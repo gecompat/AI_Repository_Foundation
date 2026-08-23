@@ -2,10 +2,14 @@
 # AI Repository Foundation - generic .gitignore
 # ------------------------------------------------------------
 
+# ============================================================
 # Secrets and local environment configuration
+# ============================================================
+
 .env
 .env.*
 !.env.example
+
 *.secret
 *.secrets
 *.key
@@ -13,38 +17,58 @@
 *.pfx
 *.p12
 
-# Local AI / agent runtime data
-.ai-local/
-.agent-local/
+# ============================================================
+# Local runtime / working data
+# ============================================================
+#
+# Convention:
+#   .ai/    = version-controlled AI/project governance
+#   .local/ = local, non-versioned runtime and working data
+#
+# Store local logs, caches, temporary files, test artifacts,
+# agent state and other machine-specific data below .local/.
+# ============================================================
+
 .local/
-.runtime/
-.state/
-.cache/
-artifacts/
-tmp/
-temp/
 
+# ============================================================
 # Logs
-*.log
-logs/
+# ============================================================
 
-# Operating systems
+*.log
+
+# ============================================================
+# Operating system files
+# ============================================================
+
 .DS_Store
 Thumbs.db
 Desktop.ini
 
-# Editors and IDEs - local/user-specific state
+# ============================================================
+# Editor and IDE user-specific state
+# ============================================================
+
+# Visual Studio Code
 .vscode/*
 !.vscode/extensions.json
-!.vscode/settings.example.json
+!.vscode/settings.json
+!.vscode/tasks.json
+!.vscode/launch.json
 
+# JetBrains IDEs
 .idea/
+
+# Visual Studio
 *.suo
 *.user
 *.userosscache
 *.sln.docstates
 
-# Backup / temporary files
+# ============================================================
+# Temporary and backup files
+# ============================================================
+
 *.bak
 *.tmp
 *.temp
@@ -53,36 +77,59 @@ Desktop.ini
 *~
 ~$*
 
-# Test / coverage output
-coverage/
+# ============================================================
+# Test and coverage output
+# ============================================================
+
 .coverage
 .coverage.*
+coverage/
 htmlcov/
 test-results/
 
-# Build / distribution artifacts
+# ============================================================
+# Generic build / distribution output
+# ============================================================
+
 build/
 dist/
 out/
 
-# Python - potentially used by validation/bootstrap tooling
+# ============================================================
+# Python tooling
+# ============================================================
+
 __pycache__/
 *.py[cod]
+
 .pytest_cache/
 .mypy_cache/
 .ruff_cache/
+
 .venv/
 venv/
 
-# Node.js - potentially used by tooling
+# ============================================================
+# Node.js tooling
+# ============================================================
+
 node_modules/
 
-# Local package/download caches
+# ============================================================
+# Package / download caches
+# ============================================================
+
 packages/
 downloads/
 
+# ============================================================
 # Generated Foundation packages
+# ============================================================
+
 *.zip
 
+# ============================================================
 # Local override files
+# ============================================================
+
 *.local.*
