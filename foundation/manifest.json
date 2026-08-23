@@ -1,14 +1,21 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.1.0",
+  "ruleset_version": "1.1.1",
   "installation_scope": "rules_only",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
-  "description": "Explicit whitelist of reusable rules that may be transferred to another repository.",
+  "description": "Explicit whitelist of reusable rules and the required source-license notice that may be transferred to another repository.",
   "default_adapters": ["github-copilot", "claude-code", "gemini"],
+  "attribution": {
+    "required": true,
+    "source": "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md",
+    "target": ".ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md",
+    "policy": "preserve_complete_notice_without_changing_target_root_license"
+  },
   "core": [
     {"source": "foundation/AGENTS.template.md", "target": "AGENTS.md", "kind": "entrypoint", "merge": "ai_merge_if_exists"},
     {"source": "foundation/FOUNDATION_RULESET.template.md", "target": ".ai/foundation/FOUNDATION_RULESET.md", "kind": "rule", "merge": "review_if_exists"},
+    {"source": "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md", "target": ".ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md", "kind": "attribution", "merge": "review_if_exists"},
     {"source": ".ai/PROJECT_RULES.md", "target": ".ai/foundation/PROJECT_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/WORKING_RULES.md", "target": ".ai/foundation/WORKING_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/MODEL_ROUTING_POLICY.md", "target": ".ai/foundation/MODEL_ROUTING_POLICY.md", "kind": "rule", "merge": "review_if_exists"},

@@ -2,6 +2,19 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.1.1] - 2026-08-23
+
+### Fixed
+
+- finalized FND-006 with a dedicated, manifest-required attribution notice for transferred Foundation material;
+- preserved the complete Foundation MIT copyright and permission notice without copying or modifying the target repository's root `LICENSE`;
+- added deterministic validation that blocks an installed ruleset when the required Foundation MIT notice is missing or incomplete.
+
+### Changed
+
+- direct AI transfer now treats attribution validation as part of completion;
+- target ruleset metadata records the attribution notice separately from governance authority.
+
 ## [1.1.0] - 2026-08-23
 
 ### Changed
@@ -23,7 +36,7 @@ All notable Foundation changes follow Semantic Versioning.
 
 ### Migration
 
-Do not unpack or copy the Foundation repository wholesale. v1.1 transfers only manifest-listed rules/adapters. Existing target README, LICENSE, project context, decisions, backlog, status, handover, and implementation are outside the transfer set and remain untouched.
+Do not unpack or copy the Foundation repository wholesale. v1.1 transfers only manifest-listed rules/adapters plus the required namespaced Foundation attribution notice. Existing target README, root LICENSE, project context, decisions, backlog, status, handover, and implementation are outside the transfer set and remain untouched.
 
 ## [1.0.0] - 2026-08-23
 

@@ -51,3 +51,14 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Date: 2026-08-23
 - Decision: Privacy gates depend on data classification, destination, and permitted handling boundary. Real public or repository-intended information is not automatically confidential.
 - Consequences: public research and ordinary project facts remain usable while secrets, sensitive/confidential transfer, and unknown classification retain strict handling rules.
+
+## DEC-0007 — Dedicated attribution notice for transferred Foundation material
+
+- Status: Accepted
+- Date: 2026-08-23
+- Context: The Foundation's MIT notice must accompany copied Foundation material, while target repositories must retain independent control of their own root license.
+- Decision: Every Foundation rules transfer includes `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`, containing the complete Foundation MIT copyright and permission notice. Installation never replaces or amends the target repository's root `LICENSE`.
+- Rationale: a dedicated, namespaced notice satisfies Foundation provenance/attribution needs without creating the false impression that the target project as a whole is MIT-licensed by the Foundation.
+- Alternatives: copying the Foundation root `LICENSE` was rejected because it could be misread as the target-project license; README-only attribution was rejected because README is outside the transfer payload and may not exist.
+- Consequences: the manifest, installer, direct AI protocol, validator, and tests treat the notice as mandatory transfer provenance rather than project-license selection.
+- Affected areas: transfer manifest, installer behavior, direct AI transfer, target validation, licensing policy.

@@ -11,6 +11,6 @@ Planning is not implementation authority.
 | FND-003 | low | proposed | Evaluate packaged release artifact | FND-001 | Package is justified beyond manifest/AI/installer transfer and contains only intended rule artifacts |
 | FND-004 | low | proposed | Optional adapter modules | FND-001 | Each adapter is thin, selectable, and validator-covered |
 | FND-005 | medium | proposed | Existing-repository merge assistant | FND-001 | Deterministic plan plus AI protocol produce bounded, reviewable semantic merges |
-| FND-006 | high | proposed | Finalize transferred-rule attribution mechanism | FND-001 | Source-license obligations are satisfied without replacing the target project's root license |
+| FND-006 | high | in_progress | Finalize transferred-rule attribution mechanism | v1.1 transfer model | Dedicated notice is manifest-required, preserves the complete MIT notice, leaves target root license untouched, and is validator/test covered |
 
 Allowed statuses: `proposed`, `ready`, `in_progress`, `blocked`, `done`. A completed item must retain traceable evidence.

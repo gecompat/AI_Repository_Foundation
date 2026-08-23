@@ -4,11 +4,11 @@ A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and hum
 
 ## v1.1 installation model
 
-The Foundation repository itself is **not** a template to unpack into another repository. Its README, LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and tool source belong only to this Foundation project.
+The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and tool source belong only to this Foundation project.
 
-`foundation/manifest.json` is the explicit whitelist of reusable rules. Only manifest-listed core rules and selected discovery adapters may be transferred to a target repository.
+`foundation/manifest.json` is the explicit whitelist of reusable rules. Only manifest-listed core rules, the required source-license notice, and selected discovery adapters may be transferred to a target repository.
 
-A target repository keeps its own README, license, architecture, project context, decisions, state, backlog, and implementation.
+A target repository keeps its own README, root license, architecture, project context, decisions, state, backlog, and implementation.
 
 ## Two equivalent transfer paths
 
@@ -18,7 +18,7 @@ An AI with read access to this repository and write access to the target reposit
 
 1. `foundation/manifest.json`;
 2. `foundation/AI_TRANSFER.md`;
-3. only the manifest-listed source rules it needs.
+3. only the manifest-listed source rules/provenance it needs.
 
 The AI can safely merge the marked Foundation bridge into an existing `AGENTS.md` while preserving project-specific rules. It must never infer additional transferable files by scanning this repository.
 
@@ -36,9 +36,15 @@ Apply when the plan contains only `CREATE` and `UNCHANGED` states:
 python tools/install_foundation.py TARGET --apply
 ```
 
-The installer classifies selected targets as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`. It never overwrites a differing file. Existing target `README.md` and `LICENSE` are outside the transfer manifest and therefore do not block installation. For semantic merges into an existing repository, use the direct AI transfer protocol or resolve the reported merge explicitly.
+The installer classifies selected targets as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`. It never overwrites a differing file. Existing target `README.md` and root `LICENSE` are outside the transfer manifest and therefore do not block installation. For semantic merges into an existing repository, use the direct AI transfer protocol or resolve the reported merge explicitly.
 
 Adapters default to GitHub Copilot, Claude Code, and Gemini. Use `--adapters none` or an explicit comma-separated adapter list when desired.
+
+## Attribution without changing the target license
+
+Transferred Foundation rules are MIT-licensed source material. Every rules transfer includes `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`, which preserves the complete Foundation MIT notice and applies only to the transferred Foundation material.
+
+The target repository's own root `LICENSE` is never copied from the Foundation, replaced, amended, or reinterpreted by the installer or AI transfer protocol.
 
 ## Validation
 
@@ -63,7 +69,7 @@ python -m unittest discover -s tests -v
 ## Core principles
 
 - repository state is durable project truth;
-- only rules in the transfer manifest are reusable installation payload;
+- only rules/provenance in the transfer manifest are reusable installation payload;
 - normal operations inside the current task's authorization envelope do not create repeated confirmation gates;
 - privacy gates depend on data classification, destination, and handling authority, not merely on information being real;
 - model/resource routing uses `LOCAL`, `ECONOMICAL`, `BALANCED`, and `FRONTIER` per step;
@@ -72,4 +78,4 @@ python -m unittest discover -s tests -v
 
 ## License
 
-The Foundation project is MIT-licensed. Installing Foundation rules never replaces or silently selects the target repository's own root license. Applicable source-license/attribution obligations must still be handled without rewriting the target project's license declaration.
+The Foundation project is MIT-licensed. Installing Foundation rules never replaces or silently selects the target repository's own root license. The dedicated namespaced Foundation notice carries the source-license attribution required for copied Foundation material.

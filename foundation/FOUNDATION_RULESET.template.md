@@ -1,9 +1,9 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.1.0
+Ruleset version: 1.1.1
 
-This directory contains reusable governance rules only. It does not describe the Foundation source project and does not define the target project's README, license, architecture, backlog, status, or release state.
+This directory contains reusable governance rules plus the source-license notice required for transferred Foundation material. It does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
 ## Rule classes
 
@@ -24,5 +24,9 @@ This directory contains reusable governance rules only. It does not describe the
 - evidence/sources: `SOURCE_AND_EVIDENCE_POLICY.md`
 - dependencies/services: `DEPENDENCY_POLICY.md`
 - machine-readable authority index: `repo_map.yaml`
+
+## Provenance and license notice
+
+`AI_REPOSITORY_FOUNDATION_NOTICE.md` is not a target-project license. It preserves the MIT notice for the Foundation material copied into this repository. Keep that notice with the installed Foundation rules; do not use it to replace or reinterpret the target project's own root license.
 
 Read only the rules relevant to the current task. Repository-specific instructions and facts remain in the target repository; these Foundation files are a reusable baseline, not a replacement for project context.
