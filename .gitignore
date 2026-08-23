@@ -1,0 +1,88 @@
+# ------------------------------------------------------------
+# AI Repository Foundation - generic .gitignore
+# ------------------------------------------------------------
+
+# Secrets and local environment configuration
+.env
+.env.*
+!.env.example
+*.secret
+*.secrets
+*.key
+*.pem
+*.pfx
+*.p12
+
+# Local AI / agent runtime data
+.ai-local/
+.agent-local/
+.local/
+.runtime/
+.state/
+.cache/
+artifacts/
+tmp/
+temp/
+
+# Logs
+*.log
+logs/
+
+# Operating systems
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Editors and IDEs - local/user-specific state
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.example.json
+
+.idea/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Backup / temporary files
+*.bak
+*.tmp
+*.temp
+*.swp
+*.swo
+*~
+~$*
+
+# Test / coverage output
+coverage/
+.coverage
+.coverage.*
+htmlcov/
+test-results/
+
+# Build / distribution artifacts
+build/
+dist/
+out/
+
+# Python - potentially used by validation/bootstrap tooling
+__pycache__/
+*.py[cod]
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.venv/
+venv/
+
+# Node.js - potentially used by tooling
+node_modules/
+
+# Local package/download caches
+packages/
+downloads/
+
+# Generated Foundation packages
+*.zip
+
+# Local override files
+*.local.*
