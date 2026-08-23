@@ -88,6 +88,44 @@ class InstallationModelTests(unittest.TestCase):
                 rc = foundation_validator.main(["--target", str(target), "--adapters", "none"])
             self.assertEqual(rc, 2)
 
+    def test_validation_contract_is_machine_readable(self) -> None:
+        contract = self.manifest["validation_contract"]
+        self.assertEqual(contract["foundation_validator_scope"], "FOUNDATION_INTEGRITY")
+        self.assertEqual(contract["project_semantic_authority"], "target_repository")
+        self.assertEqual(contract["runtime_empirical_authority"], "target_repository")
+        self.assertEqual(contract["completion"], "impact_based_combination")
+        self.assertTrue(contract["foundation_green_does_not_imply_project_green"])
+
+    def test_target_validator_declares_foundation_integrity_scope(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                self.assertEqual(install_foundation.main([str(target), "--adapters", "none", "--apply"]), 0)
+            output = StringIO()
+            with redirect_stdout(output):
+                rc = foundation_validator.main(["--target", str(target), "--adapters", "none", "--json"])
+            self.assertEqual(rc, 0)
+            payload = json.loads(output.getvalue())
+            self.assertEqual(payload["validation_scope"], "FOUNDATION_INTEGRITY")
+            codes = {item["code"] for item in payload["results"]}
+            self.assertIn("PROJECT_VALIDATION_OUT_OF_SCOPE", codes)
+
+    def test_local_override_is_drift_not_semantic_approval(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                self.assertEqual(install_foundation.main([str(target), "--adapters", "none", "--apply"]), 0)
+            policy = target / ".ai" / "foundation" / "DOCUMENTATION_POLICY.md"
+            policy.write_text(policy.read_text(encoding="utf-8") + "\n# Target-specific compatible override\n", encoding="utf-8")
+            output = StringIO()
+            with redirect_stdout(output):
+                rc = foundation_validator.main(["--target", str(target), "--adapters", "none", "--json"])
+            self.assertEqual(rc, 0)
+            payload = json.loads(output.getvalue())
+            drift = [item for item in payload["results"] if item["code"] == "LOCAL_OVERRIDE_OR_DRIFT"]
+            self.assertTrue(drift)
+            self.assertIn("does not establish semantic correctness", drift[0]["message"])
+
     def test_v1_bootstrap_dry_run_remains_preview_only(self) -> None:
         args = bootstrap.compatibility_args(["target", "--dry-run"])
         self.assertNotIn("--dry-run", args)
@@ -109,7 +147,7 @@ class InstallationModelTests(unittest.TestCase):
     def test_manifest_is_machine_readable(self) -> None:
         parsed = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(parsed["schema_version"], 1)
-        self.assertEqual(parsed["ruleset_version"], "1.1.1")
+        self.assertEqual(parsed["ruleset_version"], "1.1.2")
 
 
 if __name__ == "__main__":

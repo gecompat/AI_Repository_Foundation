@@ -60,7 +60,9 @@ Validate an installed target ruleset from a Foundation checkout:
 python tools/foundation_validator.py --target TARGET
 ```
 
-Run deterministic tests:
+The target validation command checks **Foundation integration only** (`FOUNDATION_INTEGRITY`). It does not replace project-specific semantic/static validation (`PROJECT_SEMANTIC`) or executable/empirical validation (`RUNTIME_EMPIRICAL`). Existing project validators, documentation contracts, tests, reviews, and manual validation remain authoritative when their contracts are affected.
+
+Run deterministic Foundation tests:
 
 ```text
 python -m unittest discover -s tests -v
@@ -73,6 +75,7 @@ python -m unittest discover -s tests -v
 - normal operations inside the current task's authorization envelope do not create repeated confirmation gates;
 - privacy gates depend on data classification, destination, and handling authority, not merely on information being real;
 - model/resource routing uses `LOCAL`, `ECONOMICAL`, `BALANCED`, and `FRONTIER` per step;
+- Foundation validation supplements rather than replaces project-specific validation;
 - validation is local-first and manual validation requires an exact step-by-step plan;
 - adapters are thin discovery bridges and never duplicate governance.
 

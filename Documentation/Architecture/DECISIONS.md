@@ -62,3 +62,14 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Alternatives: copying the Foundation root `LICENSE` was rejected because it could be misread as the target-project license; README-only attribution was rejected because README is outside the transfer payload and may not exist.
 - Consequences: the manifest, installer, direct AI protocol, validator, and tests treat the notice as mandatory transfer provenance rather than project-license selection.
 - Affected areas: transfer manifest, installer behavior, direct AI transfer, target validation, licensing policy.
+
+## DEC-0008 — Layered validation ownership
+
+- Status: Accepted
+- Date: 2026-08-23
+- Context: A generic Foundation validator can prove deterministic Foundation integration contracts but cannot generally prove the semantic correctness of target-project rules, local overrides, architecture, domain behavior, or runtime results.
+- Decision: Validation is separated into `FOUNDATION_INTEGRITY`, `PROJECT_SEMANTIC`, and `RUNTIME_EMPIRICAL`. The Foundation validator owns only `FOUNDATION_INTEGRITY`; the target repository remains authoritative for the other scopes. Completion combines the scopes relevant to the affected change.
+- Rationale: treating Foundation validation as complete project validation would create false assurance and could cause existing project-specific static contracts, validators, tests, or reviews to be removed or skipped.
+- Alternatives: teaching the Foundation validator all project semantics was rejected as impossible to keep vendor-/domain-neutral and would duplicate project knowledge.
+- Consequences: transferred rules and machine-readable metadata explicitly preserve target validation; drift detection is not semantic approval; Foundation-green does not imply project-green.
+- Affected areas: validation policy, target ruleset metadata, direct AI transfer, validator output, tests.

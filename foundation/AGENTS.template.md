@@ -9,5 +9,7 @@ The current explicit task authorizes ordinary, reasonably expected and proportio
 
 Foundation `REQUIRED` rules may not be silently weakened. Foundation `DEFAULT` rules may be intentionally overridden by project-specific rules. Tool-specific adapters must only lead back to this repository entry point and may not define parallel governance.
 
+Foundation validation covers Foundation integration integrity only. Preserve and use the target repository's existing semantic validators, static contracts, tests, reviews, and manual validation when their contracts are affected. A green Foundation validator is not evidence that the entire project is validated.
+
 Chat history, memory, prior scratchpads, and vendor-specific project prompts are not durable project truth.
 <!-- AI_REPOSITORY_FOUNDATION:END -->
