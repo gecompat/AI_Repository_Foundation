@@ -2,6 +2,29 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.1.0] - 2026-08-23
+
+### Changed
+
+- replaced mutation-driven confirmation gates with an authorization-envelope model: ordinary task-authorized operations proceed without repeated confirmation;
+- replaced the overly broad "real information" privacy gate with explicit data classification, destination, and handling-boundary rules;
+- made model-tier escalation depend on unresolved risk/complexity/verifiability rather than human review effort;
+- made third-party/dependency review proportional to risk;
+- separated the Foundation project's own state from the reusable rules transferred to target repositories.
+
+### Added
+
+- `foundation/manifest.json` as the sole machine- and AI-readable transfer whitelist;
+- direct AI transfer protocol for applying rules to new or existing repositories without a local installer;
+- namespaced target rules under `.ai/foundation/`;
+- manifest-driven deterministic installer with `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, and `CONFLICT` states;
+- target validation mode and deterministic installation-model unit tests;
+- minimal CI for Foundation self-validation.
+
+### Migration
+
+Do not unpack or copy the Foundation repository wholesale. v1.1 transfers only manifest-listed rules/adapters. Existing target README, LICENSE, project context, decisions, backlog, status, handover, and implementation are outside the transfer set and remain untouched.
+
 ## [1.0.0] - 2026-08-23
 
 ### Added
@@ -14,4 +37,4 @@ All notable Foundation changes follow Semantic Versioning.
 
 ### Migration
 
-Initial release. Applying to an existing repository requires dry-run, inventory, conflict review, and explicit writes; no blind overwrite or automatic upgrade is supported.
+Initial baseline. Superseded for new installations by the manifest-driven v1.1 transfer model.

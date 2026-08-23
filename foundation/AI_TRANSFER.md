@@ -8,6 +8,8 @@ This protocol allows an AI system with read access to this Foundation repository
 
 In particular, never copy the Foundation project's README, LICENSE, changelog, `.gitignore`, project context, Foundation metadata, status, handover, backlog, roadmap, internal decisions, tests, or tool source merely because they exist here.
 
+The target project's root license is never changed by this transfer. Transferred text originates from the Foundation source repository; preserve any legally required attribution/notice through the target project's appropriate third-party/provenance mechanism. If that mechanism or obligation is unclear, report a licensing review item rather than copying/replacing the target root license.
+
 ## Procedure
 
 1. Read `foundation/manifest.json`.

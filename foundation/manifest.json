@@ -1,6 +1,9 @@
 {
   "schema_version": 1,
   "ruleset_version": "1.1.0",
+  "installation_scope": "rules_only",
+  "source_license": "MIT",
+  "target_root_license_behavior": "never_modify_or_replace",
   "description": "Explicit whitelist of reusable rules that may be transferred to another repository.",
   "default_adapters": ["github-copilot", "claude-code", "gemini"],
   "core": [
