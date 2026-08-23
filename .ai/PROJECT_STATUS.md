@@ -4,7 +4,7 @@ Status: GENERATED/EVIDENCE
 Last updated: 2026-08-23
 Foundation version: 1.2.0 candidate
 
-## Implemented on current work branch
+## Implemented
 
 - rules/provenance transfer manifest and direct AI transfer protocol;
 - dedicated Foundation attribution notice without changing target root licenses;
@@ -22,7 +22,8 @@ Foundation version: 1.2.0 candidate
 ## Validation evidence
 
 - v1.1.2 validation-scope implementation was validated successfully before this candidate.
-- v1.2.0 semantic-integration implementation: not yet validated on this branch.
+- v1.2.0 semantic integration implementation: GitHub Actions `Foundation CI`, run `32646967820`, head `17662ba58a88abee8ef951d22918aa4c5543392d`: validated, conclusion `success`.
+- The v1.2 deterministic coverage includes transfer-manifest integrity, semantic-policy installation, compatibility taxonomy, root discovery contract, stricter-project compatibility, validation-status extensibility, model-routing interoperability, narrow attribution/privacy handling, target Foundation-integrity scope, idempotency, target README/root-LICENSE preservation, and transactional conflict behavior.
 - fresh-agent semantic transfer/continuation: pending manual validation under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-Do not treat the v1.2.0 candidate as validated until Foundation CI succeeds on the actual implementation head.
+FND-005, FND-008, and FND-009 are complete for their deterministic contracts. FND-001 remains in progress until the separate fresh-agent semantic-transfer/continuation acceptance is actually executed and recorded. The final documentation/evidence head must also receive its own green CI result before merge.
