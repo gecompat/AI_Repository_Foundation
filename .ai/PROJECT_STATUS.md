@@ -24,6 +24,7 @@ Foundation version: 1.2.0 candidate
 - v1.1.2 validation-scope implementation was validated successfully before this candidate.
 - v1.2.0 semantic integration implementation: GitHub Actions `Foundation CI`, run `32646967820`, head `17662ba58a88abee8ef951d22918aa4c5543392d`: validated, conclusion `success`.
 - The v1.2 deterministic coverage includes transfer-manifest integrity, semantic-policy installation, compatibility taxonomy, root discovery contract, stricter-project compatibility, validation-status extensibility, model-routing interoperability, narrow attribution/privacy handling, target Foundation-integrity scope, idempotency, target README/root-LICENSE preservation, and transactional conflict behavior.
-- fresh-agent semantic transfer/continuation: pending manual validation under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
+- Existing-repository AI transfer: `validated` based on successful Foundation integration initiated and completed with AI assistance in five existing repositories: `gecompat/FolioTone`, `gecompat/SQL_Server_Lab`, `gecompat/SQL_Server_Toolbelt`, `gecompat/SQL_Server_Analyze`, and `gecompat/SQL_PerformanceSchulung`. See `Documentation/Quality/EXISTING_REPOSITORY_AI_TRANSFER_EVIDENCE.md`.
+- Fresh-agent post-transfer continuation without prior conversation context: `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-FND-005, FND-008, and FND-009 are complete for their deterministic contracts. FND-001 remains in progress until the separate fresh-agent semantic-transfer/continuation acceptance is actually executed and recorded. The final documentation/evidence head must also receive its own green CI result before merge.
+FND-005, FND-008, and FND-009 are complete for their deterministic contracts. FND-001 remains in progress only for the separate fresh-agent post-transfer continuation criterion; the existing-repository AI-transfer portion is now validated.
