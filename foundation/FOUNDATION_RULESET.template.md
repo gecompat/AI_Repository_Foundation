@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.1.1
+Ruleset version: 1.1.2
 
 This directory contains reusable governance rules plus the source-license notice required for transferred Foundation material. It does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -23,7 +23,13 @@ This directory contains reusable governance rules plus the source-license notice
 - third-party/licensing: `THIRD_PARTY_AND_LICENSING.md`
 - evidence/sources: `SOURCE_AND_EVIDENCE_POLICY.md`
 - dependencies/services: `DEPENDENCY_POLICY.md`
-- machine-readable authority index: `repo_map.yaml`
+- machine-readable authority and validation-scope index: `repo_map.yaml`
+
+## Validation boundary
+
+Foundation validation supplements rather than replaces the target repository's validation system. The Foundation validator covers `FOUNDATION_INTEGRITY` only. Project-specific semantic correctness remains under `PROJECT_SEMANTIC`; executable/empirical behavior remains under `RUNTIME_EMPIRICAL`. Existing project validators, static contracts, tests, reviews, and manual validation remain authoritative for those scopes when affected.
+
+A local override or drift warning identifies a difference; it is not semantic approval of that difference. A green Foundation validator must never be used as evidence that the entire target project is validated.
 
 ## Provenance and license notice
 

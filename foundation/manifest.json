@@ -1,11 +1,18 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.1.1",
+  "ruleset_version": "1.1.2",
   "installation_scope": "rules_only",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
   "description": "Explicit whitelist of reusable rules and the required source-license notice that may be transferred to another repository.",
   "default_adapters": ["github-copilot", "claude-code", "gemini"],
+  "validation_contract": {
+    "foundation_validator_scope": "FOUNDATION_INTEGRITY",
+    "project_semantic_authority": "target_repository",
+    "runtime_empirical_authority": "target_repository",
+    "completion": "impact_based_combination",
+    "foundation_green_does_not_imply_project_green": true
+  },
   "attribution": {
     "required": true,
     "source": "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md",

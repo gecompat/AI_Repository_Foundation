@@ -2,6 +2,19 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.1.2] - 2026-08-23
+
+### Fixed
+
+- clarified that the Foundation validator establishes `FOUNDATION_INTEGRITY` only and cannot prove semantic correctness of project-specific rules or local overrides;
+- made preservation of target-project semantic/static/runtime validation an explicit transferred rule instead of a Foundation-internal limitation only;
+- prevented a green Foundation validator from being interpreted as full project validation.
+
+### Changed
+
+- the transfer manifest and target `repo_map` now expose `FOUNDATION_INTEGRITY`, `PROJECT_SEMANTIC`, and `RUNTIME_EMPIRICAL` as machine-readable validation scopes;
+- direct AI transfer now inventories and preserves existing target validation infrastructure and reports validation results by scope.
+
 ## [1.1.1] - 2026-08-23
 
 ### Fixed

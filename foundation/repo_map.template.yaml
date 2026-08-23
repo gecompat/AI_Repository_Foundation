@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.1.1
+foundation_ruleset_version: 1.1.2
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -17,6 +17,22 @@ authority:
 provenance:
   foundation_notice: .ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md
   target_root_license_behavior: independent_and_untouched
+validation_contract:
+  foundation_integrity:
+    label: FOUNDATION_INTEGRITY
+    authority: foundation_ruleset
+    purpose: installed_foundation_structure_provenance_and_deterministic_contracts
+  project_semantic:
+    label: PROJECT_SEMANTIC
+    authority: target_repository
+    purpose: project_rules_local_overrides_architecture_domain_and_documentation_contracts
+  runtime_empirical:
+    label: RUNTIME_EMPIRICAL
+    authority: target_repository
+    purpose: tests_builds_integrations_runtime_research_data_and_manual_validation
+  completion:
+    selection: impact_based
+    foundation_integrity_does_not_replace_project_validation: true
 override_contract:
   required: may_not_be_silently_weakened
   default: project_may_override_intentionally
