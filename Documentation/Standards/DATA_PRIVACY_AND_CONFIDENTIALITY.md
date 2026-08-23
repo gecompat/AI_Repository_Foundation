@@ -19,6 +19,14 @@ Privacy decisions are based on classification, destination, and handling authori
 
 Stop before mutation or transfer only when classification/handling authority is unresolved (`UNKNOWN`), the planned destination crosses the permitted boundary, or an explicit stricter project/platform rule requires a gate. A public company name, repository name, documentation URL, or other real public fact is not a privacy gate by itself.
 
+A target project may deliberately use a stricter privacy profile, including synthetic-only repository data, narrower allowlists, or additional approval requirements. Such a stricter rule is compatible with the Foundation and should be preserved.
+
+## Required Foundation provenance in stricter projects
+
+The legally required Foundation attribution notice may contain real public attribution information that a target privacy scanner would otherwise reject. Do not alter, abbreviate, or neutralize the required notice to satisfy a generic scanner.
+
+When a stricter target scanner needs an exception, prefer the narrowest possible path-scoped exception for `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md` (or its deliberately equivalent validated notice location). Do not broaden a global personal-name or real-data allowlist merely to permit Foundation provenance.
+
 Use data minimization. Real diagnostic data may be inspected when authorized but does not automatically become repository evidence. Review/redact it before broader transfer when required. Automated scanning supports classification but cannot replace semantic review.
 
 If a secret may have been exposed, stop further distribution and rotate/revoke it as appropriate before treating repository cleanup as sufficient remediation.

@@ -70,6 +70,15 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Context: A generic Foundation validator can prove deterministic Foundation integration contracts but cannot generally prove the semantic correctness of target-project rules, local overrides, architecture, domain behavior, or runtime results.
 - Decision: Validation is separated into `FOUNDATION_INTEGRITY`, `PROJECT_SEMANTIC`, and `RUNTIME_EMPIRICAL`. The Foundation validator owns only `FOUNDATION_INTEGRITY`; the target repository remains authoritative for the other scopes. Completion combines the scopes relevant to the affected change.
 - Rationale: treating Foundation validation as complete project validation would create false assurance and could cause existing project-specific static contracts, validators, tests, or reviews to be removed or skipped.
-- Alternatives: teaching the Foundation validator all project semantics was rejected as impossible to keep vendor-/domain-neutral and would duplicate project knowledge.
 - Consequences: transferred rules and machine-readable metadata explicitly preserve target validation; drift detection is not semantic approval; Foundation-green does not imply project-green.
-- Affected areas: validation policy, target ruleset metadata, direct AI transfer, validator output, tests.
+
+## DEC-0009 — Semantic integration preserves mature project governance
+
+- Status: Accepted
+- Date: 2026-08-23
+- Context: Real existing repositories contain mature privacy, validation, model-routing, Git, approval, adapter, and documentation contracts that often overlap the Foundation without being wrong.
+- Decision: Existing-repository integration uses explicit semantic compatibility classes. Foundation `REQUIRED` rules are minimum protected floors, intentionally stricter project rules are compatible, active project governance must remain discoverable from root `AGENTS.md`, and unique adapter governance must be preserved/re-homed before adapters are thinned.
+- Rationale: file-level `MERGE_REQUIRED` alone is insufficient to distinguish a valid stricter project rule, an equivalent rule, a selectable override, a target-internal contradiction, or a true Foundation required-floor conflict.
+- Alternatives: normalizing all projects to Foundation wording was rejected because it would destroy project-specific policy detail and create unnecessary churn; leaving semantic merge entirely informal was rejected because different AI systems produced inconsistent classifications.
+- Consequences: direct AI transfer becomes a bounded semantic merge protocol; richer project validation statuses and model-routing policies remain valid through semantic mapping; target repo maps are preserved; orphaned active authority is treated as an integration defect.
+- Affected areas: semantic integration, root discovery, adapters, privacy, model routing, validation, repo-map integration, existing-repository migration.

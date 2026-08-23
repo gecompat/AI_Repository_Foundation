@@ -24,6 +24,7 @@ PROJECT_REQUIRED = [
     "Documentation/Standards/THIRD_PARTY_AND_LICENSING.md",
     "Documentation/Standards/SOURCE_AND_EVIDENCE_POLICY.md",
     "Documentation/Standards/DEPENDENCY_POLICY.md",
+    "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
     "Documentation/Quality/KNOWN_LIMITATIONS.md",
     "foundation/manifest.json", "foundation/AI_TRANSFER.md", "foundation/AGENTS.template.md",
     "foundation/FOUNDATION_RULESET.template.md", "foundation/repo_map.template.yaml",
@@ -46,12 +47,55 @@ VALIDATION_CONTRACT = {
     "runtime_empirical_authority": "target_repository",
     "completion": "impact_based_combination",
     "foundation_green_does_not_imply_project_green": True,
+    "foundation_reserved_statuses": ["not executed", "pending manual validation", "validated"],
+    "target_status_extensions_allowed": True,
+    "reserved_statuses_may_not_be_redefined": True,
+}
+
+INTEGRATION_COMPATIBILITY_CLASSES = [
+    "EQUIVALENT",
+    "PROJECT_STRONGER",
+    "PROJECT_SELECTABLE_OVERRIDE",
+    "COMPLEMENTARY",
+    "DUPLICATE_GOVERNANCE",
+    "FOUNDATION_REQUIRED_CONFLICT",
+    "TARGET_INTERNAL_CONFLICT",
+    "ORPHANED_AUTHORITY",
+    "ADAPTER_GOVERNANCE_MISPLACED",
+]
+INTEGRATION_CONTRACT = {
+    "policy_source": "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
+    "policy_target": ".ai/foundation/SEMANTIC_INTEGRATION_POLICY.md",
+    "root_entrypoint": "AGENTS.md",
+    "project_governance_must_be_transitively_discoverable": True,
+    "stricter_project_rules": "compatible",
+    "existing_project_rule_labels_required": False,
+    "adapter_governance_migration": "preserve_then_rehome_then_thin",
+    "project_repo_map_behavior": "preserve_and_optionally_bridge",
+    "orphaned_authority_is_integration_defect": True,
+}
+MODEL_ROUTING_CONTRACT = {
+    "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
+    "target_policy_may_be_more_detailed": True,
+    "semantic_mapping_required_when_overlapping": True,
+    "concrete_models_are_runtime_facts": True,
 }
 VALIDATION_MAP_MARKERS = [
     "label: FOUNDATION_INTEGRITY",
     "label: PROJECT_SEMANTIC",
     "label: RUNTIME_EMPIRICAL",
     "foundation_integrity_does_not_replace_project_validation: true",
+    "target_extensions_allowed: true",
+    "reserved_meanings_may_not_be_redefined: true",
+]
+INTEGRATION_MAP_MARKERS = [
+    ".ai/foundation/SEMANTIC_INTEGRATION_POLICY.md",
+    "project_governance_must_be_transitively_discoverable: true",
+    "stricter_project_rules: compatible",
+    "adapter_governance_migration: preserve_then_rehome_then_thin",
+    "project_repo_map_behavior: preserve_and_optionally_bridge",
+    "orphaned_authority_is_integration_defect: true",
+    "semantic_mapping_when_overlapping: required",
 ]
 
 results: list[dict] = []
@@ -98,10 +142,10 @@ def scan_text(path: Path, display: str) -> None:
         add("WARNING", "PLACEHOLDER", display, "unresolved template placeholder found")
 
 
-def validate_validation_map(text: str, display: str) -> None:
-    for marker in VALIDATION_MAP_MARKERS:
+def validate_markers(text: str, display: str, code: str, markers: list[str]) -> None:
+    for marker in markers:
         if marker not in text:
-            add("ERROR", "VALIDATION_SCOPE_MAP", display, f"validation-scope marker missing: {marker}")
+            add("ERROR", code, display, f"required marker missing: {marker}")
 
 
 def validate_manifest(manifest: dict) -> None:
@@ -116,12 +160,25 @@ def validate_manifest(manifest: dict) -> None:
     else:
         for key, expected in VALIDATION_CONTRACT.items():
             if validation_contract.get(key) != expected:
-                add(
-                    "ERROR",
-                    "VALIDATION_CONTRACT",
-                    "foundation/manifest.json",
-                    f"{key} must be {expected!r}",
-                )
+                add("ERROR", "VALIDATION_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
+
+    integration_contract = manifest.get("integration_contract")
+    if not isinstance(integration_contract, dict):
+        add("BLOCKING", "INTEGRATION_CONTRACT", "foundation/manifest.json", "integration_contract is required")
+    else:
+        for key, expected in INTEGRATION_CONTRACT.items():
+            if integration_contract.get(key) != expected:
+                add("ERROR", "INTEGRATION_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
+        if integration_contract.get("compatibility_classes") != INTEGRATION_COMPATIBILITY_CLASSES:
+            add("ERROR", "INTEGRATION_CLASSES", "foundation/manifest.json", "compatibility_classes do not match the canonical ordered set")
+
+    model_contract = manifest.get("model_routing_contract")
+    if not isinstance(model_contract, dict):
+        add("BLOCKING", "MODEL_ROUTING_CONTRACT", "foundation/manifest.json", "model_routing_contract is required")
+    else:
+        for key, expected in MODEL_ROUTING_CONTRACT.items():
+            if model_contract.get(key) != expected:
+                add("ERROR", "MODEL_ROUTING_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
 
     targets: set[str] = set()
     rows = list(manifest.get("core", []))
@@ -147,6 +204,14 @@ def validate_manifest(manifest: dict) -> None:
         source_path = ROOT / source
         if not source_path.is_file():
             add("ERROR", "MISSING_SOURCE", source, "manifest source does not exist")
+
+    integration_rows = [
+        row for row in rows
+        if row.get("source") == INTEGRATION_CONTRACT["policy_source"]
+        and row.get("target") == INTEGRATION_CONTRACT["policy_target"]
+    ]
+    if len(integration_rows) != 1:
+        add("BLOCKING", "INTEGRATION_POLICY_MAPPING", "foundation/manifest.json", "semantic integration policy must be transferred exactly once")
 
     for adapter in manifest.get("default_adapters", []):
         if adapter not in manifest.get("adapters", {}):
@@ -199,6 +264,7 @@ def validate_foundation(profile: str) -> None:
             "Documentation/Standards/DOCUMENTATION_POLICY.md",
             "Documentation/Standards/SOURCE_AND_EVIDENCE_POLICY.md",
             "Documentation/Standards/DEPENDENCY_POLICY.md",
+            "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
             "Documentation/Architecture/DECISIONS.md",
         ]:
             if rel not in text:
@@ -206,10 +272,15 @@ def validate_foundation(profile: str) -> None:
 
     target_map_template = ROOT / "foundation" / "repo_map.template.yaml"
     if target_map_template.is_file():
-        validate_validation_map(
-            target_map_template.read_text(encoding="utf-8"),
-            "foundation/repo_map.template.yaml",
-        )
+        map_text = target_map_template.read_text(encoding="utf-8")
+        validate_markers(map_text, "foundation/repo_map.template.yaml", "VALIDATION_SCOPE_MAP", VALIDATION_MAP_MARKERS)
+        validate_markers(map_text, "foundation/repo_map.template.yaml", "INTEGRATION_SCOPE_MAP", INTEGRATION_MAP_MARKERS)
+
+    agents_template = ROOT / "foundation" / "AGENTS.template.md"
+    if agents_template.is_file():
+        agents_text = agents_template.read_text(encoding="utf-8")
+        if "transitively discoverable" not in agents_text or "SEMANTIC_INTEGRATION_POLICY.md" not in agents_text:
+            add("ERROR", "DISCOVERY_CONTRACT", "foundation/AGENTS.template.md", "root discovery/integration contract is missing")
 
     for rel in [".github/copilot-instructions.md", "CLAUDE.md", "GEMINI.md"]:
         path = ROOT / rel
@@ -244,6 +315,12 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
         ".",
         "Foundation validator covers FOUNDATION_INTEGRITY only. PROJECT_SEMANTIC and RUNTIME_EMPIRICAL validation remain target-project responsibilities when affected.",
     )
+    add(
+        "INFO",
+        "PROJECT_GOVERNANCE_DISCOVERY_SEMANTIC",
+        "AGENTS.md",
+        "Foundation validator can verify the discovery contract is installed but cannot prove that every active target-specific authority in an arbitrary repository was semantically inventoried and linked. Existing-repository integration must review this under PROJECT_SEMANTIC.",
+    )
 
     selected_paths: list[Path] = []
     required_mit_notice = (ROOT / "LICENSE").read_text(encoding="utf-8")
@@ -256,14 +333,18 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
             continue
         selected_paths.append(destination)
         text = destination.read_text(encoding="utf-8", errors="replace")
-        if display == "AGENTS.md" and "AI_REPOSITORY_FOUNDATION" not in text:
-            add("ERROR", "ENTRYPOINT_BRIDGE", display, "Foundation bridge marker is missing")
+        if display == "AGENTS.md":
+            if "AI_REPOSITORY_FOUNDATION" not in text:
+                add("ERROR", "ENTRYPOINT_BRIDGE", display, "Foundation bridge marker is missing")
+            if "transitively discoverable" not in text:
+                add("ERROR", "DISCOVERY_CONTRACT", display, "Foundation project-governance discovery contract is missing")
         if row.get("kind") == "adapter" and "AGENTS.md" not in text:
             add("ERROR", "ADAPTER_DISCOVERY", display, "adapter does not lead to AGENTS.md")
         if row.get("kind") == "attribution" and required_mit_notice not in text:
             add("BLOCKING", "ATTRIBUTION_NOTICE", display, "installed attribution file does not preserve the complete Foundation MIT notice")
         if display == ".ai/foundation/repo_map.yaml":
-            validate_validation_map(text, display)
+            validate_markers(text, display, "VALIDATION_SCOPE_MAP", VALIDATION_MAP_MARKERS)
+            validate_markers(text, display, "INTEGRATION_SCOPE_MAP", INTEGRATION_MAP_MARKERS)
         if display.startswith(".ai/foundation/") and source.is_file() and destination.read_bytes() != source.read_bytes():
             add(
                 "WARNING",
