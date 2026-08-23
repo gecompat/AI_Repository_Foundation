@@ -12,6 +12,7 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import bootstrap  # noqa: E402
+import foundation_validator  # noqa: E402
 import install_foundation  # noqa: E402
 
 
@@ -29,16 +30,19 @@ class InstallationModelTests(unittest.TestCase):
         self.assertFalse(any(path.startswith("Documentation/Architecture/") for path in targets))
         self.assertFalse(any(path.startswith("Documentation/Quality/") for path in targets))
 
-    def test_existing_readme_and_license_do_not_block_installation(self) -> None:
+    def test_existing_readme_and_license_are_preserved_and_notice_is_installed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             (target / "README.md").write_text("Target README\n", encoding="utf-8")
             (target / "LICENSE").write_text("Target license\n", encoding="utf-8")
-            entries = install_foundation.transfer_entries(self.manifest, [])
-            plan = install_foundation.build_plan(target, entries)
-            self.assertFalse(any(item.state in {"MERGE_REQUIRED", "CONFLICT"} for item in plan))
+            with redirect_stdout(StringIO()):
+                rc = install_foundation.main([str(target), "--adapters", "none", "--apply"])
+            self.assertEqual(rc, 0)
             self.assertEqual((target / "README.md").read_text(encoding="utf-8"), "Target README\n")
             self.assertEqual((target / "LICENSE").read_text(encoding="utf-8"), "Target license\n")
+            notice = target / ".ai" / "foundation" / "AI_REPOSITORY_FOUNDATION_NOTICE.md"
+            self.assertTrue(notice.is_file())
+            self.assertIn((ROOT / "LICENSE").read_text(encoding="utf-8"), notice.read_text(encoding="utf-8"))
 
     def test_second_install_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -59,7 +63,30 @@ class InstallationModelTests(unittest.TestCase):
                 rc = install_foundation.main([str(target), "--adapters", "none", "--apply"])
             self.assertEqual(rc, 2)
             self.assertFalse((target / ".ai" / "foundation" / "FOUNDATION_RULESET.md").exists())
+            self.assertFalse((target / ".ai" / "foundation" / "AI_REPOSITORY_FOUNDATION_NOTICE.md").exists())
             self.assertEqual((target / "AGENTS.md").read_text(encoding="utf-8"), "# Existing project rules\n")
+
+    def test_attribution_manifest_and_source_preserve_complete_mit_notice(self) -> None:
+        attribution = self.manifest["attribution"]
+        self.assertTrue(attribution["required"])
+        self.assertNotEqual(attribution["target"], "LICENSE")
+        rows = [row for row in self.manifest["core"] if row.get("kind") == "attribution"]
+        self.assertEqual(len(rows), 1)
+        self.assertEqual(rows[0]["source"], attribution["source"])
+        self.assertEqual(rows[0]["target"], attribution["target"])
+        source_text = (ROOT / attribution["source"]).read_text(encoding="utf-8")
+        self.assertIn((ROOT / "LICENSE").read_text(encoding="utf-8"), source_text)
+
+    def test_target_validator_blocks_tampered_attribution_notice(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                self.assertEqual(install_foundation.main([str(target), "--adapters", "none", "--apply"]), 0)
+            notice = target / ".ai" / "foundation" / "AI_REPOSITORY_FOUNDATION_NOTICE.md"
+            notice.write_text("# Incomplete notice\n", encoding="utf-8")
+            with redirect_stdout(StringIO()):
+                rc = foundation_validator.main(["--target", str(target), "--adapters", "none"])
+            self.assertEqual(rc, 2)
 
     def test_v1_bootstrap_dry_run_remains_preview_only(self) -> None:
         args = bootstrap.compatibility_args(["target", "--dry-run"])
@@ -82,7 +109,7 @@ class InstallationModelTests(unittest.TestCase):
     def test_manifest_is_machine_readable(self) -> None:
         parsed = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(parsed["schema_version"], 1)
-        self.assertEqual(parsed["ruleset_version"], "1.1.0")
+        self.assertEqual(parsed["ruleset_version"], "1.1.1")
 
 
 if __name__ == "__main__":

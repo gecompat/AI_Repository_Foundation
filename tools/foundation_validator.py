@@ -27,6 +27,7 @@ PROJECT_REQUIRED = [
     "Documentation/Quality/KNOWN_LIMITATIONS.md",
     "foundation/manifest.json", "foundation/AI_TRANSFER.md", "foundation/AGENTS.template.md",
     "foundation/FOUNDATION_RULESET.template.md", "foundation/repo_map.template.yaml",
+    "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md",
     "tools/install_foundation.py", "tools/foundation_validator.py",
 ]
 
@@ -118,6 +119,30 @@ def validate_manifest(manifest: dict) -> None:
         if adapter not in manifest.get("adapters", {}):
             add("ERROR", "DEFAULT_ADAPTER", adapter, "default adapter is not defined")
 
+    attribution = manifest.get("attribution")
+    if not isinstance(attribution, dict) or not attribution.get("required"):
+        add("BLOCKING", "ATTRIBUTION_CONFIG", "foundation/manifest.json", "required attribution configuration is missing")
+        return
+
+    attr_source = attribution.get("source")
+    attr_target = attribution.get("target")
+    matching = [row for row in rows if row.get("kind") == "attribution"]
+    if len(matching) != 1:
+        add("BLOCKING", "ATTRIBUTION_ENTRY", "foundation/manifest.json", "exactly one attribution transfer entry is required")
+        return
+    row = matching[0]
+    if row.get("source") != attr_source or row.get("target") != attr_target:
+        add("BLOCKING", "ATTRIBUTION_MAPPING", "foundation/manifest.json", "attribution metadata and transfer entry do not match")
+    if attr_target in FORBIDDEN_TARGETS or attr_target == "LICENSE":
+        add("BLOCKING", "ATTRIBUTION_ROOT_LICENSE", str(attr_target), "Foundation attribution must not replace the target root license")
+
+    source_path = ROOT / str(attr_source)
+    license_path = ROOT / "LICENSE"
+    if source_path.is_file() and license_path.is_file():
+        required_notice = license_path.read_text(encoding="utf-8")
+        if required_notice not in source_path.read_text(encoding="utf-8"):
+            add("BLOCKING", "ATTRIBUTION_SOURCE", str(attr_source), "attribution source does not contain the complete Foundation MIT notice")
+
 
 def validate_foundation(profile: str) -> None:
     for rel in PROJECT_REQUIRED:
@@ -174,6 +199,7 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
         return
 
     selected_paths: list[Path] = []
+    required_mit_notice = (ROOT / "LICENSE").read_text(encoding="utf-8")
     for row in rows:
         source = ROOT / row["source"]
         destination = target / row["target"]
@@ -187,8 +213,10 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
             add("ERROR", "ENTRYPOINT_BRIDGE", display, "Foundation bridge marker is missing")
         if row.get("kind") == "adapter" and "AGENTS.md" not in text:
             add("ERROR", "ADAPTER_DISCOVERY", display, "adapter does not lead to AGENTS.md")
+        if row.get("kind") == "attribution" and required_mit_notice not in text:
+            add("BLOCKING", "ATTRIBUTION_NOTICE", display, "installed attribution file does not preserve the complete Foundation MIT notice")
         if display.startswith(".ai/foundation/") and source.is_file() and destination.read_bytes() != source.read_bytes():
-            add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule differs from current source; review intentionally")
+            add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule/provenance file differs from current source; review intentionally")
 
     if profile != "quick":
         for path in selected_paths:

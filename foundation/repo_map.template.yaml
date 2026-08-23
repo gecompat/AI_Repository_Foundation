@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.1.0
+foundation_ruleset_version: 1.1.1
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -14,6 +14,9 @@ authority:
     - .ai/foundation/THIRD_PARTY_AND_LICENSING.md
     - .ai/foundation/SOURCE_AND_EVIDENCE_POLICY.md
     - .ai/foundation/DEPENDENCY_POLICY.md
+provenance:
+  foundation_notice: .ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md
+  target_root_license_behavior: independent_and_untouched
 override_contract:
   required: may_not_be_silently_weakened
   default: project_may_override_intentionally
