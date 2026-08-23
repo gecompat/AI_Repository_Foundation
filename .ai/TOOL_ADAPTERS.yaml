@@ -1,0 +1,27 @@
+schema_version: 1
+canonical_entrypoint: AGENTS.md
+tools:
+  codex:
+    support: native
+    required_files: []
+  github-copilot:
+    support: adapter
+    required_files:
+      - .github/copilot-instructions.md
+  claude-code:
+    support: adapter
+    required_files:
+      - CLAUDE.md
+  gemini:
+    support: adapter
+    required_files:
+      - GEMINI.md
+adapter_contract:
+  may_contain:
+    - discovery
+    - import_mechanics
+    - tool_specific_runtime_notes
+  may_not_contain:
+    - duplicated_governance
+    - weakened_governance
+    - model_or_price_contracts

@@ -1,0 +1,36 @@
+schema_version: 1
+canonical_entrypoint: AGENTS.md
+authority:
+  authoritative:
+    - AGENTS.md
+    - .ai/PROJECT_CONTEXT.md
+    - .ai/PROJECT_RULES.md
+    - .ai/WORKING_RULES.md
+    - .ai/MODEL_ROUTING_POLICY.md
+    - .ai/VALIDATION_POLICY.md
+    - .ai/FOUNDATION.md
+    - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
+    - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
+    - Documentation/Standards/THIRD_PARTY_AND_LICENSING.md
+  informative:
+    - README.md
+    - .ai/ROADMAP.md
+    - .ai/BACKLOG.md
+    - Documentation/Architecture/OVERVIEW.md
+    - Documentation/Quality/KNOWN_LIMITATIONS.md
+  generated_evidence:
+    - .ai/PROJECT_STATUS.md
+    - .ai/HANDOVER.md
+state:
+  status: .ai/PROJECT_STATUS.md
+  handover: .ai/HANDOVER.md
+  backlog: .ai/BACKLOG.md
+  roadmap: .ai/ROADMAP.md
+decisions:
+  index: Documentation/Architecture/DECISIONS.md
+adapters:
+  registry: .ai/TOOL_ADAPTERS.yaml
+validation:
+  command: python tools/foundation_validator.py
+bootstrap:
+  command: python tools/bootstrap.py TARGET --dry-run
