@@ -4,7 +4,7 @@ Status: GENERATED/EVIDENCE
 Last updated: 2026-08-23
 Foundation version: 1.1.1 candidate
 
-## Implemented on current work branch
+## Implemented
 
 - rules-only transfer manifest;
 - direct AI transfer protocol;
@@ -21,7 +21,8 @@ Foundation version: 1.1.1 candidate
 ## Validation evidence
 
 - Previous v1.1 deterministic Foundation CI: validated successfully on the final v1.1 PR head.
-- FND-006 attribution implementation: pending CI on the current branch; do not claim validated until that run is green.
+- FND-006 attribution implementation: Foundation CI run `32638922019`, head `9102a70bc13efb6f1642321ccbcedd56a54d6046`: validated, conclusion `success`.
+- FND-006 deterministic coverage includes target README/root-LICENSE preservation, mandatory notice installation, complete MIT-notice preservation, attribution-manifest integrity, tampered-notice blocking, idempotency, and transactional conflict handling.
 - fresh-agent semantic transfer/continuation: pending manual validation under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-The release profile remains intentionally blocked until the pending manual acceptance test is completed.
+FND-006 is complete. The release profile remains intentionally blocked until the pending fresh-agent manual acceptance test is completed.
