@@ -4,9 +4,11 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-The v1.1 transfer model uses a manifest whitelist consumed by both the deterministic installer and direct AI transfer. Target README, root LICENSE, project context/state, backlog, decisions, tests, and implementation are outside the transfer set.
+The v1.1 transfer model uses a manifest whitelist consumed by both the deterministic installer and direct AI transfer. Target README, root LICENSE, project context/state, backlog, decisions, tests, implementation, and project-specific validation infrastructure are outside the transfer set.
 
-FND-006 is complete. Every rules transfer includes `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`, which preserves the complete Foundation MIT notice while leaving the target project's root license independent and untouched. Foundation CI run `32638922019` validated the attribution mechanism on head `9102a70bc13efb6f1642321ccbcedd56a54d6046`.
+FND-006 is complete. Every rules transfer includes `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`, which preserves the complete Foundation MIT notice while leaving the target project's root license independent and untouched.
+
+FND-007 is complete. Foundation validation is explicitly limited to `FOUNDATION_INTEGRITY`; target repositories retain authority for `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL`. Foundation CI run `32642237490` validated the scope contract on head `f910947fd186c0ed52317238de200b89350d5ce8`. Local override/drift detection is not semantic approval, and existing project validators/static contracts/tests must be preserved when relevant.
 
 Authorization is task-envelope based: ordinary expected operations proceed without repeated confirmation. Privacy is classification/destination based rather than triggered merely by real information.
 
@@ -19,4 +21,5 @@ Authorization is task-envelope based: ordinary expected operations proceed witho
 ## Open constraints
 
 - Deterministic installation never overwrites differing existing rules; semantic merge is deliberately delegated to the AI transfer protocol or explicit resolution.
-- Vendor discovery behavior can change and must be rechecked against current primary documentation when adapters change.
+- Foundation validator success proves Foundation integration integrity only; project-specific semantic/runtime validation remains target-owned.
+- Vendor adapter discovery behavior can change and must be rechecked against current primary documentation when adapters change.
