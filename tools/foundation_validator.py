@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Dependency-free validator for the Foundation project or an installed target ruleset."""
+"""Dependency-free validator for Foundation integrity in this project or an installed target ruleset."""
 
 from __future__ import annotations
 
@@ -39,6 +39,20 @@ SECRET_PATTERNS = [
 ABSOLUTE_PATHS = [re.compile(r"[A-Za-z]:\\Users\\"), re.compile(r"/home/[^/\s]+/")]
 CONFLICT = re.compile(r"^(?:<<<<<<<|=======|>>>>>>>)", re.MULTILINE)
 PLACEHOLDER = re.compile(r"\b(?:CHANGEME|TODO_TEMPLATE|TBD_TEMPLATE)\b")
+
+VALIDATION_CONTRACT = {
+    "foundation_validator_scope": "FOUNDATION_INTEGRITY",
+    "project_semantic_authority": "target_repository",
+    "runtime_empirical_authority": "target_repository",
+    "completion": "impact_based_combination",
+    "foundation_green_does_not_imply_project_green": True,
+}
+VALIDATION_MAP_MARKERS = [
+    "label: FOUNDATION_INTEGRITY",
+    "label: PROJECT_SEMANTIC",
+    "label: RUNTIME_EMPIRICAL",
+    "foundation_integrity_does_not_replace_project_validation: true",
+]
 
 results: list[dict] = []
 
@@ -84,11 +98,30 @@ def scan_text(path: Path, display: str) -> None:
         add("WARNING", "PLACEHOLDER", display, "unresolved template placeholder found")
 
 
+def validate_validation_map(text: str, display: str) -> None:
+    for marker in VALIDATION_MAP_MARKERS:
+        if marker not in text:
+            add("ERROR", "VALIDATION_SCOPE_MAP", display, f"validation-scope marker missing: {marker}")
+
+
 def validate_manifest(manifest: dict) -> None:
     if manifest.get("schema_version") != 1:
         add("ERROR", "MANIFEST_SCHEMA", "foundation/manifest.json", "schema_version must be 1")
     if not manifest.get("ruleset_version"):
         add("ERROR", "MANIFEST_VERSION", "foundation/manifest.json", "ruleset_version is required")
+
+    validation_contract = manifest.get("validation_contract")
+    if not isinstance(validation_contract, dict):
+        add("BLOCKING", "VALIDATION_CONTRACT", "foundation/manifest.json", "validation_contract is required")
+    else:
+        for key, expected in VALIDATION_CONTRACT.items():
+            if validation_contract.get(key) != expected:
+                add(
+                    "ERROR",
+                    "VALIDATION_CONTRACT",
+                    "foundation/manifest.json",
+                    f"{key} must be {expected!r}",
+                )
 
     targets: set[str] = set()
     rows = list(manifest.get("core", []))
@@ -171,6 +204,13 @@ def validate_foundation(profile: str) -> None:
             if rel not in text:
                 add("ERROR", "AUTHORITY_MAP", ".ai/repo_map.yaml", f"authoritative source missing from map: {rel}")
 
+    target_map_template = ROOT / "foundation" / "repo_map.template.yaml"
+    if target_map_template.is_file():
+        validate_validation_map(
+            target_map_template.read_text(encoding="utf-8"),
+            "foundation/repo_map.template.yaml",
+        )
+
     for rel in [".github/copilot-instructions.md", "CLAUDE.md", "GEMINI.md"]:
         path = ROOT / rel
         if path.is_file():
@@ -198,6 +238,13 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
         add("BLOCKING", "MANIFEST_READ", "foundation/manifest.json", str(exc))
         return
 
+    add(
+        "INFO",
+        "PROJECT_VALIDATION_OUT_OF_SCOPE",
+        ".",
+        "Foundation validator covers FOUNDATION_INTEGRITY only. PROJECT_SEMANTIC and RUNTIME_EMPIRICAL validation remain target-project responsibilities when affected.",
+    )
+
     selected_paths: list[Path] = []
     required_mit_notice = (ROOT / "LICENSE").read_text(encoding="utf-8")
     for row in rows:
@@ -215,8 +262,15 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
             add("ERROR", "ADAPTER_DISCOVERY", display, "adapter does not lead to AGENTS.md")
         if row.get("kind") == "attribution" and required_mit_notice not in text:
             add("BLOCKING", "ATTRIBUTION_NOTICE", display, "installed attribution file does not preserve the complete Foundation MIT notice")
+        if display == ".ai/foundation/repo_map.yaml":
+            validate_validation_map(text, display)
         if display.startswith(".ai/foundation/") and source.is_file() and destination.read_bytes() != source.read_bytes():
-            add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule/provenance file differs from current source; review intentionally")
+            add(
+                "WARNING",
+                "LOCAL_OVERRIDE_OR_DRIFT",
+                display,
+                "installed Foundation rule/provenance file differs from current source; this detects drift only and does not establish semantic correctness of the override",
+            )
 
     if profile != "quick":
         for path in selected_paths:
@@ -234,16 +288,24 @@ def main(argv: list[str] | None = None) -> int:
     results.clear()
     if args.target:
         validate_target(args.target.resolve(), args.adapters, args.profile)
+        validation_scope = "FOUNDATION_INTEGRITY"
     else:
         validate_foundation(args.profile)
+        validation_scope = "FOUNDATION_PROJECT_INTEGRITY"
 
     counts = {severity: sum(item["severity"] == severity for item in results) for severity in ["INFO", "WARNING", "ERROR", "BLOCKING"]}
-    payload = {"schema_version": 1, "counts": counts, "results": results}
+    payload = {
+        "schema_version": 1,
+        "validation_scope": validation_scope,
+        "counts": counts,
+        "results": results,
+    }
     if args.json_output:
         print(json.dumps(payload, indent=2))
     else:
         for item in results:
             print(f"[{item['severity']}] {item['code']} {item['path']}: {item['message']}")
+        print(f"[SCOPE] {validation_scope}")
         print("[SUMMARY] " + " ".join(f"{key.lower()}={value}" for key, value in counts.items()))
 
     if counts["BLOCKING"]:
