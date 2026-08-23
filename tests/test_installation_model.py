@@ -11,6 +11,7 @@ import sys
 ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
+import bootstrap  # noqa: E402
 import install_foundation  # noqa: E402
 
 
@@ -59,6 +60,15 @@ class InstallationModelTests(unittest.TestCase):
             self.assertEqual(rc, 2)
             self.assertFalse((target / ".ai" / "foundation" / "FOUNDATION_RULESET.md").exists())
             self.assertEqual((target / "AGENTS.md").read_text(encoding="utf-8"), "# Existing project rules\n")
+
+    def test_v1_bootstrap_dry_run_remains_preview_only(self) -> None:
+        args = bootstrap.compatibility_args(["target", "--dry-run"])
+        self.assertNotIn("--dry-run", args)
+        self.assertNotIn("--apply", args)
+
+    def test_v1_bootstrap_without_dry_run_preserves_apply_semantics(self) -> None:
+        args = bootstrap.compatibility_args(["target"])
+        self.assertIn("--apply", args)
 
     def test_manifest_sources_exist_and_targets_are_unique(self) -> None:
         rows = list(self.manifest["core"])
