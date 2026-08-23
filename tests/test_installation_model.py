@@ -44,6 +44,16 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue(notice.is_file())
             self.assertIn((ROOT / "LICENSE").read_text(encoding="utf-8"), notice.read_text(encoding="utf-8"))
 
+    def test_semantic_integration_policy_is_installed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                rc = install_foundation.main([str(target), "--adapters", "none", "--apply"])
+            self.assertEqual(rc, 0)
+            policy = target / ".ai" / "foundation" / "SEMANTIC_INTEGRATION_POLICY.md"
+            self.assertTrue(policy.is_file())
+            self.assertIn("PROJECT_STRONGER", policy.read_text(encoding="utf-8"))
+
     def test_second_install_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
@@ -95,6 +105,45 @@ class InstallationModelTests(unittest.TestCase):
         self.assertEqual(contract["runtime_empirical_authority"], "target_repository")
         self.assertEqual(contract["completion"], "impact_based_combination")
         self.assertTrue(contract["foundation_green_does_not_imply_project_green"])
+        self.assertTrue(contract["target_status_extensions_allowed"])
+        self.assertTrue(contract["reserved_statuses_may_not_be_redefined"])
+        self.assertEqual(contract["foundation_reserved_statuses"], ["not executed", "pending manual validation", "validated"])
+
+    def test_semantic_integration_contract_is_machine_readable(self) -> None:
+        contract = self.manifest["integration_contract"]
+        self.assertTrue(contract["project_governance_must_be_transitively_discoverable"])
+        self.assertEqual(contract["stricter_project_rules"], "compatible")
+        self.assertFalse(contract["existing_project_rule_labels_required"])
+        self.assertEqual(contract["adapter_governance_migration"], "preserve_then_rehome_then_thin")
+        self.assertEqual(contract["project_repo_map_behavior"], "preserve_and_optionally_bridge")
+        self.assertTrue(contract["orphaned_authority_is_integration_defect"])
+        self.assertEqual(
+            contract["compatibility_classes"],
+            [
+                "EQUIVALENT",
+                "PROJECT_STRONGER",
+                "PROJECT_SELECTABLE_OVERRIDE",
+                "COMPLEMENTARY",
+                "DUPLICATE_GOVERNANCE",
+                "FOUNDATION_REQUIRED_CONFLICT",
+                "TARGET_INTERNAL_CONFLICT",
+                "ORPHANED_AUTHORITY",
+                "ADAPTER_GOVERNANCE_MISPLACED",
+            ],
+        )
+
+    def test_model_routing_contract_preserves_richer_project_policy(self) -> None:
+        contract = self.manifest["model_routing_contract"]
+        self.assertEqual(contract["foundation_tiers"], ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"])
+        self.assertTrue(contract["target_policy_may_be_more_detailed"])
+        self.assertTrue(contract["semantic_mapping_required_when_overlapping"])
+        self.assertTrue(contract["concrete_models_are_runtime_facts"])
+
+    def test_agents_bridge_declares_project_governance_discovery(self) -> None:
+        text = (ROOT / "foundation" / "AGENTS.template.md").read_text(encoding="utf-8")
+        self.assertIn("transitively discoverable", text)
+        self.assertIn("SEMANTIC_INTEGRATION_POLICY.md", text)
+        self.assertIn("outside this managed Foundation block", text)
 
     def test_target_validator_declares_foundation_integrity_scope(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -109,6 +158,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertEqual(payload["validation_scope"], "FOUNDATION_INTEGRITY")
             codes = {item["code"] for item in payload["results"]}
             self.assertIn("PROJECT_VALIDATION_OUT_OF_SCOPE", codes)
+            self.assertIn("PROJECT_GOVERNANCE_DISCOVERY_SEMANTIC", codes)
 
     def test_local_override_is_drift_not_semantic_approval(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -125,6 +175,19 @@ class InstallationModelTests(unittest.TestCase):
             drift = [item for item in payload["results"] if item["code"] == "LOCAL_OVERRIDE_OR_DRIFT"]
             self.assertTrue(drift)
             self.assertIn("does not establish semantic correctness", drift[0]["message"])
+
+    def test_interoperability_rules_are_explicit(self) -> None:
+        project_rules = (ROOT / ".ai" / "PROJECT_RULES.md").read_text(encoding="utf-8")
+        validation = (ROOT / ".ai" / "VALIDATION_POLICY.md").read_text(encoding="utf-8")
+        routing = (ROOT / ".ai" / "MODEL_ROUTING_POLICY.md").read_text(encoding="utf-8")
+        privacy = (ROOT / "Documentation" / "Standards" / "DATA_PRIVACY_AND_CONFIDENTIALITY.md").read_text(encoding="utf-8")
+        transfer = (ROOT / "foundation" / "AI_TRANSFER.md").read_text(encoding="utf-8")
+        self.assertIn("project may be stricter", project_rules)
+        self.assertIn("Target repositories may define additional statuses", validation)
+        self.assertIn("Preserve it when it is compatible", routing)
+        self.assertIn("AI_REPOSITORY_FOUNDATION_NOTICE.md", privacy)
+        self.assertIn("ADAPTER_GOVERNANCE_MISPLACED", transfer)
+        self.assertIn("ORPHANED_AUTHORITY", transfer)
 
     def test_v1_bootstrap_dry_run_remains_preview_only(self) -> None:
         args = bootstrap.compatibility_args(["target", "--dry-run"])
@@ -147,7 +210,7 @@ class InstallationModelTests(unittest.TestCase):
     def test_manifest_is_machine_readable(self) -> None:
         parsed = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(parsed["schema_version"], 1)
-        self.assertEqual(parsed["ruleset_version"], "1.1.2")
+        self.assertEqual(parsed["ruleset_version"], "1.2.0")
 
 
 if __name__ == "__main__":
