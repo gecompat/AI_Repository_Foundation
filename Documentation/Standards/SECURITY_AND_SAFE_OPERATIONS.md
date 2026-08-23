@@ -2,10 +2,19 @@
 
 Status: AUTHORITATIVE — REQUIRED
 
-Classify actions as `READ-ONLY`, `LOCAL MUTATION`, `EXTERNAL MUTATION`, or `DESTRUCTIVE / IRREVERSIBLE`.
+Use the authorization envelope from the current task, project rules, environment, permissions, scope, and budgets. Normal, expected operations inside that envelope do not require repeated confirmation merely because they mutate state.
 
-Before mutation, confirm authority, exact targets, affected systems/data/people, reversibility, backup/recovery, concurrency, cost, and validation. Prefer recoverable and scoped actions. Never broaden task authority merely because a tool can perform an action.
+Classify actions as:
 
-Destructive/irreversible operations, production changes, credential/permission changes, paid actions, external messages, releases, and other material side effects require explicit authority. Use dry-run or preview when available. Re-resolve exact targets immediately before destructive action and stop on ambiguity.
+- `READ_ONLY`;
+- `NORMAL_OPERATION`;
+- `HIGH_IMPACT_OPERATION`;
+- `DESTRUCTIVE_OR_IRREVERSIBLE`.
 
-Failures must be bounded by timeouts/cancellation where applicable and must not leave silent partial state. Document recovery and residual risk. Do not weaken privacy, secret handling, or integrity as a project override.
+Before a material operation, confirm the target and effects to the degree proportionate to its risk. `HIGH_IMPACT_OPERATION` may proceed when the current task or project policy clearly authorizes the relevant production, publication, permission, financial, messaging, release, or other material effect.
+
+For `DESTRUCTIVE_OR_IRREVERSIBLE`, require exact target authority, assess recovery where possible, and re-resolve the target immediately before execution. Do not ask for another confirmation when the current task already explicitly and unambiguously authorizes that exact action and circumstances have not materially changed.
+
+Request additional authority only when an action exceeds scope/environment/budget, targets an unexpected resource, has a material effect not reasonably implied by the task, or lacks exact authority for a destructive/irreversible effect.
+
+Use dry-run/preview for high-risk operations when useful and available, not as mandatory bureaucracy for ordinary work. Failures must be bounded by timeouts/cancellation where applicable and must not leave silent partial state. Do not weaken privacy, secret handling, or integrity as a project override.

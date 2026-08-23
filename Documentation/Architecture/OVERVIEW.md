@@ -1,12 +1,15 @@
 # Architecture Overview
 
-The Foundation separates concerns:
+The Foundation separates three concerns:
 
-- `AGENTS.md`: small canonical discovery and stop-gate contract;
-- `.ai/`: AI/workflow governance, routing, metadata, and current continuation state;
-- `Documentation/Standards/`: durable policies applying to humans and AI;
-- `Documentation/Architecture/`: durable decisions and structure;
-- tool adapter files: discovery only;
-- `tools/`: deterministic local bootstrap and validation.
+1. **Foundation project** — its own README, license, development governance, backlog, status, decisions, tests, and tools.
+2. **Transferable rule set** — an explicit whitelist in `foundation/manifest.json` containing only reusable governance rules and selected discovery adapters.
+3. **Transfer mechanisms** — a deterministic installer and an AI transfer protocol that consume the same manifest.
 
-Core is mandatory. Project-type capabilities and additional adapters are optional and should not create empty or irrelevant structure in target repositories. No vendor capability—subagents, web, shell, Git writes, memory, or model switching—is assumed.
+A target repository never receives Foundation-project README, LICENSE, changelog, project context, status, handover, backlog, roadmap, internal decisions, tests, or installer source merely because they exist in this repository.
+
+Generic reusable policies remain canonical in their Foundation source locations and are mapped by the manifest into the namespaced target path `.ai/foundation/`. This avoids copying the Foundation project's own state while avoiding duplicate source-of-truth rule text inside this repository.
+
+The target root `AGENTS.md` is an entry bridge. If absent, it can be created from the transfer template. If already present, deterministic installation reports `MERGE_REQUIRED`; an AI may merge only the marked Foundation bridge while preserving target-project instructions.
+
+Tool adapters are discovery only. No vendor capability—subagents, web, shell, Git writes, memory, or model switching—is assumed.

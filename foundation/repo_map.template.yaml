@@ -1,0 +1,20 @@
+schema_version: 1
+foundation_ruleset_version: 1.1.0
+canonical_entrypoint: AGENTS.md
+authority:
+  required_or_baseline:
+    - .ai/foundation/FOUNDATION_RULESET.md
+    - .ai/foundation/PROJECT_RULES.md
+    - .ai/foundation/WORKING_RULES.md
+    - .ai/foundation/MODEL_ROUTING_POLICY.md
+    - .ai/foundation/VALIDATION_POLICY.md
+    - .ai/foundation/DATA_PRIVACY_AND_CONFIDENTIALITY.md
+    - .ai/foundation/SECURITY_AND_SAFE_OPERATIONS.md
+    - .ai/foundation/DOCUMENTATION_POLICY.md
+    - .ai/foundation/THIRD_PARTY_AND_LICENSING.md
+    - .ai/foundation/SOURCE_AND_EVIDENCE_POLICY.md
+    - .ai/foundation/DEPENDENCY_POLICY.md
+override_contract:
+  required: may_not_be_silently_weakened
+  default: project_may_override_intentionally
+  project_specific_facts: target_repository_is_authoritative

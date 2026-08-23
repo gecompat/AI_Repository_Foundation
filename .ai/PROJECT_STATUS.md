@@ -2,21 +2,26 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-08-23
-Foundation version: 1.0.0
+Foundation version: 1.1.0 candidate
 
-## Implemented
+## Implemented on current work branch
 
-- canonical governance and continuation structure;
-- privacy, security, documentation, licensing, evidence, dependency, and decision policies;
-- Copilot, Claude, and Gemini thin adapters;
-- structured Foundation metadata, adapter registry, and repository map;
-- dependency-free bootstrap and validator skeletons.
+- rules-only transfer manifest;
+- direct AI transfer protocol;
+- deterministic manifest-driven installer;
+- namespaced target rule layout;
+- authorization-envelope action model;
+- data-classification privacy model;
+- proportional dependency/third-party review;
+- target-aware validator;
+- deterministic installation-model tests and CI;
+- v1.0 bootstrap CLI compatibility mapping.
 
-## Validation
+## Validation evidence
 
-- structural self-validation: not executed on the GitHub PR branch at publication time;
-- bootstrap empty-target test: not executed;
-- second-run idempotency test: not executed;
-- continuation test by a fresh agent: pending manual validation.
+- GitHub Actions `Foundation CI`, run 32637482750, head `d6439ac60a71c39a9c11bdb943e808b8481f7aaf`: validated, conclusion `success`.
+- Foundation validator (`--profile full`) within that CI run: validated.
+- installation-model unit tests within that CI run: validated, including target README/LICENSE preservation, idempotent second install, transactional conflict handling, manifest source/target integrity, and machine-readable manifest.
+- fresh-agent semantic transfer/continuation: pending manual validation under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-No unexecuted validation is claimed as passed. See `Documentation/Quality/KNOWN_LIMITATIONS.md`.
+The release profile remains intentionally blocked until the pending manual acceptance test is completed; deterministic gates are green for the recorded head.
