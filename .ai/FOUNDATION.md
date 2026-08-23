@@ -2,17 +2,19 @@
 
 Status: AUTHORITATIVE
 
-- foundation: gecompat/AI_Repository_Foundation
-- version: 1.0.0
-- applied: 2026-08-23
+- foundation: AI Repository Foundation
+- version: 1.1.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
-- license: MIT
-- source_classification: FOUNDATION_DEFAULT
-- enabled_capabilities: governance, documentation, research, data, git, ai-agents, bootstrap, validation
-- enabled_adapters: codex-native, github-copilot, claude-code, gemini
-- local_overrides: none
+- project_license: MIT
+- transfer_manifest: `foundation/manifest.json`
+- direct_ai_transfer: `foundation/AI_TRANSFER.md`
+- transfer_model: explicit whitelist; rules only
+- target_project_license: never replaced by installation
+- default_adapters: github-copilot, claude-code, gemini
 
-Versioning follows Semantic Versioning. PATCH fixes defects without new governance requirements; MINOR adds backward-compatible rules/capabilities/adapters; MAJOR changes structure, authority, or governance incompatibly.
+Versioning follows Semantic Versioning. PATCH fixes defects without new governance requirements; MINOR adds backward-compatible rules/capabilities/adapters or improves installation semantics; MAJOR changes authority or governance incompatibly.
 
-Upgrades are explicit and impact-based. Never auto-upgrade or auto-downgrade a target repository. Classify file provenance as `FOUNDATION_DEFAULT`, `LOCAL_OVERRIDE`, `PROJECT_SPECIFIC`, or `CONFLICT`; classify conflicts as `NONE`, `COMPATIBLE_OVERRIDE`, `REVIEW_REQUIRED`, or `BLOCKING_CONFLICT`. Similar wording is not proof of semantic equivalence.
+The Foundation repository and the transferable rule set have separate scopes. Project README, LICENSE, changelog, project context, status, handover, backlog, roadmap, Foundation-internal decisions, tests, and tools are Foundation-project artifacts and are never transferred unless a future manifest explicitly defines a different rule artifact.
+
+Upgrades are explicit and impact-based. Never auto-upgrade or auto-downgrade a target repository. Classify target states as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`; an AI may perform a semantic merge only under `foundation/AI_TRANSFER.md` while preserving project-specific rules and reporting real conflicts.

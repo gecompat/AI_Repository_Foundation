@@ -9,9 +9,13 @@ authority:
     - .ai/MODEL_ROUTING_POLICY.md
     - .ai/VALIDATION_POLICY.md
     - .ai/FOUNDATION.md
+    - Documentation/Architecture/DECISIONS.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
+    - Documentation/Standards/DOCUMENTATION_POLICY.md
     - Documentation/Standards/THIRD_PARTY_AND_LICENSING.md
+    - Documentation/Standards/SOURCE_AND_EVIDENCE_POLICY.md
+    - Documentation/Standards/DEPENDENCY_POLICY.md
   informative:
     - README.md
     - .ai/ROADMAP.md
@@ -28,9 +32,11 @@ state:
   roadmap: .ai/ROADMAP.md
 decisions:
   index: Documentation/Architecture/DECISIONS.md
-adapters:
-  registry: .ai/TOOL_ADAPTERS.yaml
+transfer:
+  manifest: foundation/manifest.json
+  ai_protocol: foundation/AI_TRANSFER.md
 validation:
-  command: python tools/foundation_validator.py
-bootstrap:
-  command: python tools/bootstrap.py TARGET --dry-run
+  foundation_command: python tools/foundation_validator.py
+  target_command: python tools/foundation_validator.py --target TARGET
+installation:
+  command: python tools/install_foundation.py TARGET

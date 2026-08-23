@@ -4,33 +4,37 @@ Status: AUTHORITATIVE
 
 ## Rule classes
 
-- `REQUIRED`: may not be weakened by a target project when safety, privacy, authorization, or integrity would be reduced.
-- `DEFAULT`: applies unless an intentional compatible override is documented.
-- `PROJECT_SELECTABLE`: must be decided by the target project.
+- `REQUIRED`: baseline safety, privacy, integrity, evidence, and authorization rules that may not be silently weakened.
+- `DEFAULT`: applies unless an intentional compatible project override is documented.
+- `PROJECT_SELECTABLE`: chosen by the target project.
 
 ## Required
 
-- Apply the privacy/confidentiality stop-gate before every mutation or transfer.
-- Never version secrets or `.local/` content.
-- Preserve truthful status and validation evidence.
-- Stop on unclear or incompatible third-party rights.
-- Protect recovery and require authority for destructive or irreversible work.
-- Tool adapters must only perform discovery/import and must not define parallel governance.
+- Classify information by handling requirements; being real is not by itself a stop condition.
+- Stop only when classification/handling authority is unresolved or a planned transfer crosses the permitted boundary.
+- Never version secrets or private local runtime state.
+- Preserve truthful project status and validation evidence.
+- A concrete task authorizes ordinary, expected, proportionate operations inside its authorization envelope; do not create redundant confirmation gates.
+- Require exact authority for destructive or irreversible work when it is not already explicit in the current task and target.
+- Stop on unclear or incompatible third-party rights when incorporation or distribution would create material risk.
+- Tool adapters perform discovery/import only and must not define parallel governance.
 
 ## Defaults
 
-- Use `branch_and_pr` for AI-assisted Git changes.
+- Use `branch_and_pr` for AI-assisted Git changes unless the project selects another workflow.
 - Prefer local, deterministic, impact-based work and validation.
 - Keep changes small, coherent, and free of unrelated cleanup.
-- Use synthetic or redistributable data for examples and tests.
+- Use synthetic or explicitly redistributable data for examples and tests when real data is not necessary.
+- Public primary sources and other project-authorized real information may be used normally within their permitted handling boundary.
 - Document durable material decisions with stable IDs.
-- No automatic Foundation upgrade or overwrite of local changes.
+- Do not automatically upgrade Foundation rules or overwrite local changes.
 
 ## Project-selectable
 
-- target-project license;
-- merge strategy;
+- target-project license and contribution policy;
+- merge strategy and Git workflow;
 - AI commit attribution;
-- additional adapters and capabilities;
-- approval thresholds for low-risk implementation;
-- language, platform, concrete validation commands, and release process.
+- adapters and capabilities;
+- decision-authority matrix and approval thresholds;
+- allowed data classifications and destinations;
+- language, platform, concrete validation commands, release process, environments, and budgets.
