@@ -2,13 +2,13 @@
 
 A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and human-maintained technical and knowledge projects. Its goal is safe continuation without chat history, memory, personal prompts, or a specific vendor.
 
-## v1.1 installation model
+## v1.2 integration model
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and tool source belong only to this Foundation project.
 
-`foundation/manifest.json` is the explicit whitelist of reusable rules. Only manifest-listed core rules, the required source-license notice, and selected discovery adapters may be transferred to a target repository.
+`foundation/manifest.json` is the explicit whitelist of reusable rules/provenance. `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md` defines how those rules coexist with mature target-project governance.
 
-A target repository keeps its own README, root license, architecture, project context, decisions, state, backlog, and implementation.
+A target repository keeps its own README, root license, architecture, project context, decisions, state, backlog, model policy, validation system, and implementation.
 
 ## Two equivalent transfer paths
 
@@ -18,9 +18,10 @@ An AI with read access to this repository and write access to the target reposit
 
 1. `foundation/manifest.json`;
 2. `foundation/AI_TRANSFER.md`;
-3. only the manifest-listed source rules/provenance it needs.
+3. `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md` for an existing repository;
+4. only the manifest-listed source rules/provenance it needs.
 
-The AI can safely merge the marked Foundation bridge into an existing `AGENTS.md` while preserving project-specific rules. It must never infer additional transferable files by scanning this repository.
+For existing repositories the AI preserves target governance, classifies semantic overlaps, ensures active project rules remain discoverable from root `AGENTS.md`, and never drops unique rules merely to thin a tool adapter.
 
 ### Deterministic local installer
 
@@ -36,9 +37,15 @@ Apply when the plan contains only `CREATE` and `UNCHANGED` states:
 python tools/install_foundation.py TARGET --apply
 ```
 
-The installer classifies selected targets as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`. It never overwrites a differing file. Existing target `README.md` and root `LICENSE` are outside the transfer manifest and therefore do not block installation. For semantic merges into an existing repository, use the direct AI transfer protocol or resolve the reported merge explicitly.
+The installer classifies selected target files as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`. It never overwrites a differing file. For semantic merges into an existing repository, use the direct AI transfer protocol or resolve the reported merge explicitly.
 
-Adapters default to GitHub Copilot, Claude Code, and Gemini. Use `--adapters none` or an explicit comma-separated adapter list when desired.
+Adapters default to GitHub Copilot, Claude Code, and Gemini as recommendations. Use `--adapters none` or an explicit comma-separated adapter list when desired.
+
+## Semantic compatibility
+
+Foundation `REQUIRED` rules are minimum protected floors. A target project may be stricter. Existing mature project policies may remain more detailed.
+
+Semantic integration distinguishes equivalent, stricter, selectable override, complementary, duplicate, required-conflict, target-internal-conflict, orphaned-authority, and misplaced-adapter-governance cases. See `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md`.
 
 ## Attribution without changing the target license
 
@@ -60,7 +67,7 @@ Validate an installed target ruleset from a Foundation checkout:
 python tools/foundation_validator.py --target TARGET
 ```
 
-The target validation command checks **Foundation integration only** (`FOUNDATION_INTEGRITY`). It does not replace project-specific semantic/static validation (`PROJECT_SEMANTIC`) or executable/empirical validation (`RUNTIME_EMPIRICAL`). Existing project validators, documentation contracts, tests, reviews, and manual validation remain authoritative when their contracts are affected.
+The target validation command checks **Foundation integration only** (`FOUNDATION_INTEGRITY`). It does not replace project-specific semantic/static validation (`PROJECT_SEMANTIC`) or executable/empirical validation (`RUNTIME_EMPIRICAL`). Target projects may retain richer validation statuses as long as Foundation reserved meanings are not redefined.
 
 Run deterministic Foundation tests:
 
@@ -72,12 +79,13 @@ python -m unittest discover -s tests -v
 
 - repository state is durable project truth;
 - only rules/provenance in the transfer manifest are reusable installation payload;
+- active project governance remains discoverable from root `AGENTS.md` after integration;
+- stricter project rules are compatible unless a real logical/required-floor conflict exists;
 - normal operations inside the current task's authorization envelope do not create repeated confirmation gates;
 - privacy gates depend on data classification, destination, and handling authority, not merely on information being real;
-- model/resource routing uses `LOCAL`, `ECONOMICAL`, `BALANCED`, and `FRONTIER` per step;
+- model/resource routing uses `LOCAL`, `ECONOMICAL`, `BALANCED`, and `FRONTIER` as portable semantics while target routing may be more detailed;
 - Foundation validation supplements rather than replaces project-specific validation;
-- validation is local-first and manual validation requires an exact step-by-step plan;
-- adapters are thin discovery bridges and never duplicate governance.
+- adapters are thin discovery bridges only after unique adapter governance has been preserved elsewhere.
 
 ## License
 

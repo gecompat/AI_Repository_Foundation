@@ -4,9 +4,11 @@ Status: AUTHORITATIVE
 
 ## Rule classes
 
-- `REQUIRED`: baseline safety, privacy, integrity, evidence, and authorization rules that may not be silently weakened.
+- `REQUIRED`: a minimum safety, privacy, integrity, evidence, or authorization floor that may not be silently weakened. A target project may be stricter.
 - `DEFAULT`: applies unless an intentional compatible project override is documented.
 - `PROJECT_SELECTABLE`: chosen by the target project.
+
+Existing target rules do not need to adopt these labels. During integration, classify their semantics under `SEMANTIC_INTEGRATION_POLICY.md` instead of rewriting project governance merely for terminology consistency.
 
 ## Required
 
@@ -17,7 +19,10 @@ Status: AUTHORITATIVE
 - A concrete task authorizes ordinary, expected, proportionate operations inside its authorization envelope; do not create redundant confirmation gates.
 - Require exact authority for destructive or irreversible work when it is not already explicit in the current task and target.
 - Stop on unclear or incompatible third-party rights when incorporation or distribution would create material risk.
-- Tool adapters perform discovery/import only and must not define parallel governance.
+- Tool adapters perform discovery/import only and must not define parallel governance. Preserve and rehome unique existing adapter governance before thinning an adapter.
+- Preserve active project-specific governance and make it discoverable from the root repository instruction tree.
+
+A project rule that is deliberately stricter than a Foundation minimum is compatible unless it creates a real logical conflict. Extra approvals, narrower data use, additional validation, or reduced autonomous authority are not Foundation conflicts by themselves.
 
 ## Defaults
 
@@ -37,4 +42,5 @@ Status: AUTHORITATIVE
 - adapters and capabilities;
 - decision-authority matrix and approval thresholds;
 - allowed data classifications and destinations;
-- language, platform, concrete validation commands, release process, environments, and budgets.
+- language, platform, concrete validation commands, release process, environments, and budgets;
+- richer project-specific validation statuses and model-routing taxonomy, provided Foundation reserved meanings remain intact or are mapped explicitly.

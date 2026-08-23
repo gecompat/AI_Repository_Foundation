@@ -42,11 +42,17 @@ Evidence records contain, as relevant:
 - date;
 - limitations.
 
-Statuses have exact meanings:
+## Status vocabulary
+
+The following Foundation meanings are reserved and must not be weakened or redefined:
 
 - `not executed`: no required procedure was run.
 - `pending manual validation`: an executable manual plan exists but has not been completed.
 - `validated`: the stated procedure actually ran and met its pass criteria for the stated scope only.
+
+Target repositories may define additional statuses such as `partially validated`, `failed`, `not applicable`, `inconclusive`, or domain-specific equivalents. Such extensions are compatible when their meanings are documented and they do not cause unexecuted, failed, partial, or inapplicable work to be represented as `validated`.
+
+A project may keep an existing richer status vocabulary; it does not need to replace it with only the three Foundation terms. When reporting across repositories, preserve the exact target status and map to a Foundation reserved meaning only when the semantics genuinely match.
 
 When human execution is required, create an exact step-by-step manual validation plan containing: ID, objective, contract/risk, prerequisites, environment, initial state, ordered steps, exact commands/UI actions, expected results, pass/fail criteria, outputs to return, cleanup/recovery, limitations, and residual risk. A plan is not evidence that the test passed.
 

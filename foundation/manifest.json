@@ -1,17 +1,48 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.1.2",
+  "ruleset_version": "1.2.0",
   "installation_scope": "rules_only",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
-  "description": "Explicit whitelist of reusable rules and the required source-license notice that may be transferred to another repository.",
+  "description": "Explicit whitelist of reusable rules and required source-license provenance for new or existing repositories.",
   "default_adapters": ["github-copilot", "claude-code", "gemini"],
+  "integration_contract": {
+    "policy_source": "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
+    "policy_target": ".ai/foundation/SEMANTIC_INTEGRATION_POLICY.md",
+    "root_entrypoint": "AGENTS.md",
+    "project_governance_must_be_transitively_discoverable": true,
+    "stricter_project_rules": "compatible",
+    "existing_project_rule_labels_required": false,
+    "adapter_governance_migration": "preserve_then_rehome_then_thin",
+    "project_repo_map_behavior": "preserve_and_optionally_bridge",
+    "orphaned_authority_is_integration_defect": true,
+    "compatibility_classes": [
+      "EQUIVALENT",
+      "PROJECT_STRONGER",
+      "PROJECT_SELECTABLE_OVERRIDE",
+      "COMPLEMENTARY",
+      "DUPLICATE_GOVERNANCE",
+      "FOUNDATION_REQUIRED_CONFLICT",
+      "TARGET_INTERNAL_CONFLICT",
+      "ORPHANED_AUTHORITY",
+      "ADAPTER_GOVERNANCE_MISPLACED"
+    ]
+  },
   "validation_contract": {
     "foundation_validator_scope": "FOUNDATION_INTEGRITY",
     "project_semantic_authority": "target_repository",
     "runtime_empirical_authority": "target_repository",
     "completion": "impact_based_combination",
-    "foundation_green_does_not_imply_project_green": true
+    "foundation_green_does_not_imply_project_green": true,
+    "foundation_reserved_statuses": ["not executed", "pending manual validation", "validated"],
+    "target_status_extensions_allowed": true,
+    "reserved_statuses_may_not_be_redefined": true
+  },
+  "model_routing_contract": {
+    "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
+    "target_policy_may_be_more_detailed": true,
+    "semantic_mapping_required_when_overlapping": true,
+    "concrete_models_are_runtime_facts": true
   },
   "attribution": {
     "required": true,
@@ -24,6 +55,7 @@
     {"source": "foundation/FOUNDATION_RULESET.template.md", "target": ".ai/foundation/FOUNDATION_RULESET.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md", "target": ".ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md", "kind": "attribution", "merge": "review_if_exists"},
     {"source": ".ai/PROJECT_RULES.md", "target": ".ai/foundation/PROJECT_RULES.md", "kind": "rule", "merge": "review_if_exists"},
+    {"source": "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md", "target": ".ai/foundation/SEMANTIC_INTEGRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/WORKING_RULES.md", "target": ".ai/foundation/WORKING_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/MODEL_ROUTING_POLICY.md", "target": ".ai/foundation/MODEL_ROUTING_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/VALIDATION_POLICY.md", "target": ".ai/foundation/VALIDATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
