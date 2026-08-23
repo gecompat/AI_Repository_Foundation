@@ -2,6 +2,12 @@
 
 Status: pending manual validation
 
+## Current evidence split
+
+The existing-repository AI-transfer portion has been validated separately through successful AI-assisted Foundation integration in five existing repositories. See `Documentation/Quality/EXISTING_REPOSITORY_AI_TRANSFER_EVIDENCE.md`.
+
+What remains pending here is the stricter fresh-agent continuation criterion: after transfer, an AI with no prior conversation context must be able to understand and continue the target project using repository state alone.
+
 ## Objective
 
 Verify that an AI system with no prior chat history can use only the Foundation repository plus a target repository to transfer the intended rules safely and then understand how to continue the target project.
