@@ -1,0 +1,26 @@
+{
+  "schema_version": 1,
+  "cases": {
+    "direct": {
+      "kind": "work_item",
+      "title": "Create deterministic direct artifact",
+      "uid": "urn:uuid:01890f1c-7b00-7abc-8abc-1234567890ab",
+      "expected_human_ref": "WI-0001",
+      "expected_registry_revision": 1
+    },
+    "deferred": {
+      "kind": "capability",
+      "title": "Create deterministic deferred artifact",
+      "uid": "urn:uuid:123e4567-e89b-42d3-a456-426614174000",
+      "expected_human_ref": null,
+      "expected_registry_revision": 0
+    },
+    "register": {
+      "kind": "requirement",
+      "title": "Register deterministic draft",
+      "uid": "urn:uuid:01890f1c-7b00-7def-9abc-1234567890ab",
+      "expected_human_ref": "REQ-0001",
+      "expected_registry_revision": 1
+    }
+  }
+}
