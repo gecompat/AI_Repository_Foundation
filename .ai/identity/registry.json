@@ -1,12 +1,12 @@
 {
   "schema_version": 1,
   "profile": "foundation-artifact-registry/v1",
-  "registry_revision": 26,
+  "registry_revision": 27,
   "prefixes": {
     "CAP": {"kind": "capability", "next_sequence": 1, "width": 4},
     "REQ": {"kind": "requirement", "next_sequence": 1, "width": 4},
     "WI": {"kind": "work_item", "next_sequence": 14, "width": 4},
-    "DEC": {"kind": "decision", "next_sequence": 14, "width": 4},
+    "DEC": {"kind": "decision", "next_sequence": 15, "width": 4},
     "GATE": {"kind": "gate", "next_sequence": 1, "width": 4},
     "RISK": {"kind": "risk", "next_sequence": 1, "width": 4},
     "EXP": {"kind": "experiment", "next_sequence": 1, "width": 4},
@@ -41,6 +41,7 @@
     "DEC-0010": "urn:uuid:01a033ec-ab63-7325-a559-4e60f126d24f",
     "DEC-0011": "urn:uuid:01a033ec-ab63-728d-b305-f869d21f55c9",
     "DEC-0012": "urn:uuid:01a033ec-ab63-72a2-b523-cc461818175f",
-    "DEC-0013": "urn:uuid:01a033ec-ab63-7ff4-b81c-f897e48b7fb4"
+    "DEC-0013": "urn:uuid:01a033ec-ab63-7ff4-b81c-f897e48b7fb4",
+    "DEC-0014": "urn:uuid:01a033ec-ab63-7073-9eb8-74a48ad8a4fd"
   }
 }
