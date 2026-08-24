@@ -7,7 +7,7 @@
   "required": ["schema_version", "operation"],
   "properties": {
     "schema_version": {"const": 1},
-    "operation": {"enum": ["create", "register", "resolve", "validate"]},
+    "operation": {"enum": ["init", "create", "register", "resolve", "validate"]},
     "allocation_mode": {"enum": ["DIRECT", "DEFERRED"]},
     "expected_registry_revision": {"type": ["integer", "null"], "minimum": 0},
     "artifact_uid": {
