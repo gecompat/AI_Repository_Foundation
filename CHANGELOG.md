@@ -2,6 +2,33 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.5.0] - 2026-08-24
+
+### Added
+
+- a transferred semantic upgrade-applicability policy requiring complete assessment of every Foundation feature introduced or materially changed since the target's installed version;
+- `foundation/feature_catalog.json` with structured feature introduction/change history, transfer-source coverage, applicability signals, questions, recommendations, and decision boundaries;
+- JSON Schemas for the semantic feature catalog and upgrade-assessment output;
+- deterministic `tools/upgrade_applicability.py` feature-delta computation;
+- blocking `tools/feature_catalog_guard.py` coverage/change-review validation;
+- negative tests for uncovered transferable sources, catalog-version drift, unknown dependencies, and material/non-material delta behavior;
+- explicit persistent-identity/nomenclature signals so upgrades from pre-v1.3 versions surface `ADOPT_FORWARD` when the improved convention is relevant;
+- Foundation source-project persistent identity registry and explicit `FND-*` -> `WI-*` migration mapping.
+
+### Changed
+
+- an older-Foundation upgrade now computes semantic feature delta before normal file/semantic merge decisions;
+- every candidate feature must receive exactly one assessment classification; `RECOMMENDED`, `DECISION_REQUIRED`, and `CONFLICT` results must be surfaced explicitly;
+- changed transferable Foundation sources require both a ruleset version bump and feature-catalog review in CI;
+- the Foundation source project now uses registered `WI-*` work-item references and `DEC-*` decision references; historical `FND-*` identifiers remain permanent aliases rather than active planning IDs;
+- direct AI transfer no longer relies on an AI spontaneously noticing newly relevant governance such as identifier nomenclature.
+
+### Migration
+
+Target repositories are not forced to migrate their own identifiers. During an upgrade, compute the complete feature delta from the installed version to v1.5. For `persistent-identity`, inspect existing durable identifiers: preserve equivalent/stronger conventions; recommend `ADOPT_FORWARD` when the Foundation layered model is materially better for future artifacts; use `MIGRATE_EXPLICIT` only after an explicit project migration decision.
+
+The Foundation source repository itself deliberately selected `MIGRATE_EXPLICIT` for its old internal `FND-*` work-item family. That source-project migration is not part of the target transfer payload.
+
 ## [1.4.0] - 2026-08-24
 
 ### Added
@@ -86,7 +113,7 @@ For an existing repository, do not treat `MERGE_REQUIRED` as a request to normal
 
 ### Fixed
 
-- finalized FND-006 with a dedicated, manifest-required attribution notice for transferred Foundation material;
+- finalized historical work item `FND-006` (now alias of `WI-0006`) with a dedicated, manifest-required attribution notice for transferred Foundation material;
 - preserved the complete Foundation MIT copyright and permission notice without copying or modifying the target repository's root `LICENSE`;
 - added deterministic validation that blocks an installed ruleset when the required Foundation MIT notice is missing or incomplete.
 
