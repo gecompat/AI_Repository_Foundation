@@ -6,6 +6,7 @@ import subprocess
 import sys
 import tempfile
 import unittest
+import uuid
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parents[1]
@@ -60,6 +61,13 @@ def powershell_command(operation: str, registry: Path, *args: str) -> list[str]:
         str(registry),
         *translated,
     ]
+
+
+def urn_uuid_version(value: str) -> int | None:
+    prefix = "urn:uuid:"
+    if not value.startswith(prefix):
+        raise AssertionError(f"not a UUID URN: {value}")
+    return uuid.UUID(value[len(prefix):]).version
 
 
 class ArtifactRegistrationContractTests(unittest.TestCase):
@@ -171,10 +179,8 @@ class ArtifactRegistrationContractTests(unittest.TestCase):
             args = ["--mode", "DEFERRED", "--kind", "work_item", "--title", "generated"]
             py_uid = run_json(python_command("new", py_registry, *args))["artifact_uid"]
             ps_uid = run_json(powershell_command("new", ps_registry, *args))["artifact_uid"]
-            self.assertEqual(py_uid[14], "7")
-            self.assertEqual(ps_uid[14], "7")
-            self.assertTrue(py_uid.startswith("urn:uuid:"))
-            self.assertTrue(ps_uid.startswith("urn:uuid:"))
+            self.assertEqual(urn_uuid_version(py_uid), 7)
+            self.assertEqual(urn_uuid_version(ps_uid), 7)
 
 
 if __name__ == "__main__":
