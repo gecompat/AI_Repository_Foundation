@@ -4,24 +4,11 @@ Status: AUTHORITATIVE
 
 ## Rule classes
 
-- `REQUIRED`: a minimum safety, privacy, integrity, evidence, authorization, identity, or registration floor that may not be silently weakened. A target project may be stricter.
+- `REQUIRED`: a minimum safety, privacy, integrity, evidence, authorization, identity, registration, or upgrade-completeness floor that may not be silently weakened. A target project may be stricter.
 - `DEFAULT`: applies unless an intentional compatible project override is documented.
 - `PROJECT_SELECTABLE`: chosen by the target project.
 
 Existing target rules do not need to adopt these labels. During integration, classify their semantics under `SEMANTIC_INTEGRATION_POLICY.md` instead of rewriting project governance merely for terminology consistency.
-
-## Foundation source-project identifier profile
-
-The Foundation source project itself has explicitly completed `MIGRATE_EXPLICIT` for its planning identifiers. This source-project choice does not force the same migration on target repositories.
-
-- Active Foundation work items use registered `WI-<SEQUENCE>` references.
-- Durable decisions use registered `DEC-<SEQUENCE>` references.
-- `.ai/identity/registry.json` is the Foundation project's Registration Authority state for final sequential project references.
-- `Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md` is the authoritative historical mapping from `FND-*` aliases to preferred `WI-*` references.
-- Historical `FND-*` aliases are reserved forever and MUST NOT be reassigned.
-- New Foundation source-project work items MUST NOT use `FND-*`, wave, phase, date, owner, or hierarchy as canonical identity.
-- Humans and AI MUST allocate new final `WI-*`, `DEC-*`, or other sequential Foundation project references through the registered authority; scanning Markdown for the highest visible number is prohibited.
-- Roadmap/release labels such as `v1.5` are planning/release metadata, not artifact identities.
 
 ## Required
 
@@ -39,6 +26,7 @@ The Foundation source project itself has explicitly completed `MIGRATE_EXPLICIT`
 - Treat identifiers as references, never as authorization credentials.
 - For each overlapping final human-reference scope, use one project-defined Registration Authority. Humans and AI systems use the same authority; neither may independently guess or allocate the next final sequence.
 - Use `DIRECT` allocation only through serialized or equivalently unique authority behavior. When concurrent/offline creation cannot safely allocate a final sequence, use `DEFERRED` or the project's equivalent safe mechanism.
+- When upgrading from an older installed Foundation version, compute the complete semantic feature delta from `feature_catalog.json`, assess every introduced/materially changed candidate exactly once, and explicitly surface `RECOMMENDED`, `DECISION_REQUIRED`, and `CONFLICT` results. A feature may not be silently skipped because its relevance was not inferred.
 
 A project rule that is deliberately stricter than a Foundation minimum is compatible unless it creates a real logical conflict. Extra approvals, narrower data use, additional validation, or reduced autonomous authority are not Foundation conflicts by themselves.
 
@@ -52,6 +40,7 @@ A project rule that is deliberately stricter than a Foundation minimum is compat
 - Document durable material decisions with stable IDs.
 - For a project without an established durable identifier convention, use the layered identity default in `PERSISTENT_IDENTITY_POLICY.md`: opaque persistent machine UID, flat typed project-local human reference, explicit aliases/relations, and separate revision identity.
 - For a new project using sequential human references, establish a Registration Authority before publishing those references; the Foundation reference registry profile is a default option, not a required storage technology.
+- For an applicable newer Foundation feature, prefer an explicit recommendation over silent non-adoption; this does not authorize a project-selectable change or historical migration automatically.
 - Do not automatically upgrade Foundation rules, replace a project allocator, install optional reference clients, or overwrite local changes.
 
 ## Project-selectable
