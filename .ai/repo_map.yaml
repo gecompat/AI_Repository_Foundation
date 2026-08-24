@@ -9,7 +9,9 @@ authority:
     - .ai/MODEL_ROUTING_POLICY.md
     - .ai/VALIDATION_POLICY.md
     - .ai/FOUNDATION.md
+    - .ai/identity/registry.json
     - Documentation/Architecture/DECISIONS.md
+    - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
     - Documentation/Standards/DOCUMENTATION_POLICY.md
@@ -33,6 +35,12 @@ state:
   handover: .ai/HANDOVER.md
   backlog: .ai/BACKLOG.md
   roadmap: .ai/ROADMAP.md
+identity:
+  registration_authority: .ai/identity/registry.json
+  preferred_work_item_reference: WI
+  preferred_decision_reference: DEC
+  historical_alias_mapping: Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
+  migration_mode: MIGRATE_EXPLICIT
 decisions:
   index: Documentation/Architecture/DECISIONS.md
 transfer:
