@@ -25,6 +25,7 @@ PROJECT_REQUIRED = [
     "Documentation/Standards/SOURCE_AND_EVIDENCE_POLICY.md",
     "Documentation/Standards/DEPENDENCY_POLICY.md",
     "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
+    "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md",
     "Documentation/Quality/KNOWN_LIMITATIONS.md",
     "foundation/manifest.json", "foundation/AI_TRANSFER.md", "foundation/AGENTS.template.md",
     "foundation/FOUNDATION_RULESET.template.md", "foundation/repo_map.template.yaml",
@@ -74,6 +75,33 @@ INTEGRATION_CONTRACT = {
     "project_repo_map_behavior": "preserve_and_optionally_bridge",
     "orphaned_authority_is_integration_defect": True,
 }
+IDENTITY_CONTRACT = {
+    "policy_source": "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md",
+    "policy_target": ".ai/foundation/PERSISTENT_IDENTITY_POLICY.md",
+    "required_invariants": [
+        "stable_no_reuse",
+        "no_silent_rename_or_reinterpretation",
+        "legacy_identifier_preservation",
+        "identity_separate_from_mutable_classification",
+        "relationships_explicit",
+        "revision_identity_separate",
+        "identifiers_are_not_authorization",
+    ],
+    "default_machine_identifier": "rfc9562_uuidv7_as_urn_uuid",
+    "compatible_uuid_profiles": ["uuidv7", "uuidv4"],
+    "default_human_reference": "flat_typed_project_local",
+    "default_human_reference_pattern": "<PREFIX>-<SEQUENCE>",
+    "default_prefixes": ["CAP", "REQ", "WI", "DEC", "GATE", "RISK", "EXP", "OPS", "INC", "REL", "TEST"],
+    "prefix_meaning_reuse": "prohibited",
+    "hierarchy_and_status": "metadata_not_canonical_identity",
+    "external_references": "aliases_or_locators_not_canonical_by_default",
+    "content_hash_scope": "immutable_revision_or_content",
+    "existing_project_default_mode": "PRESERVE",
+    "new_project_default_mode": "FOUNDATION_DEFAULT",
+    "adoption_modes": ["PRESERVE", "ADOPT_FORWARD", "MIGRATE_EXPLICIT"],
+    "migration_requires_explicit_decision": True,
+    "unknown_existing_project_choice": "PRESERVE",
+}
 MODEL_ROUTING_CONTRACT = {
     "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
     "target_policy_may_be_more_detailed": True,
@@ -96,6 +124,16 @@ INTEGRATION_MAP_MARKERS = [
     "project_repo_map_behavior: preserve_and_optionally_bridge",
     "orphaned_authority_is_integration_defect: true",
     "semantic_mapping_when_overlapping: required",
+]
+IDENTITY_MAP_MARKERS = [
+    ".ai/foundation/PERSISTENT_IDENTITY_POLICY.md",
+    "default_machine_identifier: rfc9562_uuidv7_as_urn_uuid",
+    "default_human_reference: flat_typed_project_local",
+    "existing_project_default_mode: PRESERVE",
+    "adoption_modes: PRESERVE_ADOPT_FORWARD_MIGRATE_EXPLICIT",
+    "migration_requires_explicit_decision: true",
+    "unknown_existing_project_choice: PRESERVE",
+    "hierarchy_and_status: metadata_not_canonical_identity",
 ]
 
 results: list[dict] = []
@@ -172,6 +210,14 @@ def validate_manifest(manifest: dict) -> None:
         if integration_contract.get("compatibility_classes") != INTEGRATION_COMPATIBILITY_CLASSES:
             add("ERROR", "INTEGRATION_CLASSES", "foundation/manifest.json", "compatibility_classes do not match the canonical ordered set")
 
+    identity_contract = manifest.get("identity_contract")
+    if not isinstance(identity_contract, dict):
+        add("BLOCKING", "IDENTITY_CONTRACT", "foundation/manifest.json", "identity_contract is required")
+    else:
+        for key, expected in IDENTITY_CONTRACT.items():
+            if identity_contract.get(key) != expected:
+                add("ERROR", "IDENTITY_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
+
     model_contract = manifest.get("model_routing_contract")
     if not isinstance(model_contract, dict):
         add("BLOCKING", "MODEL_ROUTING_CONTRACT", "foundation/manifest.json", "model_routing_contract is required")
@@ -212,6 +258,14 @@ def validate_manifest(manifest: dict) -> None:
     ]
     if len(integration_rows) != 1:
         add("BLOCKING", "INTEGRATION_POLICY_MAPPING", "foundation/manifest.json", "semantic integration policy must be transferred exactly once")
+
+    identity_rows = [
+        row for row in rows
+        if row.get("source") == IDENTITY_CONTRACT["policy_source"]
+        and row.get("target") == IDENTITY_CONTRACT["policy_target"]
+    ]
+    if len(identity_rows) != 1:
+        add("BLOCKING", "IDENTITY_POLICY_MAPPING", "foundation/manifest.json", "persistent identity policy must be transferred exactly once")
 
     for adapter in manifest.get("default_adapters", []):
         if adapter not in manifest.get("adapters", {}):
@@ -265,6 +319,7 @@ def validate_foundation(profile: str) -> None:
             "Documentation/Standards/SOURCE_AND_EVIDENCE_POLICY.md",
             "Documentation/Standards/DEPENDENCY_POLICY.md",
             "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
+            "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md",
             "Documentation/Architecture/DECISIONS.md",
         ]:
             if rel not in text:
@@ -275,6 +330,7 @@ def validate_foundation(profile: str) -> None:
         map_text = target_map_template.read_text(encoding="utf-8")
         validate_markers(map_text, "foundation/repo_map.template.yaml", "VALIDATION_SCOPE_MAP", VALIDATION_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "INTEGRATION_SCOPE_MAP", INTEGRATION_MAP_MARKERS)
+        validate_markers(map_text, "foundation/repo_map.template.yaml", "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
 
     agents_template = ROOT / "foundation" / "AGENTS.template.md"
     if agents_template.is_file():
@@ -321,6 +377,12 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
         "AGENTS.md",
         "Foundation validator can verify the discovery contract is installed but cannot prove that every active target-specific authority in an arbitrary repository was semantically inventoried and linked. Existing-repository integration must review this under PROJECT_SEMANTIC.",
     )
+    add(
+        "INFO",
+        "PROJECT_IDENTITY_SEMANTICS_OUT_OF_SCOPE",
+        ".",
+        "Foundation validator verifies the installed identity contract but cannot prove that an arbitrary target's historical identifiers, aliases, relations, or migration mappings are semantically correct. Review them under PROJECT_SEMANTIC and RUNTIME_EMPIRICAL when affected.",
+    )
 
     selected_paths: list[Path] = []
     required_mit_notice = (ROOT / "LICENSE").read_text(encoding="utf-8")
@@ -345,6 +407,7 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
         if display == ".ai/foundation/repo_map.yaml":
             validate_markers(text, display, "VALIDATION_SCOPE_MAP", VALIDATION_MAP_MARKERS)
             validate_markers(text, display, "INTEGRATION_SCOPE_MAP", INTEGRATION_MAP_MARKERS)
+            validate_markers(text, display, "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
         if display.startswith(".ai/foundation/") and source.is_file() and destination.read_bytes() != source.read_bytes():
             add(
                 "WARNING",
