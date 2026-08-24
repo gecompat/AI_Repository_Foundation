@@ -7,6 +7,37 @@
   "description": "Explicit whitelist of reusable core rules/provenance plus explicitly selected optional capability files for new or existing repositories.",
   "default_adapters": ["github-copilot", "claude-code", "gemini"],
   "default_capabilities": [],
+  "transfer_coverage_contract": {
+    "version_authority": "foundation/manifest.json#ruleset_version",
+    "version_mirrors": [
+      {"path": ".ai/FOUNDATION.md", "pattern": "(?m)^- version: (?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)$"},
+      {"path": ".ai/PROJECT_STATUS.md", "pattern": "(?m)^Foundation version: (?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)(?: candidate)?$"},
+      {"path": "foundation/FOUNDATION_RULESET.template.md", "pattern": "(?m)^Ruleset version: (?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)$"},
+      {"path": "foundation/repo_map.template.yaml", "pattern": "(?m)^foundation_ruleset_version: (?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)$"},
+      {"path": "CHANGELOG.md", "pattern": "(?m)^## \\[(?P<version>[0-9]+\\.[0-9]+\\.[0-9]+)\\] -"}
+    ],
+    "managed_core_roots": [
+      {"path": "Documentation/Standards", "suffixes": [".md"], "recursive": false},
+      {"path": "foundation/schemas", "suffixes": [".json"], "recursive": true}
+    ],
+    "fixed_core_sources": [
+      "foundation/AGENTS.template.md",
+      "foundation/FOUNDATION_RULESET.template.md",
+      "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md",
+      ".ai/PROJECT_RULES.md",
+      ".ai/WORKING_RULES.md",
+      ".ai/MODEL_ROUTING_POLICY.md",
+      ".ai/VALIDATION_POLICY.md",
+      "foundation/repo_map.template.yaml"
+    ],
+    "legacy_capability_roots": [
+      {"capability": "artifact-registration-clients", "path": "tools/identity", "suffixes": [".py", ".ps1"], "recursive": true}
+    ],
+    "future_capability_root": "foundation/capabilities",
+    "future_transferable_policy_root": "Documentation/Standards",
+    "future_transferable_schema_root": "foundation/schemas",
+    "unclassified_managed_source_behavior": "blocking"
+  },
   "integration_contract": {
     "policy_source": "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
     "policy_target": ".ai/foundation/SEMANTIC_INTEGRATION_POLICY.md",
@@ -135,6 +166,6 @@
     "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore",
     ".ai/PROJECT_CONTEXT.md", ".ai/FOUNDATION.md", ".ai/PROJECT_STATUS.md", ".ai/HANDOVER.md", ".ai/BACKLOG.md", ".ai/ROADMAP.md", ".ai/TOOL_ADAPTERS.yaml", ".ai/repo_map.yaml",
     "Documentation/Architecture/", "Documentation/Quality/",
-    "tools/bootstrap.py", "tools/install_foundation.py", "tools/foundation_validator.py", "tests/"
+    "tools/bootstrap.py", "tools/install_foundation.py", "tools/foundation_validator.py", "tools/transfer_manifest_guard.py", "tests/"
   ]
 }
