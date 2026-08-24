@@ -18,6 +18,7 @@ authority:
     - Documentation/Standards/DEPENDENCY_POLICY.md
     - Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
     - Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
+    - Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
   informative:
     - README.md
     - .ai/ROADMAP.md
@@ -39,8 +40,12 @@ transfer:
   ai_protocol: foundation/AI_TRANSFER.md
   semantic_integration_policy: Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
   persistent_identity_policy: Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
+  artifact_registration_policy: Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
+  artifact_registration_schemas: foundation/schemas/
+  optional_reference_clients: tools/identity/
 validation:
   foundation_command: python tools/foundation_validator.py
   target_command: python tools/foundation_validator.py --target TARGET
 installation:
   command: python tools/install_foundation.py TARGET
+  optional_registration_clients: python tools/install_foundation.py TARGET --capabilities artifact-registration-clients
