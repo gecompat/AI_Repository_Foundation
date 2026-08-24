@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.2.0
+Ruleset version: 1.3.0
 
 This directory contains reusable governance rules plus the source-license notice required for transferred Foundation material. It does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -17,6 +17,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 
 - project/baseline rules: `PROJECT_RULES.md`
 - semantic integration, compatibility, discovery, and adapter migration: `SEMANTIC_INTEGRATION_POLICY.md`
+- persistent artifact identity, human references, aliases, relations, revisions, and legacy-safe adoption: `PERSISTENT_IDENTITY_POLICY.md`
 - authorization and working behavior: `WORKING_RULES.md`
 - model/resource selection and target-policy mapping: `MODEL_ROUTING_POLICY.md`
 - validation, status vocabulary, and manual test plans: `VALIDATION_POLICY.md`
@@ -26,7 +27,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - third-party/licensing: `THIRD_PARTY_AND_LICENSING.md`
 - evidence/sources: `SOURCE_AND_EVIDENCE_POLICY.md`
 - dependencies/services: `DEPENDENCY_POLICY.md`
-- machine-readable authority, integration, and validation index: `repo_map.yaml`
+- machine-readable authority, integration, identity, and validation index: `repo_map.yaml`
 
 ## Discovery boundary
 
@@ -37,6 +38,12 @@ An active authoritative target rule that is not discoverable is `ORPHANED_AUTHOR
 ## Semantic integration boundary
 
 Foundation integration supplements existing governance. Preserve `PROJECT_STRONGER`, `PROJECT_SELECTABLE_OVERRIDE`, and `COMPLEMENTARY` project behavior. Resolve `FOUNDATION_REQUIRED_CONFLICT`, distinguish `TARGET_INTERNAL_CONFLICT`, and do not remove adapter governance until it has been safely rehomed.
+
+Existing identifier conventions are project governance. Preserve them by default. The Foundation identity default applies automatically only when no established convention exists, or prospectively after an explicit `ADOPT_FORWARD` decision. A historical migration requires `MIGRATE_EXPLICIT`; Foundation installation never performs one implicitly.
+
+## Identity boundary
+
+Persistent identity, human-readable reference, aliases/external references, mutable relations/classification, revision identity, and current locator are distinct concerns. Stable references are never reused for different artifacts. Hierarchy/status/location changes must not force canonical identity changes. Identifiers never grant authorization.
 
 ## Validation boundary
 

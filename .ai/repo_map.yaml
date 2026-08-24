@@ -17,6 +17,7 @@ authority:
     - Documentation/Standards/SOURCE_AND_EVIDENCE_POLICY.md
     - Documentation/Standards/DEPENDENCY_POLICY.md
     - Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
+    - Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
   informative:
     - README.md
     - .ai/ROADMAP.md
@@ -37,6 +38,7 @@ transfer:
   manifest: foundation/manifest.json
   ai_protocol: foundation/AI_TRANSFER.md
   semantic_integration_policy: Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
+  persistent_identity_policy: Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
 validation:
   foundation_command: python tools/foundation_validator.py
   target_command: python tools/foundation_validator.py --target TARGET

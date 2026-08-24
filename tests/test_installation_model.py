@@ -54,6 +54,20 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue(policy.is_file())
             self.assertIn("PROJECT_STRONGER", policy.read_text(encoding="utf-8"))
 
+    def test_persistent_identity_policy_is_installed(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                rc = install_foundation.main([str(target), "--adapters", "none", "--apply"])
+            self.assertEqual(rc, 0)
+            policy = target / ".ai" / "foundation" / "PERSISTENT_IDENTITY_POLICY.md"
+            self.assertTrue(policy.is_file())
+            text = policy.read_text(encoding="utf-8")
+            self.assertIn("PRESERVE", text)
+            self.assertIn("ADOPT_FORWARD", text)
+            self.assertIn("MIGRATE_EXPLICIT", text)
+            self.assertIn("urn:uuid:<uuid>", text)
+
     def test_second_install_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
@@ -132,6 +146,23 @@ class InstallationModelTests(unittest.TestCase):
             ],
         )
 
+    def test_identity_contract_is_machine_readable(self) -> None:
+        contract = self.manifest["identity_contract"]
+        self.assertEqual(contract["policy_target"], ".ai/foundation/PERSISTENT_IDENTITY_POLICY.md")
+        self.assertEqual(contract["default_machine_identifier"], "rfc9562_uuidv7_as_urn_uuid")
+        self.assertEqual(contract["compatible_uuid_profiles"], ["uuidv7", "uuidv4"])
+        self.assertEqual(contract["default_human_reference"], "flat_typed_project_local")
+        self.assertEqual(contract["default_human_reference_pattern"], "<PREFIX>-<SEQUENCE>")
+        self.assertEqual(contract["existing_project_default_mode"], "PRESERVE")
+        self.assertEqual(contract["new_project_default_mode"], "FOUNDATION_DEFAULT")
+        self.assertEqual(contract["adoption_modes"], ["PRESERVE", "ADOPT_FORWARD", "MIGRATE_EXPLICIT"])
+        self.assertTrue(contract["migration_requires_explicit_decision"])
+        self.assertEqual(contract["unknown_existing_project_choice"], "PRESERVE")
+        self.assertEqual(contract["hierarchy_and_status"], "metadata_not_canonical_identity")
+        self.assertEqual(contract["content_hash_scope"], "immutable_revision_or_content")
+        self.assertIn("legacy_identifier_preservation", contract["required_invariants"])
+        self.assertIn("identifiers_are_not_authorization", contract["required_invariants"])
+
     def test_model_routing_contract_preserves_richer_project_policy(self) -> None:
         contract = self.manifest["model_routing_contract"]
         self.assertEqual(contract["foundation_tiers"], ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"])
@@ -159,6 +190,7 @@ class InstallationModelTests(unittest.TestCase):
             codes = {item["code"] for item in payload["results"]}
             self.assertIn("PROJECT_VALIDATION_OUT_OF_SCOPE", codes)
             self.assertIn("PROJECT_GOVERNANCE_DISCOVERY_SEMANTIC", codes)
+            self.assertIn("PROJECT_IDENTITY_SEMANTICS_OUT_OF_SCOPE", codes)
 
     def test_local_override_is_drift_not_semantic_approval(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -181,11 +213,16 @@ class InstallationModelTests(unittest.TestCase):
         validation = (ROOT / ".ai" / "VALIDATION_POLICY.md").read_text(encoding="utf-8")
         routing = (ROOT / ".ai" / "MODEL_ROUTING_POLICY.md").read_text(encoding="utf-8")
         privacy = (ROOT / "Documentation" / "Standards" / "DATA_PRIVACY_AND_CONFIDENTIALITY.md").read_text(encoding="utf-8")
+        integration = (ROOT / "Documentation" / "Standards" / "SEMANTIC_INTEGRATION_POLICY.md").read_text(encoding="utf-8")
+        identity = (ROOT / "Documentation" / "Standards" / "PERSISTENT_IDENTITY_POLICY.md").read_text(encoding="utf-8")
         transfer = (ROOT / "foundation" / "AI_TRANSFER.md").read_text(encoding="utf-8")
         self.assertIn("project may be stricter", project_rules)
         self.assertIn("Target repositories may define additional statuses", validation)
         self.assertIn("Preserve it when it is compatible", routing)
         self.assertIn("AI_REPOSITORY_FOUNDATION_NOTICE.md", privacy)
+        self.assertIn("unknown -> PRESERVE", integration)
+        self.assertIn("MIGRATE_EXPLICIT", identity)
+        self.assertIn("Missing input means `PRESERVE`", transfer)
         self.assertIn("ADAPTER_GOVERNANCE_MISPLACED", transfer)
         self.assertIn("ORPHANED_AUTHORITY", transfer)
 
@@ -210,7 +247,7 @@ class InstallationModelTests(unittest.TestCase):
     def test_manifest_is_machine_readable(self) -> None:
         parsed = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(parsed["schema_version"], 1)
-        self.assertEqual(parsed["ruleset_version"], "1.2.0")
+        self.assertEqual(parsed["ruleset_version"], "1.3.0")
 
 
 if __name__ == "__main__":

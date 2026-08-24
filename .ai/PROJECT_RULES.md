@@ -4,7 +4,7 @@ Status: AUTHORITATIVE
 
 ## Rule classes
 
-- `REQUIRED`: a minimum safety, privacy, integrity, evidence, or authorization floor that may not be silently weakened. A target project may be stricter.
+- `REQUIRED`: a minimum safety, privacy, integrity, evidence, authorization, or identity floor that may not be silently weakened. A target project may be stricter.
 - `DEFAULT`: applies unless an intentional compatible project override is documented.
 - `PROJECT_SELECTABLE`: chosen by the target project.
 
@@ -21,6 +21,9 @@ Existing target rules do not need to adopt these labels. During integration, cla
 - Stop on unclear or incompatible third-party rights when incorporation or distribution would create material risk.
 - Tool adapters perform discovery/import only and must not define parallel governance. Preserve and rehome unique existing adapter governance before thinning an adapter.
 - Preserve active project-specific governance and make it discoverable from the root repository instruction tree.
+- Preserve published durable identifiers and historical references; never silently reuse, rename, or reinterpret them for a different artifact.
+- Keep canonical identity independent of mutable status, owner, hierarchy, phase, location, or tool assignment; existing references that historically encode such values remain valid and need not be renamed.
+- Treat identifiers as references, never as authorization credentials.
 
 A project rule that is deliberately stricter than a Foundation minimum is compatible unless it creates a real logical conflict. Extra approvals, narrower data use, additional validation, or reduced autonomous authority are not Foundation conflicts by themselves.
 
@@ -32,6 +35,7 @@ A project rule that is deliberately stricter than a Foundation minimum is compat
 - Use synthetic or explicitly redistributable data for examples and tests when real data is not necessary.
 - Public primary sources and other project-authorized real information may be used normally within their permitted handling boundary.
 - Document durable material decisions with stable IDs.
+- For a project without an established durable identifier convention, use the layered identity default in `PERSISTENT_IDENTITY_POLICY.md`: opaque persistent machine UID, flat typed project-local human reference, explicit aliases/relations, and separate revision identity.
 - Do not automatically upgrade Foundation rules or overwrite local changes.
 
 ## Project-selectable
@@ -43,4 +47,6 @@ A project rule that is deliberately stricter than a Foundation minimum is compat
 - decision-authority matrix and approval thresholds;
 - allowed data classifications and destinations;
 - language, platform, concrete validation commands, release process, environments, and budgets;
-- richer project-specific validation statuses and model-routing taxonomy, provided Foundation reserved meanings remain intact or are mapped explicitly.
+- richer project-specific validation statuses and model-routing taxonomy, provided Foundation reserved meanings remain intact or are mapped explicitly;
+- identifier adoption mode for an existing repository: `PRESERVE`, `ADOPT_FORWARD`, or explicitly planned `MIGRATE_EXPLICIT`;
+- compatible project-specific identifier prefixes, human-reference syntax, UUID profile, relation vocabulary, and storage representation, provided the required identity invariants remain intact.

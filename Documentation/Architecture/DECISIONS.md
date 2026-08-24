@@ -76,9 +76,21 @@ Create one for durable material decisions affecting multiple areas, difficult re
 
 - Status: Accepted
 - Date: 2026-08-23
-- Context: Real existing repositories contain mature privacy, validation, model-routing, Git, approval, adapter, and documentation contracts that often overlap the Foundation without being wrong.
+- Context: Real existing repositories contain mature privacy, validation, model-routing, Git, approval, adapter, documentation, and identifier contracts that often overlap the Foundation without being wrong.
 - Decision: Existing-repository integration uses explicit semantic compatibility classes. Foundation `REQUIRED` rules are minimum protected floors, intentionally stricter project rules are compatible, active project governance must remain discoverable from root `AGENTS.md`, and unique adapter governance must be preserved/re-homed before adapters are thinned.
 - Rationale: file-level `MERGE_REQUIRED` alone is insufficient to distinguish a valid stricter project rule, an equivalent rule, a selectable override, a target-internal contradiction, or a true Foundation required-floor conflict.
 - Alternatives: normalizing all projects to Foundation wording was rejected because it would destroy project-specific policy detail and create unnecessary churn; leaving semantic merge entirely informal was rejected because different AI systems produced inconsistent classifications.
 - Consequences: direct AI transfer becomes a bounded semantic merge protocol; richer project validation statuses and model-routing policies remain valid through semantic mapping; target repo maps are preserved; orphaned active authority is treated as an integration defect.
 - Affected areas: semantic integration, root discovery, adapters, privacy, model routing, validation, repo-map integration, existing-repository migration.
+
+## DEC-0010 — Layered persistent identity with legacy-safe adoption
+
+- Status: Accepted
+- Date: 2026-08-24
+- Context: Human-readable identifiers such as hierarchical wave/slice IDs are useful but become unstable when they encode mutable hierarchy, phase, status, location, or tool ownership. Repository splits/merges, forks, multiple AI agents, offline work, and issue-tracker migration also require identity that does not depend on a central local sequence or current repository path. Existing repositories, however, may already contain deeply referenced identifier conventions that must not be invalidated by Foundation integration.
+- Decision: Separate persistent machine identity, human reference, aliases/external references, mutable relations/classification, revision identity, and locator. The Foundation default for new/adopting projects uses an opaque RFC 9562 UUID machine UID (UUIDv7 default, UUIDv4 compatible) plus a flat typed project-local human reference. Hierarchy/status/location remain metadata/relations. Existing repositories default to `PRESERVE`; prospective adoption uses `ADOPT_FORWARD`; historical renaming requires explicitly authorized `MIGRATE_EXPLICIT` with durable mappings and recovery.
+- Rationale: one semantically rich string cannot simultaneously optimize human readability, distributed/offline allocation, cross-repository uniqueness, refactoring stability, and long-lived compatibility. A layered model preserves readable references while decoupling them from the deepest identity.
+- Alternatives: making the current `S-FUT11-04`-style hierarchy universal was rejected because reparenting/phase changes make encoded semantics stale; UUID-only references were rejected as poor human interfaces; flat counters alone were rejected as insufficient for concurrent/offline allocation; content hashes were rejected as primary identity for mutable logical artifacts because normal edits would change identity.
+- Consequences: the Foundation gains a persistent-identity policy, machine-readable identity contract, default prefix registry, explicit relation/revision semantics, and legacy-safe adoption modes. The Foundation validator checks contract installation/integrity but target-specific historical mappings remain `PROJECT_SEMANTIC`/`RUNTIME_EMPIRICAL` responsibilities.
+- Affected areas: planning/governance identifiers, semantic integration, AI transfer, repository federation/split/merge, validation, future tooling.
+- Evidence/references: RFC 9562, RFC 8141, RFC 8720, ISO 21511, SPDX 3.x identifier/namespace concepts.
