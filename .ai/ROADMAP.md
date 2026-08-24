@@ -15,9 +15,27 @@ Initial governance, metadata, adapters, bootstrap skeleton, and validator skelet
 - conflict-aware existing-repository planning;
 - target-aware validator and deterministic self-tests.
 
+## v1.2 — Semantic integration of existing repositories
+
+- compatibility classes for overlapping Foundation/target governance;
+- root discovery invariant for active target authority;
+- preservation of stricter target rules and richer local policy vocabularies;
+- adapter-governance rehome-before-thin contract;
+- separation of Foundation integrity from project semantic/runtime validation.
+
+## v1.3 — Persistent identity and references
+
+- layered persistent identity model for durable project artifacts;
+- opaque machine UID plus human-reference separation;
+- explicit aliases/external references, relations, revision identity, and locators;
+- broad Foundation default human-reference prefix registry;
+- legacy-safe `PRESERVE`, `ADOPT_FORWARD`, and `MIGRATE_EXPLICIT` adoption modes;
+- fork/template/repository split/merge identity semantics;
+- machine-readable identity contract and validator/test coverage.
+
 ## Later
 
-- optional adapter/capability modules beyond the v1.1 core;
-- stronger drift hashes and upgrade planning;
-- resolve the preferred attribution/notice mechanism for copied rule text without modifying target root licenses;
-- packaged release artifacts only if they add value beyond manifest-driven transfer.
+- optional adapter/capability modules beyond the core;
+- stronger drift hashes and upgrade planning under FND-002;
+- packaged release artifacts only if they add value beyond manifest-driven transfer;
+- optional reference implementation for project-owned identity registries/resolvers only if multiple target repositories demonstrate that a shared serialization/tool adds value beyond the policy contract.
