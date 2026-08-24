@@ -12,17 +12,16 @@ The normative contract is language-neutral. Core transfer includes `ARTIFACT_REG
 
 Python is not required. The opt-in `artifact-registration-clients` capability contains independent Python and PowerShell reference clients. Both implement registry initialization, direct/deferred creation, later registration, resolve, registry revision checks, stable allocation/non-reuse, and UUIDv7 generation. Foundation CI runs the same deterministic fixtures against both clients and explicitly verifies the PowerShell runtime.
 
-Installer and validator now understand optional capabilities. Reference clients are not transferred by default. Target-specific Registration Authority selection, network/distributed concurrency, issue-tracker/database integration, and operational recovery remain `PROJECT_SEMANTIC`/`RUNTIME_EMPIRICAL` responsibilities.
+Installer and validator understand optional capabilities. Reference clients are not transferred by default. Target-specific Registration Authority selection, network/distributed concurrency, issue-tracker/database integration, and operational recovery remain `PROJECT_SEMANTIC`/`RUNTIME_EMPIRICAL` responsibilities.
 
-Two development CI runs were useful failure evidence rather than completion evidence: run `32711122382` exposed PowerShell scriptblock result-scope handling; run `32711344144` reduced the remaining defects to deferred-null coercion and an incorrect UUID-version assertion. All identified defects were corrected on PR #8. FND-011 remains `in_progress` until the final PR head passes `Foundation CI`.
+Two development CI runs were useful failure evidence rather than completion evidence: run `32711122382` exposed PowerShell scriptblock result-scope handling; run `32711344144` reduced the remaining defects to deferred-null coercion and an incorrect UUID-version assertion. Both defects were corrected. GitHub Actions `Foundation CI` run `32711801576` on implementation/documentation head `e56017f06d0084a444c0a812896eb89f1386657b` then completed successfully, including PowerShell runtime verification, Foundation validation, and all cross-language/installation contract tests. FND-011 is complete for its deterministic contract.
 
 ## Next actions
 
-1. Confirm `Foundation CI` on the final v1.4 implementation/documentation head.
-2. If green, record the exact successful run/head in `.ai/PROJECT_STATUS.md`, `.ai/BACKLOG.md`, and this handover; mark FND-011 `done`.
-3. Confirm the evidence-only final head remains green and merge PR #8.
-4. Execute `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md` with a genuinely fresh AI session/test target when available; do not claim it as executed beforehand.
-5. Complete FND-001 only after that separate manual acceptance is recorded.
+1. Confirm `Foundation CI` on the evidence-only final PR #8 head.
+2. Merge PR #8 only if that final head is green.
+3. Execute `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md` with a genuinely fresh AI session/test target when available; do not claim it as executed beforehand.
+4. Complete FND-001 only after that separate manual acceptance is recorded.
 
 ## Open constraints
 
