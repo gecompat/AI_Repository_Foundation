@@ -21,6 +21,8 @@ authority:
     - Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
     - Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
     - Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
+    - Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
+    - foundation/feature_catalog.json
   informative:
     - README.md
     - .ai/ROADMAP.md
@@ -48,16 +50,21 @@ transfer:
   version_authority: foundation/manifest.json#ruleset_version
   coverage_contract: foundation/manifest.json#transfer_coverage_contract
   completeness_guard: tools/transfer_manifest_guard.py
+  feature_catalog: foundation/feature_catalog.json
+  feature_catalog_guard: tools/feature_catalog_guard.py
+  upgrade_delta_tool: tools/upgrade_applicability.py
   ai_protocol: foundation/AI_TRANSFER.md
   semantic_integration_policy: Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
   persistent_identity_policy: Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
   artifact_registration_policy: Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
-  artifact_registration_schemas: foundation/schemas/
+  upgrade_applicability_policy: Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
+  schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
 validation:
   transfer_completeness_command: python tools/transfer_manifest_guard.py
+  semantic_feature_command: python tools/feature_catalog_guard.py
   foundation_command: python tools/foundation_validator.py
-  complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
+  complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/feature_catalog_guard.py && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
   target_command: python tools/foundation_validator.py --target TARGET
 installation:
   command: python tools/install_foundation.py TARGET
