@@ -8,6 +8,9 @@ Status: AUTHORITATIVE
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
 - transfer_manifest: `foundation/manifest.json`
+- ruleset_version_authority: `foundation/manifest.json#ruleset_version`
+- transfer_coverage_contract: `foundation/manifest.json#transfer_coverage_contract`
+- transfer_completeness_guard: `tools/transfer_manifest_guard.py`
 - direct_ai_transfer: `foundation/AI_TRANSFER.md`
 - semantic_integration_policy: `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md`
 - persistent_identity_policy: `Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md`
@@ -35,6 +38,8 @@ For existing repositories, semantic integration preserves target-owned governanc
 Persistent identifier integration follows the same compatibility rule. Existing published identifiers are preserved by default. `ADOPT_FORWARD` may introduce a better profile prospectively while retaining history; `MIGRATE_EXPLICIT` requires a separate explicit migration decision. Foundation installation never treats missing input as migration authority.
 
 Artifact registration is implementation-language neutral. Existing compatible issue trackers, databases, services, scripts/modules, and applications remain valid Registration Authorities. Humans and AI must use the same authority for the same scope; Foundation reference clients do not replace project tooling implicitly.
+
+Transfer completeness is part of source-project correctness. `foundation/manifest.json#ruleset_version` is the single version authority. Managed reusable policies, schemas, and capability payloads must be classified by the manifest in the same change that introduces them. `tools/transfer_manifest_guard.py` blocks unclassified managed sources, capability payloads outside registered roots, unresolved contract mappings, and version-mirror drift. A stale installed target version is not evidence about current source capability availability.
 
 Foundation validation establishes deterministic Foundation integration/integrity only. Project-specific semantic validation and runtime/empirical validation remain target-repository responsibilities and are not replaced by Foundation installation.
 
