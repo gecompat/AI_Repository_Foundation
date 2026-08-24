@@ -1,9 +1,9 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.4.0
+Ruleset version: 1.5.0
 
-This directory contains reusable governance rules, machine-readable schemas, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
+This directory contains reusable governance rules, machine-readable schemas, the semantic feature catalog, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
 ## Rule classes
 
@@ -19,7 +19,10 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - semantic integration, compatibility, discovery, and adapter migration: `SEMANTIC_INTEGRATION_POLICY.md`
 - persistent artifact identity, human references, aliases, relations, revisions, and legacy-safe adoption: `PERSISTENT_IDENTITY_POLICY.md`
 - language-neutral artifact creation, Registration Authority, `DIRECT`/`DEFERRED`, concurrency, and human/AI allocation: `ARTIFACT_REGISTRATION_POLICY.md`
+- semantic upgrade delta/applicability and mandatory recommendation surfacing: `UPGRADE_APPLICABILITY_POLICY.md`
+- semantic feature catalog: `feature_catalog.json`
 - registration schemas: `schemas/artifact-record.schema.json`, `schemas/artifact-registry.schema.json`, `schemas/artifact-registration-request.schema.json`
+- upgrade schemas: `schemas/feature-catalog.schema.json`, `schemas/upgrade-assessment.schema.json`
 - authorization and working behavior: `WORKING_RULES.md`
 - model/resource selection and target-policy mapping: `MODEL_ROUTING_POLICY.md`
 - validation, status vocabulary, and manual test plans: `VALIDATION_POLICY.md`
@@ -29,7 +32,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - third-party/licensing: `THIRD_PARTY_AND_LICENSING.md`
 - evidence/sources: `SOURCE_AND_EVIDENCE_POLICY.md`
 - dependencies/services: `DEPENDENCY_POLICY.md`
-- machine-readable authority, integration, identity, registration, and validation index: `repo_map.yaml`
+- machine-readable authority, integration, identity, registration, upgrade, and validation index: `repo_map.yaml`
 
 ## Discovery boundary
 
@@ -42,6 +45,12 @@ An active authoritative target rule that is not discoverable is `ORPHANED_AUTHOR
 Foundation integration supplements existing governance. Preserve `PROJECT_STRONGER`, `PROJECT_SELECTABLE_OVERRIDE`, and `COMPLEMENTARY` project behavior. Resolve `FOUNDATION_REQUIRED_CONFLICT`, distinguish `TARGET_INTERNAL_CONFLICT`, and do not remove adapter governance until it has been safely rehomed.
 
 Existing identifier conventions and Registration Authorities are project governance. Preserve them by default when compatible. The Foundation identity default applies automatically only when no established convention exists, or prospectively after an explicit `ADOPT_FORWARD` decision. A historical migration requires `MIGRATE_EXPLICIT`; Foundation installation never performs one implicitly.
+
+## Upgrade applicability boundary
+
+When the target has an older installed Foundation version, compute the complete semantic feature delta from `feature_catalog.json` before declaring the upgrade complete. Every feature introduced or materially changed in the version interval receives exactly one applicability classification. `RECOMMENDED`, `DECISION_REQUIRED`, and `CONFLICT` results are surfaced explicitly; no feature may be silently skipped because its relevance was not inferred.
+
+This requirement does not auto-authorize project-selectable changes. In particular, a relevant persistent-identity/nomenclature improvement may result in an `ADOPT_FORWARD` recommendation while historical identifiers remain untouched.
 
 ## Identity boundary
 
