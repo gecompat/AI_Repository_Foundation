@@ -2,6 +2,29 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.3.0] - 2026-08-24
+
+### Added
+
+- a transferred persistent-identity policy separating machine identity, human references, aliases/external references, relations/classification, revision identity, and locators;
+- RFC 9562 UUIDv7 as the Foundation default machine UID profile, with UUIDv4 as a compatible privacy/compatibility choice;
+- flat typed project-local human references and a default broad prefix registry for new/adopting projects;
+- explicit `PRESERVE`, `ADOPT_FORWARD`, and `MIGRATE_EXPLICIT` adoption modes for existing repositories;
+- project/repository split, merge, fork, template, external-reference, revision, security, and privacy guidance;
+- a machine-readable identity contract plus deterministic Foundation validator/test coverage.
+
+### Changed
+
+- existing published identifiers are now explicitly protected by the Foundation identity floor: no silent reuse, renaming, or reinterpretation;
+- hierarchy, status, phase, owner, location, and external-tool assignment are treated as metadata/relations rather than canonical identity in the Foundation default profile;
+- direct AI transfer inventories existing identifier conventions and defaults to `PRESERVE` when no explicit adoption decision exists;
+- historical identifier migration now requires a separate explicit migration decision, durable old-to-new mappings, alias retention, validation, and recovery;
+- semantic integration treats established project identifier conventions as target-owned governance rather than normalizing them to Foundation syntax.
+
+### Migration
+
+Existing repositories do not need to rename historical task, wave, slice, ADR/decision, issue, or other project references. On Foundation v1.3 integration, preserve the current convention unless the project explicitly selects prospective adoption. Prefer `ADOPT_FORWARD` when the Foundation default offers better long-term identity without justifying retroactive churn. Use `MIGRATE_EXPLICIT` only for a deliberately planned historical migration.
+
 ## [1.2.0] - 2026-08-23
 
 ### Added
