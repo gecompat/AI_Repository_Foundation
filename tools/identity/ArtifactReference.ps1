@@ -40,11 +40,11 @@ function New-DefaultPrefixes {
 
 function New-InitialRegistry {
     return [ordered]@{
-        schema_version    = 1
-        profile           = $RegistryProfile
-        registry_revision = 0
-        prefixes          = New-DefaultPrefixes
-        allocations       = [ordered]@{}
+        schema_version     = 1
+        profile            = $RegistryProfile
+        registry_revision  = 0
+        prefixes           = New-DefaultPrefixes
+        allocations        = [ordered]@{}
     }
 }
 
@@ -93,7 +93,7 @@ function Read-JsonHashtable([string]$Path) {
     return (Get-Content -LiteralPath $Path -Raw -Encoding UTF8 | ConvertFrom-Json -AsHashtable)
 }
 
-function Write-JsonAtomic([string]$Path, [hashtable]$Value) {
+function Write-JsonAtomic([string]$Path, $Value) {
     $fullPath = [IO.Path]::GetFullPath($Path)
     $directory = [IO.Path]::GetDirectoryName($fullPath)
     [IO.Directory]::CreateDirectory($directory) | Out-Null
@@ -123,7 +123,7 @@ function Use-RegistryLock([string]$Path, [scriptblock]$Action) {
         $writer.Flush()
         $writer.Dispose()
         $stream = $null
-        & $Action
+        return (& $Action)
     }
     catch [IO.IOException] {
         if (Test-Path -LiteralPath $lockPath) {
@@ -236,13 +236,13 @@ function Write-Result($Value) {
 try {
     switch ($Operation) {
         'init' {
-            $result = $null
-            Use-RegistryLock $RegistryPath {
+            $result = Use-RegistryLock $RegistryPath {
                 if (Test-Path -LiteralPath $RegistryPath) {
                     throw "registry already exists: $RegistryPath"
                 }
-                $result = New-InitialRegistry
-                Write-JsonAtomic $RegistryPath $result
+                $registry = New-InitialRegistry
+                Write-JsonAtomic $RegistryPath $registry
+                return $registry
             }
             Write-Result $result
         }
@@ -259,14 +259,13 @@ try {
                 $artifact = New-ArtifactRecord $artifactUid $null $Kind $Title
             }
             else {
-                $artifact = $null
-                Use-RegistryLock $RegistryPath {
+                $artifact = Use-RegistryLock $RegistryPath {
                     $registry = Read-JsonHashtable $RegistryPath
                     Assert-Registry $registry
                     Assert-ExpectedRevision $registry
                     $ref = Add-Allocation $registry $Kind $artifactUid
                     Write-JsonAtomic $RegistryPath $registry
-                    $artifact = New-ArtifactRecord $artifactUid $ref $Kind $Title
+                    return (New-ArtifactRecord $artifactUid $ref $Kind $Title)
                 }
             }
             if (-not [string]::IsNullOrWhiteSpace($ArtifactPath)) {
@@ -286,7 +285,7 @@ try {
                 throw 'artifact kind is required'
             }
 
-            Use-RegistryLock $RegistryPath {
+            $artifact = Use-RegistryLock $RegistryPath {
                 $registry = Read-JsonHashtable $RegistryPath
                 Assert-Registry $registry
                 Assert-ExpectedRevision $registry
@@ -294,7 +293,7 @@ try {
                     if ($registry.allocations[[string]$artifact.human_ref] -ne $artifactUid) {
                         throw 'artifact human_ref is not registered to its UID'
                     }
-                    return
+                    return $artifact
                 }
 
                 $recovered = $null
@@ -310,6 +309,7 @@ try {
                 }
                 $artifact.human_ref = $recovered
                 $artifact.registration_state = 'REGISTERED'
+                return $artifact
             }
             Write-JsonAtomic $ArtifactPath $artifact
             Write-Result $artifact
