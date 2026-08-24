@@ -4,13 +4,17 @@ This protocol allows an AI system with read access to this Foundation repository
 
 ## Source of transfer truth
 
-`foundation/manifest.json` is the complete transfer whitelist. Do not infer transferable files by scanning the repository.
+`foundation/manifest.json` at the **exact Foundation ref being evaluated** is the complete transfer whitelist and the ruleset-version authority. Do not infer transferable files by scanning the repository and do not infer current source capabilities from a target repository's older installed Foundation copy.
 
 - `core` contains the reusable baseline rules, schemas, entrypoint bridge, and required provenance.
 - `adapters` are selected discovery adapters.
 - `capabilities` are optional implementation modules and are transferred only when explicitly selected by the user/project.
+- `ruleset_version` describes the source ruleset at that Foundation ref.
+- `transfer_coverage_contract` defines source-side completeness/version checks that must remain green before a Foundation change is considered transferable.
 
 Files not listed in one of those selected manifest sections are not transferred.
+
+A target's installed `.ai/foundation/repo_map.yaml` records the version currently installed in that target. That installed version may legitimately be older than the current Foundation source. For upgrade or capability-availability questions, compare the target's installed version with `foundation/manifest.json` from the requested/current Foundation source ref; do not treat the stale target copy as the current source manifest.
 
 In particular, never copy the Foundation project's README, root LICENSE, changelog, `.gitignore`, project context, Foundation metadata, status, handover, backlog, roadmap, internal decisions, tests, or unlisted tool source merely because they exist here.
 
@@ -114,20 +118,22 @@ Do not remove, disable, weaken, or replace existing project validators, static d
 
 ## Procedure
 
-1. Read `foundation/manifest.json`, the semantic integration policy, the persistent identity policy when durable identifiers exist, and the artifact registration policy when allocation/creation is in scope.
-2. Inspect the target repository's current branch/ref, root/scoped instructions, active project governance, repo maps, adapter contents, identifier conventions, Registration Authority, model-routing policy, privacy/license constraints, and validation infrastructure.
-3. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities. Manifest defaults are recommendations where defined, not authority to replace target tooling.
-4. Build the deterministic file plan (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) and separately classify meaningful rule overlaps with the semantic compatibility classes.
-5. Preserve `EQUIVALENT`, `PROJECT_STRONGER`, `PROJECT_SELECTABLE_OVERRIDE`, and `COMPLEMENTARY` project behavior. Deduplicate `DUPLICATE_GOVERNANCE` without losing substance. Resolve `FOUNDATION_REQUIRED_CONFLICT`; report `TARGET_INTERNAL_CONFLICT` separately.
-6. For identifier governance, select or preserve the adoption mode. Existing convention plus no explicit decision means `PRESERVE`; a prospective change is `ADOPT_FORWARD`; historical renaming requires explicitly authorized `MIGRATE_EXPLICIT`.
-7. For artifact creation, preserve or establish one Registration Authority per overlapping scope. Do not let humans, AI, Python, PowerShell, or another client allocate independently of it.
-8. Never replace a differing existing file wholesale. For `AGENTS.md`, preserve all project-specific content and merge only the marked Foundation block, then ensure the active project governance remains discoverable from the root instruction tree.
-9. For existing adapter files, preserve unique rules before converting them to discovery-only form. Claude/Gemini/other adapters are optional unless the target actually selects them.
-10. Files under target `.ai/foundation/` are Foundation baseline rule/provenance/schema or selected capability copies. If one already differs, treat it as local override/drift and review the semantic difference; do not overwrite silently.
-11. Preserve the target README, root license, domain documentation, project context/state, backlog, decisions, implementation, project repo map, established identifier history, project allocator, and project-validation infrastructure unless the user's separate task explicitly changes them.
-12. Run/perform `FOUNDATION_INTEGRITY` validation and verify the Foundation bridge, attribution, validation/integration/identity/registration contracts, selected adapters, and selected capabilities.
-13. Determine which target `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks are relevant. For registration this may include uniqueness, registry revision, locking, DB constraints, issue-tracker/service integration, deferred registration, recovery, and cross-client behavior.
-14. Report the file plan, selected capabilities, semantic classifications, identifier adoption mode, Registration Authority/allocation mode, discovery fixes, adapter-rule moves, model-routing mapping if any, privacy/provenance exception if any, unresolved conflicts, and validation results by scope.
+1. Resolve the exact Foundation source ref and read its `foundation/manifest.json`. Treat its `ruleset_version` and `core`/`adapters`/`capabilities` sections as source truth.
+2. If upgrading an existing target, read its installed `.ai/foundation/repo_map.yaml` and distinguish the installed target version from the source manifest version.
+3. Read the semantic integration policy, the persistent identity policy when durable identifiers exist, and the artifact registration policy when allocation/creation is in scope.
+4. Inspect the target repository's current branch/ref, root/scoped instructions, active project governance, repo maps, adapter contents, identifier conventions, Registration Authority, model-routing policy, privacy/license constraints, and validation infrastructure.
+5. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities. Manifest defaults are recommendations where defined, not authority to replace target tooling.
+6. Build the deterministic file plan (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) and separately classify meaningful rule overlaps with the semantic compatibility classes.
+7. Preserve `EQUIVALENT`, `PROJECT_STRONGER`, `PROJECT_SELECTABLE_OVERRIDE`, and `COMPLEMENTARY` project behavior. Deduplicate `DUPLICATE_GOVERNANCE` without losing substance. Resolve `FOUNDATION_REQUIRED_CONFLICT`; report `TARGET_INTERNAL_CONFLICT` separately.
+8. For identifier governance, select or preserve the adoption mode. Existing convention plus no explicit decision means `PRESERVE`; a prospective change is `ADOPT_FORWARD`; historical renaming requires explicitly authorized `MIGRATE_EXPLICIT`.
+9. For artifact creation, preserve or establish one Registration Authority per overlapping scope. Do not let humans, AI, Python, PowerShell, or another client allocate independently of it.
+10. Never replace a differing existing file wholesale. For `AGENTS.md`, preserve all project-specific content and merge only the marked Foundation block, then ensure the active project governance remains discoverable from the root instruction tree.
+11. For existing adapter files, preserve unique rules before converting them to discovery-only form. Claude/Gemini/other adapters are optional unless the target actually selects them.
+12. Files under target `.ai/foundation/` are Foundation baseline rule/provenance/schema or selected capability copies. If one already differs, treat it as local override/drift and review the semantic difference; do not overwrite silently.
+13. Preserve the target README, root license, domain documentation, project context/state, backlog, decisions, implementation, project repo map, established identifier history, project allocator, and project-validation infrastructure unless the user's separate task explicitly changes them.
+14. Run/perform `FOUNDATION_INTEGRITY` validation and verify the Foundation bridge, attribution, validation/integration/identity/registration contracts, selected adapters, and selected capabilities.
+15. Determine which target `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks are relevant. For registration this may include uniqueness, registry revision, locking, DB constraints, issue-tracker/service integration, deferred registration, recovery, and cross-client behavior.
+16. Report source Foundation ref/version, target installed Foundation version, file plan, selected capabilities, semantic classifications, identifier adoption mode, Registration Authority/allocation mode, discovery fixes, adapter-rule moves, model-routing mapping if any, privacy/provenance exception if any, unresolved conflicts, and validation results by scope.
 
 ## Authorization
 
