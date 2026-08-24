@@ -1,12 +1,18 @@
 # Direct AI Transfer Protocol
 
-This protocol allows an AI system with read access to this Foundation repository and write access to another repository to install and semantically integrate the reusable rules without running the local installer.
+This protocol allows an AI system with read access to this Foundation repository and write access to another repository to install and semantically integrate reusable Foundation core material and explicitly selected optional capabilities without running the local installer.
 
 ## Source of transfer truth
 
-`foundation/manifest.json` is the complete transfer whitelist. Do not infer transferable files by scanning the repository. Files not listed in `core` or a selected adapter are not transferred.
+`foundation/manifest.json` is the complete transfer whitelist. Do not infer transferable files by scanning the repository.
 
-In particular, never copy the Foundation project's README, root LICENSE, changelog, `.gitignore`, project context, Foundation metadata, status, handover, backlog, roadmap, internal decisions, tests, or tool source merely because they exist here.
+- `core` contains the reusable baseline rules, schemas, entrypoint bridge, and required provenance.
+- `adapters` are selected discovery adapters.
+- `capabilities` are optional implementation modules and are transferred only when explicitly selected by the user/project.
+
+Files not listed in one of those selected manifest sections are not transferred.
+
+In particular, never copy the Foundation project's README, root LICENSE, changelog, `.gitignore`, project context, Foundation metadata, status, handover, backlog, roadmap, internal decisions, tests, or unlisted tool source merely because they exist here.
 
 The target project's root license is never changed by this transfer.
 
@@ -36,13 +42,40 @@ Foundation installation or upgrade never implies an identifier migration. Missin
 
 For a new project with no established durable convention, the Foundation default profile applies unless the project selects another compatible profile: RFC 9562 UUID machine identity, flat typed project-local human references, explicit relations/aliases, and separate revision identity.
 
+## Artifact Registration Authority
+
+Read `Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md` before creating or changing the mechanism that allocates final human references.
+
+For every relevant identifier scope:
+
+1. discover the existing Registration Authority, if any: issue tracker, service, database sequence, registry, PowerShell module, Python tool, application, or other project allocator;
+2. preserve a compatible existing authority rather than installing Foundation tooling over it;
+3. ensure humans and AI use the same authority for the same scope;
+4. never guess the next final sequence by scanning Markdown, filenames, Git history, chat history, or model memory when an authority exists;
+5. use `DIRECT` only through serialized or equivalently unique allocation;
+6. use `DEFERRED` for concurrent/offline creation when final sequence allocation cannot safely occur yet; the machine UID is final immediately and the human reference remains unallocated until `register`;
+7. record the project-selected authority and allocation mode in project-owned governance/configuration when that choice is durable.
+
+Python is not a Foundation requirement. PowerShell is a first-class supported reference client. The same applies to any other project-selected implementation language that preserves the contract.
+
+## Optional artifact-registration reference clients
+
+The manifest capability `artifact-registration-clients` contains both official reference clients:
+
+- Python: `.ai/foundation/reference_clients/artifact_reference.py`
+- PowerShell: `.ai/foundation/reference_clients/ArtifactReference.ps1`
+
+Select this capability only when the target project wants Foundation reference tooling. Do not install it merely because the core registration policy is transferred.
+
+Both clients implement the same language-neutral schemas and contract fixtures. A target may use neither, one operationally, or both; the selected project Registration Authority remains authoritative regardless of implementation language.
+
 ## Project-governance discovery
 
 After integration, root `AGENTS.md` must provide a reliable discovery path to both the Foundation baseline and active project-specific governance.
 
 For an existing repository:
 
-1. inventory active project governance before modifying `AGENTS.md`: root/scoped `AGENTS.md`, `.ai/`, project metadata/rule directories, documentation standards, decision/validation indexes, repo maps, tool adapters containing substantive instructions, and identifier/naming conventions;
+1. inventory active project governance before modifying `AGENTS.md`: root/scoped `AGENTS.md`, `.ai/`, project metadata/rule directories, documentation standards, decision/validation indexes, repo maps, tool adapters containing substantive instructions, identifier/naming conventions, and Registration Authority configuration;
 2. preserve any existing project router or reading order that is already useful;
 3. merge only the marked Foundation block into root `AGENTS.md`;
 4. outside the managed Foundation block, keep or add a concise project-owned discovery section that points to canonical project governance entrypoints when they are not otherwise discoverable;
@@ -55,8 +88,9 @@ If a project has a machine-readable repo map, preserve it. Add a minimal referen
 
 The transferred Foundation material originates from an MIT-licensed source. The manifest includes one mandatory attribution entry: `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`.
 
-- Transfer that notice together with the rules.
+- Transfer that notice together with the core material.
 - Preserve the complete MIT copyright and permission notice contained in it.
+- Selected optional Foundation capability files remain covered by the same Foundation source provenance.
 - Do not move the Foundation license into, replace, or rewrite the target repository's root `LICENSE`.
 - The notice applies only to transferred Foundation material; independently created target-project content remains governed by the target project's own licensing decisions.
 - If an existing Foundation notice differs, treat it as `MERGE_REQUIRED`. A semantic merge may add target-specific third-party information, but it must retain the complete Foundation MIT notice.
@@ -72,28 +106,29 @@ Do not replace a richer target model/cost policy with the four Foundation tier n
 
 ## Validation preservation contract
 
-Foundation installation must preserve the target repository's existing validation system. The Foundation validator covers only `FOUNDATION_INTEGRITY`: installed Foundation structure, provenance, adapters, deterministic Foundation contracts, and detectable drift.
+Foundation installation must preserve the target repository's existing validation system. The Foundation validator covers only `FOUNDATION_INTEGRITY`: installed Foundation structure, provenance, selected adapters/capabilities, deterministic Foundation contracts, and detectable drift.
 
-It does not establish `PROJECT_SEMANTIC` correctness for project-specific rules, local overrides, identifier mappings, architecture, domain behavior, or documentation contracts, and it does not establish `RUNTIME_EMPIRICAL` correctness for tests, builds, integrations, runtime behavior, research/data verification, migration execution, or manual procedures.
+It does not establish `PROJECT_SEMANTIC` correctness for project-specific rules, local overrides, identifier mappings, Registration Authority selection, architecture, domain behavior, or documentation contracts, and it does not establish `RUNTIME_EMPIRICAL` correctness for tests, builds, integrations, actual concurrency control, issue-tracker/service behavior, migration execution, or manual procedures.
 
 Do not remove, disable, weaken, or replace existing project validators, static documentation contracts, tests, reviews, or manual validation merely because Foundation validation exists. A local Foundation override may be reported as drift, but its semantic acceptability remains a target-project responsibility. Existing project validation statuses may be richer than the Foundation reserved meanings and should be preserved when compatible.
 
 ## Procedure
 
-1. Read `foundation/manifest.json`, the semantic integration policy, and the persistent identity policy when durable target identifiers exist or new identifier governance is being established.
-2. Inspect the target repository's current branch/ref, root/scoped instructions, active project governance, repo maps, adapter contents, identifier conventions, model-routing policy, privacy/license constraints, and validation infrastructure.
-3. Select `core` plus the adapters requested by the user/project. If none are specified, the manifest's `default_adapters` are recommendations, not mandatory.
+1. Read `foundation/manifest.json`, the semantic integration policy, the persistent identity policy when durable identifiers exist, and the artifact registration policy when allocation/creation is in scope.
+2. Inspect the target repository's current branch/ref, root/scoped instructions, active project governance, repo maps, adapter contents, identifier conventions, Registration Authority, model-routing policy, privacy/license constraints, and validation infrastructure.
+3. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities. Manifest defaults are recommendations where defined, not authority to replace target tooling.
 4. Build the deterministic file plan (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) and separately classify meaningful rule overlaps with the semantic compatibility classes.
 5. Preserve `EQUIVALENT`, `PROJECT_STRONGER`, `PROJECT_SELECTABLE_OVERRIDE`, and `COMPLEMENTARY` project behavior. Deduplicate `DUPLICATE_GOVERNANCE` without losing substance. Resolve `FOUNDATION_REQUIRED_CONFLICT`; report `TARGET_INTERNAL_CONFLICT` separately.
 6. For identifier governance, select or preserve the adoption mode. Existing convention plus no explicit decision means `PRESERVE`; a prospective change is `ADOPT_FORWARD`; historical renaming requires explicitly authorized `MIGRATE_EXPLICIT`.
-7. Never replace a differing existing file wholesale. For `AGENTS.md`, preserve all project-specific content and merge only the marked Foundation block, then ensure the active project governance remains discoverable from the root instruction tree.
-8. For existing adapter files, preserve unique rules before converting them to discovery-only form. Claude/Gemini/other adapters are optional unless the target actually selects them.
-9. Files under target `.ai/foundation/` are Foundation baseline rule/provenance copies. If one already differs, treat it as local override/drift and review the semantic difference; do not overwrite silently.
-10. Preserve the target README, root license, domain documentation, project context/state, backlog, decisions, implementation, project repo map, established identifier history, and project-validation infrastructure unless the user's separate task explicitly changes them.
-11. Run/perform `FOUNDATION_INTEGRITY` validation and verify the Foundation bridge, attribution, validation/integration/identity contracts, and selected adapters.
-12. Determine which target `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks are relevant to the integration changes and run/preserve them according to the target repository's own rules. For identity changes this may include uniqueness, alias, relation-resolution, migration-mapping, and external-system synchronization checks. Do not invent unrelated full-suite requirements.
-13. Report the file plan, semantic classifications, identifier adoption mode, discovery fixes, adapter-rule moves, model-routing mapping if any, privacy/provenance exception if any, unresolved conflicts, and validation results by scope.
+7. For artifact creation, preserve or establish one Registration Authority per overlapping scope. Do not let humans, AI, Python, PowerShell, or another client allocate independently of it.
+8. Never replace a differing existing file wholesale. For `AGENTS.md`, preserve all project-specific content and merge only the marked Foundation block, then ensure the active project governance remains discoverable from the root instruction tree.
+9. For existing adapter files, preserve unique rules before converting them to discovery-only form. Claude/Gemini/other adapters are optional unless the target actually selects them.
+10. Files under target `.ai/foundation/` are Foundation baseline rule/provenance/schema or selected capability copies. If one already differs, treat it as local override/drift and review the semantic difference; do not overwrite silently.
+11. Preserve the target README, root license, domain documentation, project context/state, backlog, decisions, implementation, project repo map, established identifier history, project allocator, and project-validation infrastructure unless the user's separate task explicitly changes them.
+12. Run/perform `FOUNDATION_INTEGRITY` validation and verify the Foundation bridge, attribution, validation/integration/identity/registration contracts, selected adapters, and selected capabilities.
+13. Determine which target `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks are relevant. For registration this may include uniqueness, registry revision, locking, DB constraints, issue-tracker/service integration, deferred registration, recovery, and cross-client behavior.
+14. Report the file plan, selected capabilities, semantic classifications, identifier adoption mode, Registration Authority/allocation mode, discovery fixes, adapter-rule moves, model-routing mapping if any, privacy/provenance exception if any, unresolved conflicts, and validation results by scope.
 
 ## Authorization
 
-The user's instruction to apply the Foundation to a target repository authorizes the ordinary file creation and compatible semantic merges described above. It does not authorize a historical identifier migration unless that migration is explicitly selected. Do not ask for repeated confirmation for each file. Stop only for a real unresolved semantic conflict, unresolved data-handling boundary, unexpected target/scope, destructive identifier migration without explicit authority, or another explicit gate.
+The user's instruction to apply the Foundation to a target repository authorizes the ordinary file creation and compatible semantic merges described above. It does not authorize a historical identifier migration unless that migration is explicitly selected, and it does not authorize replacement of an established project Registration Authority merely because optional Foundation clients exist. Do not ask for repeated confirmation for each file. Stop only for a real unresolved semantic conflict, unresolved data-handling boundary, unexpected target/scope, destructive identifier migration without explicit authority, or another explicit gate.
