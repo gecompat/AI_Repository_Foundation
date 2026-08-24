@@ -37,6 +37,9 @@ decisions:
   index: Documentation/Architecture/DECISIONS.md
 transfer:
   manifest: foundation/manifest.json
+  version_authority: foundation/manifest.json#ruleset_version
+  coverage_contract: foundation/manifest.json#transfer_coverage_contract
+  completeness_guard: tools/transfer_manifest_guard.py
   ai_protocol: foundation/AI_TRANSFER.md
   semantic_integration_policy: Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
   persistent_identity_policy: Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
@@ -44,7 +47,9 @@ transfer:
   artifact_registration_schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
 validation:
+  transfer_completeness_command: python tools/transfer_manifest_guard.py
   foundation_command: python tools/foundation_validator.py
+  complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
   target_command: python tools/foundation_validator.py --target TARGET
 installation:
   command: python tools/install_foundation.py TARGET
