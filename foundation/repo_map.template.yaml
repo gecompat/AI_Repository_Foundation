@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.4.0
+foundation_ruleset_version: 1.5.0
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -8,6 +8,8 @@ authority:
     - .ai/foundation/SEMANTIC_INTEGRATION_POLICY.md
     - .ai/foundation/PERSISTENT_IDENTITY_POLICY.md
     - .ai/foundation/ARTIFACT_REGISTRATION_POLICY.md
+    - .ai/foundation/UPGRADE_APPLICABILITY_POLICY.md
+    - .ai/foundation/feature_catalog.json
     - .ai/foundation/WORKING_RULES.md
     - .ai/foundation/MODEL_ROUTING_POLICY.md
     - .ai/foundation/VALIDATION_POLICY.md
@@ -21,6 +23,8 @@ authority:
     - .ai/foundation/schemas/artifact-record.schema.json
     - .ai/foundation/schemas/artifact-registry.schema.json
     - .ai/foundation/schemas/artifact-registration-request.schema.json
+    - .ai/foundation/schemas/feature-catalog.schema.json
+    - .ai/foundation/schemas/upgrade-assessment.schema.json
 provenance:
   foundation_notice: .ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md
   target_root_license_behavior: independent_and_untouched
@@ -74,6 +78,17 @@ registration_contract:
   final_human_reference_must_be_authority_allocated: true
   reference_clients: optional_capability
   reference_client_capability: artifact-registration-clients
+upgrade_contract:
+  policy: .ai/foundation/UPGRADE_APPLICABILITY_POLICY.md
+  feature_catalog: .ai/foundation/feature_catalog.json
+  feature_catalog_schema: .ai/foundation/schemas/feature-catalog.schema.json
+  assessment_schema: .ai/foundation/schemas/upgrade-assessment.schema.json
+  complete_feature_delta_required: true
+  candidate_definition: introduced_or_materially_changed_after_installed_through_source_version
+  assessment_classifications: NOT_APPLICABLE_ALREADY_EQUIVALENT_PROJECT_STRONGER_APPLY_DEFAULT_RECOMMENDED_DECISION_REQUIRED_CONFLICT
+  silent_skip_prohibited: true
+  surface_results: RECOMMENDED_DECISION_REQUIRED_CONFLICT
+  unknown_installed_version_behavior: resolve_baseline_or_conservative_assessment
 validation_contract:
   foundation_integrity:
     label: FOUNDATION_INTEGRITY
