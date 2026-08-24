@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.4.0
+- version: 1.5.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -11,10 +11,14 @@ Status: AUTHORITATIVE
 - ruleset_version_authority: `foundation/manifest.json#ruleset_version`
 - transfer_coverage_contract: `foundation/manifest.json#transfer_coverage_contract`
 - transfer_completeness_guard: `tools/transfer_manifest_guard.py`
+- semantic_feature_catalog: `foundation/feature_catalog.json`
+- semantic_feature_guard: `tools/feature_catalog_guard.py`
+- semantic_upgrade_delta_tool: `tools/upgrade_applicability.py`
 - direct_ai_transfer: `foundation/AI_TRANSFER.md`
 - semantic_integration_policy: `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md`
 - persistent_identity_policy: `Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md`
 - artifact_registration_policy: `Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md`
+- upgrade_applicability_policy: `Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md`
 - registration_schemas: `foundation/schemas/`
 - transfer_model: explicit core whitelist plus semantic integration and explicitly selected optional capabilities
 - attribution_notice: `foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md` -> target `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`
@@ -22,6 +26,7 @@ Status: AUTHORITATIVE
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
 - registration_contract: one Registration Authority per overlapping final-reference scope; humans and AI use the same authority; `DIRECT` or `DEFERRED` allocation semantics are language-neutral
+- upgrade_contract: complete introduced/materially-changed feature delta; exactly one applicability classification per candidate; recommendations/decisions/conflicts surfaced explicitly
 - python_runtime_required: false
 - powershell_reference_client: supported first-class
 - optional_capabilities: `artifact-registration-clients` installs both Python and PowerShell reference clients only when selected
@@ -29,9 +34,21 @@ Status: AUTHORITATIVE
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none
 
+## Foundation source-project identity profile
+
+The Foundation source repository itself uses its own persistent-identity model under explicit `MIGRATE_EXPLICIT`:
+
+- active work items use `WI-*`;
+- durable decisions use `DEC-*`;
+- `.ai/identity/registry.json` is the source-project Registration Authority state;
+- `Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md` preserves the old `FND-*` aliases;
+- new final Foundation project references are allocated through that authority, never inferred by scanning Markdown.
+
+This source-project profile is not transferable target governance and is intentionally kept outside the manifest transfer payload.
+
 Versioning follows Semantic Versioning. PATCH fixes defects without new governance requirements; MINOR adds backward-compatible rules/capabilities/adapters or improves installation/integration semantics; MAJOR changes authority or governance incompatibly.
 
-The Foundation repository and the transferable rule set have separate scopes. Project README, root LICENSE, changelog, project context, status, handover, backlog, roadmap, Foundation-internal decisions, tests, and unlisted tools are Foundation-project artifacts and are never transferred merely because they exist. The manifest may explicitly whitelist optional capability files; those files are transferred only when the capability is selected. The dedicated attribution notice is the Foundation licensing/provenance artifact included with transferred material.
+The Foundation repository and the transferable rule set have separate scopes. Project README, root LICENSE, changelog, project context, status, handover, backlog, roadmap, Foundation-internal decisions, identity registry, tests, and unlisted tools are Foundation-project artifacts and are never transferred merely because they exist. The manifest may explicitly whitelist optional capability files; those files are transferred only when the capability is selected. The dedicated attribution notice is the Foundation licensing/provenance artifact included with transferred material.
 
 For existing repositories, semantic integration preserves target-owned governance. Foundation `REQUIRED` rules are minimum floors; stricter target rules are compatible. Existing target policy vocabularies do not need to be rewritten into Foundation terms when a semantic mapping is sufficient.
 
@@ -39,8 +56,10 @@ Persistent identifier integration follows the same compatibility rule. Existing 
 
 Artifact registration is implementation-language neutral. Existing compatible issue trackers, databases, services, scripts/modules, and applications remain valid Registration Authorities. Humans and AI must use the same authority for the same scope; Foundation reference clients do not replace project tooling implicitly.
 
-Transfer completeness is part of source-project correctness. `foundation/manifest.json#ruleset_version` is the single version authority. Managed reusable policies, schemas, and capability payloads must be classified by the manifest in the same change that introduces them. `tools/transfer_manifest_guard.py` blocks unclassified managed sources, capability payloads outside registered roots, unresolved contract mappings, and version-mirror drift. A stale installed target version is not evidence about current source capability availability.
+Foundation upgrades are semantic as well as file-based. `foundation/feature_catalog.json` records when reusable features were introduced or materially changed, their transfer sources, applicability signals, and recommendation/decision semantics. An upgrade from an older installed version must assess every catalog candidate; relevant improvements such as persistent identity/nomenclature must be surfaced without relying on the user to remember to ask.
+
+Transfer completeness is part of source-project correctness. `foundation/manifest.json#ruleset_version` is the single version authority. Managed reusable policies, schemas, and capability payloads must be classified by the manifest in the same change that introduces them. `tools/transfer_manifest_guard.py` blocks unclassified managed sources, capability payloads outside registered roots, unresolved contract mappings, and version-mirror drift. `tools/feature_catalog_guard.py` additionally blocks transferable sources that lack semantic feature coverage and, in changed-source CI, requires a ruleset bump plus feature-catalog review for every changed transferable source. A stale installed target version is not evidence about current source capability availability.
 
 Foundation validation establishes deterministic Foundation integration/integrity only. Project-specific semantic validation and runtime/empirical validation remain target-repository responsibilities and are not replaced by Foundation installation.
 
-Upgrades are explicit and impact-based. Never auto-upgrade or auto-downgrade a target repository. Classify file states as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`, then use the semantic integration classes for meaningful rule overlaps. Preserve project-specific rules, identifier history, Registration Authorities, and project-selected tooling and report real conflicts rather than normalizing the target repository to Foundation wording.
+Upgrades are explicit and impact-based. Never auto-upgrade or auto-downgrade a target repository. Compute the complete semantic feature delta before selecting project choices, classify file states as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`, then use the semantic integration classes for meaningful rule overlaps. Preserve project-specific rules, identifier history, Registration Authorities, and project-selected tooling and report real conflicts rather than normalizing the target repository to Foundation wording.
