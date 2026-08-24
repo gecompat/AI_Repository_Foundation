@@ -12,10 +12,12 @@ Existing projects default to `PRESERVE`. `ADOPT_FORWARD` may introduce the impro
 
 The identity policy is transferred through `foundation/manifest.json`, indexed in the target `repo_map`, incorporated into semantic integration/direct AI transfer, and checked by Foundation validator/tests. Target-specific historical identifier correctness remains `PROJECT_SEMANTIC`/`RUNTIME_EMPIRICAL`, not something a generic Foundation validator can prove.
 
+Foundation CI run `32708542537` validated implementation head `a1f5463d5d32d0e04394303fd6f6aac8846810ce`; both the Foundation validator and installation-model test job steps succeeded. FND-010 is therefore complete for its deterministic contract. The evidence-only closing commits must still pass the final PR-head CI before merge.
+
 ## Next actions
 
-1. Open the v1.3 persistent-identity pull request and run `Foundation CI` on its head.
-2. If CI is green, record the exact run/head as FND-010 evidence, mark FND-010 `done`, and merge the coherent v1.3 change according to repository workflow.
+1. Confirm `Foundation CI` on the final evidence/PR head.
+2. Merge PR #7 only after that final CI result is green.
 3. Execute `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md` with a genuinely fresh AI session/test target when available; do not claim it as executed beforehand.
 4. Complete FND-001 only after that separate manual acceptance is recorded.
 
