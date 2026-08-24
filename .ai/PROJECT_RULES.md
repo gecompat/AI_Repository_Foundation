@@ -10,6 +10,19 @@ Status: AUTHORITATIVE
 
 Existing target rules do not need to adopt these labels. During integration, classify their semantics under `SEMANTIC_INTEGRATION_POLICY.md` instead of rewriting project governance merely for terminology consistency.
 
+## Foundation source-project identifier profile
+
+The Foundation source project itself has explicitly completed `MIGRATE_EXPLICIT` for its planning identifiers. This source-project choice does not force the same migration on target repositories.
+
+- Active Foundation work items use registered `WI-<SEQUENCE>` references.
+- Durable decisions use registered `DEC-<SEQUENCE>` references.
+- `.ai/identity/registry.json` is the Foundation project's Registration Authority state for final sequential project references.
+- `Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md` is the authoritative historical mapping from `FND-*` aliases to preferred `WI-*` references.
+- Historical `FND-*` aliases are reserved forever and MUST NOT be reassigned.
+- New Foundation source-project work items MUST NOT use `FND-*`, wave, phase, date, owner, or hierarchy as canonical identity.
+- Humans and AI MUST allocate new final `WI-*`, `DEC-*`, or other sequential Foundation project references through the registered authority; scanning Markdown for the highest visible number is prohibited.
+- Roadmap/release labels such as `v1.5` are planning/release metadata, not artifact identities.
+
 ## Required
 
 - Classify information by handling requirements; being real is not by itself a stop condition.
