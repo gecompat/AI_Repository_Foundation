@@ -26,10 +26,14 @@ PROJECT_REQUIRED = [
     "Documentation/Standards/DEPENDENCY_POLICY.md",
     "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
     "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md",
+    "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md",
     "Documentation/Quality/KNOWN_LIMITATIONS.md",
     "foundation/manifest.json", "foundation/AI_TRANSFER.md", "foundation/AGENTS.template.md",
     "foundation/FOUNDATION_RULESET.template.md", "foundation/repo_map.template.yaml",
     "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md",
+    "foundation/schemas/artifact-record.schema.json",
+    "foundation/schemas/artifact-registry.schema.json",
+    "foundation/schemas/artifact-registration-request.schema.json",
     "tools/install_foundation.py", "tools/foundation_validator.py",
 ]
 
@@ -102,6 +106,26 @@ IDENTITY_CONTRACT = {
     "migration_requires_explicit_decision": True,
     "unknown_existing_project_choice": "PRESERVE",
 }
+REGISTRATION_CONTRACT = {
+    "policy_source": "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md",
+    "policy_target": ".ai/foundation/ARTIFACT_REGISTRATION_POLICY.md",
+    "schema_targets": [
+        ".ai/foundation/schemas/artifact-record.schema.json",
+        ".ai/foundation/schemas/artifact-registry.schema.json",
+        ".ai/foundation/schemas/artifact-registration-request.schema.json",
+    ],
+    "authority_scope": "one_registration_authority_per_overlapping_identifier_scope",
+    "same_authority_for_humans_and_ai": True,
+    "implementation_language": "project_selectable",
+    "python_required": False,
+    "powershell_supported": True,
+    "allocation_modes": ["DIRECT", "DEFERRED"],
+    "direct_requires_serialized_or_equivalent_unique_allocation": True,
+    "deferred_uid_is_final_before_human_reference": True,
+    "final_human_reference_must_be_authority_allocated": True,
+    "reference_clients": "optional_capability",
+    "reference_clients_must_match_shared_contract": True,
+}
 MODEL_ROUTING_CONTRACT = {
     "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
     "target_policy_may_be_more_detailed": True,
@@ -135,6 +159,15 @@ IDENTITY_MAP_MARKERS = [
     "unknown_existing_project_choice: PRESERVE",
     "hierarchy_and_status: metadata_not_canonical_identity",
 ]
+REGISTRATION_MAP_MARKERS = [
+    ".ai/foundation/ARTIFACT_REGISTRATION_POLICY.md",
+    "same_authority_for_humans_and_ai: true",
+    "implementation_language: project_selectable",
+    "python_required: false",
+    "powershell_supported: true",
+    "allocation_modes: DIRECT_DEFERRED",
+    "reference_clients: optional_capability",
+]
 
 results: list[dict] = []
 
@@ -147,19 +180,27 @@ def load_manifest() -> dict:
     return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
 
-def selected_rows(manifest: dict, adapter_selection: str) -> list[dict]:
-    if adapter_selection == "default":
-        names = list(manifest.get("default_adapters", []))
-    elif adapter_selection == "none":
+def parse_selection(manifest: dict, raw: str, *, section: str, default_key: str) -> list[str]:
+    if raw == "default":
+        names = list(manifest.get(default_key, []))
+    elif raw == "none":
         names = []
     else:
-        names = [part.strip() for part in adapter_selection.split(",") if part.strip()]
-    unknown = sorted(set(names) - set(manifest.get("adapters", {})))
+        names = [part.strip() for part in raw.split(",") if part.strip()]
+    unknown = sorted(set(names) - set(manifest.get(section, {})))
     if unknown:
-        raise ValueError(f"unknown adapter(s): {', '.join(unknown)}")
+        raise ValueError(f"unknown {section.rstrip('s')}(s): {', '.join(unknown)}")
+    return names
+
+
+def selected_rows(manifest: dict, adapter_selection: str, capability_selection: str = "none") -> list[dict]:
+    adapters = parse_selection(manifest, adapter_selection, section="adapters", default_key="default_adapters")
+    capabilities = parse_selection(manifest, capability_selection, section="capabilities", default_key="default_capabilities")
     rows = list(manifest.get("core", []))
-    for name in names:
+    for name in adapters:
         rows.extend(manifest["adapters"][name])
+    for name in capabilities:
+        rows.extend(manifest.get("capabilities", {})[name])
     return rows
 
 
@@ -218,6 +259,14 @@ def validate_manifest(manifest: dict) -> None:
             if identity_contract.get(key) != expected:
                 add("ERROR", "IDENTITY_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
 
+    registration_contract = manifest.get("registration_contract")
+    if not isinstance(registration_contract, dict):
+        add("BLOCKING", "REGISTRATION_CONTRACT", "foundation/manifest.json", "registration_contract is required")
+    else:
+        for key, expected in REGISTRATION_CONTRACT.items():
+            if registration_contract.get(key) != expected:
+                add("ERROR", "REGISTRATION_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
+
     model_contract = manifest.get("model_routing_contract")
     if not isinstance(model_contract, dict):
         add("BLOCKING", "MODEL_ROUTING_CONTRACT", "foundation/manifest.json", "model_routing_contract is required")
@@ -228,11 +277,12 @@ def validate_manifest(manifest: dict) -> None:
 
     targets: set[str] = set()
     rows = list(manifest.get("core", []))
-    for name, adapter_rows in manifest.get("adapters", {}).items():
-        if not isinstance(adapter_rows, list):
-            add("ERROR", "ADAPTER_SCHEMA", f"adapter:{name}", "adapter value must be a list")
-            continue
-        rows.extend(adapter_rows)
+    for section_name in ["adapters", "capabilities"]:
+        for name, section_rows in manifest.get(section_name, {}).items():
+            if not isinstance(section_rows, list):
+                add("ERROR", "MODULE_SCHEMA", f"{section_name}:{name}", "module value must be a list")
+                continue
+            rows.extend(section_rows)
 
     for row in rows:
         source = row.get("source", "")
@@ -267,9 +317,23 @@ def validate_manifest(manifest: dict) -> None:
     if len(identity_rows) != 1:
         add("BLOCKING", "IDENTITY_POLICY_MAPPING", "foundation/manifest.json", "persistent identity policy must be transferred exactly once")
 
+    registration_rows = [
+        row for row in rows
+        if row.get("source") == REGISTRATION_CONTRACT["policy_source"]
+        and row.get("target") == REGISTRATION_CONTRACT["policy_target"]
+    ]
+    if len(registration_rows) != 1:
+        add("BLOCKING", "REGISTRATION_POLICY_MAPPING", "foundation/manifest.json", "artifact registration policy must be transferred exactly once")
+    for schema_target in REGISTRATION_CONTRACT["schema_targets"]:
+        if sum(row.get("target") == schema_target for row in rows) != 1:
+            add("BLOCKING", "REGISTRATION_SCHEMA_MAPPING", schema_target, "registration schema must be transferred exactly once")
+
     for adapter in manifest.get("default_adapters", []):
         if adapter not in manifest.get("adapters", {}):
             add("ERROR", "DEFAULT_ADAPTER", adapter, "default adapter is not defined")
+    for capability in manifest.get("default_capabilities", []):
+        if capability not in manifest.get("capabilities", {}):
+            add("ERROR", "DEFAULT_CAPABILITY", capability, "default capability is not defined")
 
     attribution = manifest.get("attribution")
     if not isinstance(attribution, dict) or not attribution.get("required"):
@@ -320,6 +384,7 @@ def validate_foundation(profile: str) -> None:
             "Documentation/Standards/DEPENDENCY_POLICY.md",
             "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
             "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md",
+            "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md",
             "Documentation/Architecture/DECISIONS.md",
         ]:
             if rel not in text:
@@ -331,6 +396,7 @@ def validate_foundation(profile: str) -> None:
         validate_markers(map_text, "foundation/repo_map.template.yaml", "VALIDATION_SCOPE_MAP", VALIDATION_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "INTEGRATION_SCOPE_MAP", INTEGRATION_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
+        validate_markers(map_text, "foundation/repo_map.template.yaml", "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
 
     agents_template = ROOT / "foundation" / "AGENTS.template.md"
     if agents_template.is_file():
@@ -357,10 +423,10 @@ def validate_foundation(profile: str) -> None:
             add("ERROR", "PENDING_RELEASE_VALIDATION", ".ai/PROJECT_STATUS.md", "release profile still contains pending validation")
 
 
-def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
+def validate_target(target: Path, adapter_selection: str, capability_selection: str, profile: str) -> None:
     try:
         manifest = load_manifest()
-        rows = selected_rows(manifest, adapter_selection)
+        rows = selected_rows(manifest, adapter_selection, capability_selection)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         add("BLOCKING", "MANIFEST_READ", "foundation/manifest.json", str(exc))
         return
@@ -383,6 +449,12 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
         ".",
         "Foundation validator verifies the installed identity contract but cannot prove that an arbitrary target's historical identifiers, aliases, relations, or migration mappings are semantically correct. Review them under PROJECT_SEMANTIC and RUNTIME_EMPIRICAL when affected.",
     )
+    add(
+        "INFO",
+        "PROJECT_REGISTRATION_AUTHORITY_OUT_OF_SCOPE",
+        ".",
+        "Foundation validator verifies the installed registration contract and selected reference-client files, but cannot prove that a target-specific issue tracker, service, database, or allocator is the correct serialized Registration Authority. Review that under PROJECT_SEMANTIC/RUNTIME_EMPIRICAL.",
+    )
 
     selected_paths: list[Path] = []
     required_mit_notice = (ROOT / "LICENSE").read_text(encoding="utf-8")
@@ -391,7 +463,7 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
         destination = target / row["target"]
         display = row["target"]
         if not destination.is_file():
-            add("ERROR", "MISSING_TARGET_RULE", display, "selected Foundation rule/adapter is missing")
+            add("ERROR", "MISSING_TARGET_RULE", display, "selected Foundation rule/adapter/capability is missing")
             continue
         selected_paths.append(destination)
         text = destination.read_text(encoding="utf-8", errors="replace")
@@ -408,12 +480,13 @@ def validate_target(target: Path, adapter_selection: str, profile: str) -> None:
             validate_markers(text, display, "VALIDATION_SCOPE_MAP", VALIDATION_MAP_MARKERS)
             validate_markers(text, display, "INTEGRATION_SCOPE_MAP", INTEGRATION_MAP_MARKERS)
             validate_markers(text, display, "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
+            validate_markers(text, display, "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
         if display.startswith(".ai/foundation/") and source.is_file() and destination.read_bytes() != source.read_bytes():
             add(
                 "WARNING",
                 "LOCAL_OVERRIDE_OR_DRIFT",
                 display,
-                "installed Foundation rule/provenance file differs from current source; this detects drift only and does not establish semantic correctness of the override",
+                "installed Foundation rule/provenance/capability file differs from current source; this detects drift only and does not establish semantic correctness of the override",
             )
 
     if profile != "quick":
@@ -425,13 +498,14 @@ def main(argv: list[str] | None = None) -> int:
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--target", type=Path, help="validate installed rules in another repository")
     parser.add_argument("--adapters", default="default", help="default, none, or comma-separated adapter names")
+    parser.add_argument("--capabilities", default="none", help="default, none, or comma-separated optional capability names")
     parser.add_argument("--profile", choices=["quick", "commit", "full", "release"], default="full")
     parser.add_argument("--json", action="store_true", dest="json_output")
     args = parser.parse_args(argv)
 
     results.clear()
     if args.target:
-        validate_target(args.target.resolve(), args.adapters, args.profile)
+        validate_target(args.target.resolve(), args.adapters, args.capabilities, args.profile)
         validation_scope = "FOUNDATION_INTEGRITY"
     else:
         validate_foundation(args.profile)
