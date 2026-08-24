@@ -215,14 +215,15 @@ function Add-Allocation([hashtable]$Registry, [string]$KindValue, [string]$Artif
     return $ref
 }
 
-function New-ArtifactRecord([string]$ArtifactUid, [AllowNull()][string]$Ref, [string]$KindValue, [string]$TitleValue) {
+function New-ArtifactRecord([string]$ArtifactUid, [AllowNull()]$Ref, [string]$KindValue, [string]$TitleValue) {
+    $isRegistered = $null -ne $Ref -and -not [string]::IsNullOrWhiteSpace([string]$Ref)
     return [ordered]@{
         schema_version     = 1
         artifact_uid       = $ArtifactUid
         human_ref          = $Ref
         kind               = $KindValue
         title              = $TitleValue
-        registration_state = $(if ($null -ne $Ref) { 'REGISTERED' } else { 'DRAFT' })
+        registration_state = $(if ($isRegistered) { 'REGISTERED' } else { 'DRAFT' })
         aliases            = @()
         external_refs      = @()
         relations          = @()
