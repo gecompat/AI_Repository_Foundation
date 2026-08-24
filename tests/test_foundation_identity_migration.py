@@ -27,10 +27,13 @@ class FoundationIdentityMigrationTests(unittest.TestCase):
         self.assertEqual(registry["prefixes"]["DEC"]["next_sequence"], 15)
 
     def test_historical_fnd_aliases_are_mapped_one_to_one(self) -> None:
-        mapping = (ROOT / "Documentation" / "Architecture" / "IDENTIFIER_MIGRATION_2026-08-24.md").read_text(encoding="utf-8")
+        mapping_path = ROOT / "Documentation" / "Architecture" / "IDENTIFIER_MIGRATION_2026-08-24.md"
+        mapping = mapping_path.read_text(encoding="utf-8")
         for index in range(1, 13):
             self.assertIn(f"`FND-{index:03d}` | `WI-{index:04d}`", mapping)
-        self.assertIn("FND-*` aliases are reserved forever", (ROOT / ".ai" / "FOUNDATION.md").read_text(encoding="utf-8"))
+        repo_map = (ROOT / ".ai" / "repo_map.yaml").read_text(encoding="utf-8")
+        self.assertIn("historical_alias_mapping: Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md", repo_map)
+        self.assertIn("migration_mode: MIGRATE_EXPLICIT", repo_map)
 
     def test_source_project_identity_is_not_transfer_payload(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
