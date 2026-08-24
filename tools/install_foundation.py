@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""Plan or install only manifest-whitelisted AI Repository Foundation rules."""
+"""Plan or install manifest-whitelisted AI Repository Foundation core and optional modules."""
 
 from __future__ import annotations
 
@@ -33,22 +33,37 @@ def load_manifest() -> dict:
     return json.loads(MANIFEST_PATH.read_text(encoding="utf-8"))
 
 
-def parse_adapters(manifest: dict, raw: str) -> list[str]:
+def parse_selection(manifest: dict, raw: str, *, section: str, default_key: str) -> list[str]:
     if raw == "default":
-        return list(manifest.get("default_adapters", []))
+        return list(manifest.get(default_key, []))
     if raw == "none":
         return []
     names = [name.strip() for name in raw.split(",") if name.strip()]
-    unknown = sorted(set(names) - set(manifest.get("adapters", {})))
+    unknown = sorted(set(names) - set(manifest.get(section, {})))
     if unknown:
-        raise ValueError(f"unknown adapter(s): {', '.join(unknown)}")
+        raise ValueError(f"unknown {section.rstrip('s')}(s): {', '.join(unknown)}")
     return names
 
 
-def transfer_entries(manifest: dict, adapters: list[str]) -> list[TransferEntry]:
+def parse_adapters(manifest: dict, raw: str) -> list[str]:
+    return parse_selection(manifest, raw, section="adapters", default_key="default_adapters")
+
+
+def parse_capabilities(manifest: dict, raw: str) -> list[str]:
+    return parse_selection(manifest, raw, section="capabilities", default_key="default_capabilities")
+
+
+def transfer_entries(
+    manifest: dict,
+    adapters: list[str],
+    capabilities: list[str] | None = None,
+) -> list[TransferEntry]:
     rows = list(manifest["core"])
     for adapter in adapters:
         rows.extend(manifest["adapters"][adapter])
+    for capability in capabilities or []:
+        rows.extend(manifest.get("capabilities", {})[capability])
+
     result = []
     seen_targets: set[Path] = set()
     for row in rows:
@@ -103,6 +118,11 @@ def main(argv: list[str] | None = None) -> int:
         default="default",
         help="default, none, or comma-separated adapter names",
     )
+    parser.add_argument(
+        "--capabilities",
+        default="none",
+        help="default, none, or comma-separated optional capability names",
+    )
     parser.add_argument("--apply", action="store_true", help="create missing files after a clean plan")
     parser.add_argument("--json", action="store_true", dest="json_output")
     args = parser.parse_args(argv)
@@ -115,7 +135,8 @@ def main(argv: list[str] | None = None) -> int:
     try:
         manifest = load_manifest()
         adapters = parse_adapters(manifest, args.adapters)
-        entries = transfer_entries(manifest, adapters)
+        capabilities = parse_capabilities(manifest, args.capabilities)
+        entries = transfer_entries(manifest, adapters, capabilities)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"[BLOCK] {exc}")
         return 2

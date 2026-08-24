@@ -16,7 +16,11 @@ jobs:
       - uses: actions/setup-python@v5
         with:
           python-version: '3.12'
+      - name: Verify PowerShell reference-client runtime
+        shell: pwsh
+        run: |
+          $PSVersionTable.PSVersion.ToString()
       - name: Validate Foundation project and transfer manifest
         run: python tools/foundation_validator.py --profile full
-      - name: Run installation-model tests
+      - name: Run installation and cross-language contract tests
         run: python -m unittest discover -s tests -v

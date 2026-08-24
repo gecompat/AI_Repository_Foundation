@@ -33,9 +33,20 @@ Initial governance, metadata, adapters, bootstrap skeleton, and validator skelet
 - fork/template/repository split/merge identity semantics;
 - machine-readable identity contract and validator/test coverage.
 
+## v1.4 — Language-neutral artifact registration
+
+- one Registration Authority per overlapping final-reference scope;
+- same authority for human and AI creation;
+- `DIRECT` serialized allocation and `DEFERRED` permanent-UID-first workflow;
+- core language-neutral registration policy and JSON Schemas;
+- preservation of compatible target issue-tracker/database/service/project allocators;
+- opt-in reference-client capability rather than mandatory target runtime;
+- independent Python and PowerShell reference clients with shared deterministic contract fixtures;
+- capability-aware installer, target validator, and cross-language CI.
+
 ## Later
 
-- optional adapter/capability modules beyond the core;
+- optional adapter/capability modules beyond current registration clients;
 - stronger drift hashes and upgrade planning under FND-002;
 - packaged release artifacts only if they add value beyond manifest-driven transfer;
-- optional reference implementation for project-owned identity registries/resolvers only if multiple target repositories demonstrate that a shared serialization/tool adds value beyond the policy contract.
+- evaluate additional reference clients or GUI/IDE frontends only when target-project evidence justifies them; keep the registration protocol independent of any client implementation.

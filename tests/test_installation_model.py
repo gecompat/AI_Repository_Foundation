@@ -25,6 +25,8 @@ class InstallationModelTests(unittest.TestCase):
         targets = {row["target"] for row in self.manifest["core"]}
         for rows in self.manifest["adapters"].values():
             targets.update(row["target"] for row in rows)
+        for rows in self.manifest.get("capabilities", {}).values():
+            targets.update(row["target"] for row in rows)
         forbidden = {"README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore"}
         self.assertTrue(targets.isdisjoint(forbidden))
         self.assertFalse(any(path.startswith("Documentation/Architecture/") for path in targets))
@@ -67,6 +69,47 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("ADOPT_FORWARD", text)
             self.assertIn("MIGRATE_EXPLICIT", text)
             self.assertIn("urn:uuid:<uuid>", text)
+
+    def test_artifact_registration_policy_and_schemas_are_core(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                rc = install_foundation.main([str(target), "--adapters", "none", "--apply"])
+            self.assertEqual(rc, 0)
+            policy = target / ".ai" / "foundation" / "ARTIFACT_REGISTRATION_POLICY.md"
+            self.assertTrue(policy.is_file())
+            text = policy.read_text(encoding="utf-8")
+            self.assertIn("Registration Authority", text)
+            self.assertIn("Humans and AI systems MUST use the same authority", text)
+            self.assertIn("Python", text)
+            self.assertIn("PowerShell", text)
+            for name in [
+                "artifact-record.schema.json",
+                "artifact-registry.schema.json",
+                "artifact-registration-request.schema.json",
+            ]:
+                schema = target / ".ai" / "foundation" / "schemas" / name
+                self.assertTrue(schema.is_file(), name)
+                self.assertEqual(json.loads(schema.read_text(encoding="utf-8"))["$schema"], "https://json-schema.org/draft/2020-12/schema")
+
+    def test_reference_clients_are_opt_in_capability(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                self.assertEqual(install_foundation.main([str(target), "--adapters", "none", "--apply"]), 0)
+            client_dir = target / ".ai" / "foundation" / "reference_clients"
+            self.assertFalse(client_dir.exists())
+
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                rc = install_foundation.main([
+                    str(target), "--adapters", "none", "--capabilities", "artifact-registration-clients", "--apply"
+                ])
+            self.assertEqual(rc, 0)
+            client_dir = target / ".ai" / "foundation" / "reference_clients"
+            self.assertTrue((client_dir / "artifact_reference.py").is_file())
+            self.assertTrue((client_dir / "ArtifactReference.ps1").is_file())
 
     def test_second_install_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -163,6 +206,21 @@ class InstallationModelTests(unittest.TestCase):
         self.assertIn("legacy_identifier_preservation", contract["required_invariants"])
         self.assertIn("identifiers_are_not_authorization", contract["required_invariants"])
 
+    def test_registration_contract_is_machine_readable(self) -> None:
+        contract = self.manifest["registration_contract"]
+        self.assertEqual(contract["policy_target"], ".ai/foundation/ARTIFACT_REGISTRATION_POLICY.md")
+        self.assertTrue(contract["same_authority_for_humans_and_ai"])
+        self.assertEqual(contract["implementation_language"], "project_selectable")
+        self.assertFalse(contract["python_required"])
+        self.assertTrue(contract["powershell_supported"])
+        self.assertEqual(contract["allocation_modes"], ["DIRECT", "DEFERRED"])
+        self.assertTrue(contract["direct_requires_serialized_or_equivalent_unique_allocation"])
+        self.assertTrue(contract["deferred_uid_is_final_before_human_reference"])
+        self.assertTrue(contract["final_human_reference_must_be_authority_allocated"])
+        self.assertEqual(contract["reference_clients"], "optional_capability")
+        self.assertTrue(contract["reference_clients_must_match_shared_contract"])
+        self.assertEqual(self.manifest["default_capabilities"], [])
+
     def test_model_routing_contract_preserves_richer_project_policy(self) -> None:
         contract = self.manifest["model_routing_contract"]
         self.assertEqual(contract["foundation_tiers"], ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"])
@@ -191,6 +249,31 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("PROJECT_VALIDATION_OUT_OF_SCOPE", codes)
             self.assertIn("PROJECT_GOVERNANCE_DISCOVERY_SEMANTIC", codes)
             self.assertIn("PROJECT_IDENTITY_SEMANTICS_OUT_OF_SCOPE", codes)
+            self.assertIn("PROJECT_REGISTRATION_AUTHORITY_OUT_OF_SCOPE", codes)
+
+    def test_target_validator_covers_selected_reference_clients(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            with redirect_stdout(StringIO()):
+                self.assertEqual(install_foundation.main([
+                    str(target), "--adapters", "none", "--capabilities", "artifact-registration-clients", "--apply"
+                ]), 0)
+            output = StringIO()
+            with redirect_stdout(output):
+                rc = foundation_validator.main([
+                    "--target", str(target), "--adapters", "none", "--capabilities", "artifact-registration-clients", "--json"
+                ])
+            self.assertEqual(rc, 0)
+            client = target / ".ai" / "foundation" / "reference_clients" / "ArtifactReference.ps1"
+            client.write_text(client.read_text(encoding="utf-8") + "\n# local drift\n", encoding="utf-8")
+            output = StringIO()
+            with redirect_stdout(output):
+                rc = foundation_validator.main([
+                    "--target", str(target), "--adapters", "none", "--capabilities", "artifact-registration-clients", "--json"
+                ])
+            self.assertEqual(rc, 0)
+            payload = json.loads(output.getvalue())
+            self.assertTrue(any(item["code"] == "LOCAL_OVERRIDE_OR_DRIFT" for item in payload["results"]))
 
     def test_local_override_is_drift_not_semantic_approval(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -215,6 +298,7 @@ class InstallationModelTests(unittest.TestCase):
         privacy = (ROOT / "Documentation" / "Standards" / "DATA_PRIVACY_AND_CONFIDENTIALITY.md").read_text(encoding="utf-8")
         integration = (ROOT / "Documentation" / "Standards" / "SEMANTIC_INTEGRATION_POLICY.md").read_text(encoding="utf-8")
         identity = (ROOT / "Documentation" / "Standards" / "PERSISTENT_IDENTITY_POLICY.md").read_text(encoding="utf-8")
+        registration = (ROOT / "Documentation" / "Standards" / "ARTIFACT_REGISTRATION_POLICY.md").read_text(encoding="utf-8")
         transfer = (ROOT / "foundation" / "AI_TRANSFER.md").read_text(encoding="utf-8")
         self.assertIn("project may be stricter", project_rules)
         self.assertIn("Target repositories may define additional statuses", validation)
@@ -222,6 +306,7 @@ class InstallationModelTests(unittest.TestCase):
         self.assertIn("AI_REPOSITORY_FOUNDATION_NOTICE.md", privacy)
         self.assertIn("unknown -> PRESERVE", integration)
         self.assertIn("MIGRATE_EXPLICIT", identity)
+        self.assertIn("same authority", registration.lower())
         self.assertIn("Missing input means `PRESERVE`", transfer)
         self.assertIn("ADAPTER_GOVERNANCE_MISPLACED", transfer)
         self.assertIn("ORPHANED_AUTHORITY", transfer)
@@ -239,6 +324,8 @@ class InstallationModelTests(unittest.TestCase):
         rows = list(self.manifest["core"])
         for adapter_rows in self.manifest["adapters"].values():
             rows.extend(adapter_rows)
+        for capability_rows in self.manifest.get("capabilities", {}).values():
+            rows.extend(capability_rows)
         targets = [row["target"] for row in rows]
         self.assertEqual(len(targets), len(set(targets)))
         for row in rows:
@@ -247,7 +334,8 @@ class InstallationModelTests(unittest.TestCase):
     def test_manifest_is_machine_readable(self) -> None:
         parsed = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(parsed["schema_version"], 1)
-        self.assertEqual(parsed["ruleset_version"], "1.3.0")
+        self.assertEqual(parsed["ruleset_version"], "1.4.0")
+        self.assertEqual(parsed["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 
 if __name__ == "__main__":

@@ -2,6 +2,29 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.4.0] - 2026-08-24
+
+### Added
+
+- a language-neutral artifact Registration Authority contract for durable human/AI creation workflows;
+- `DIRECT` and `DEFERRED` allocation semantics so final sequential references are never guessed by individual clients;
+- machine-readable JSON Schemas for artifact records, registry state, and registration requests;
+- an opt-in `artifact-registration-clients` capability containing independent Python and PowerShell reference clients;
+- shared deterministic cross-language fixtures covering direct allocation, deferred creation, later registration, stale revision rejection, resolution, and UUIDv7 generation;
+- capability selection in the deterministic installer and target validator.
+
+### Changed
+
+- humans and AI systems now explicitly use the same Registration Authority for the same identifier scope;
+- Python is explicitly **not** a Foundation runtime requirement; PowerShell is a first-class supported reference client and other implementation languages remain project-selectable;
+- existing Jira, GitHub Issues, Azure DevOps, database/service, project-script/module, GUI/IDE, and other compatible allocators are preserved instead of being replaced by Foundation tooling;
+- Foundation core transfer now includes registration policy/schemas, while executable reference clients remain opt-in;
+- CI now verifies a PowerShell runtime and runs the same contract tests against both official reference clients.
+
+### Migration
+
+Existing repositories do not need to install either Foundation reference client. Preserve a compatible existing Registration Authority and make it discoverable to humans and AI. If the Foundation sequential human-reference profile is adopted, establish a safe allocator before publishing final sequence references. Use `DEFERRED` when concurrent/offline work cannot safely allocate a final sequence at creation time.
+
 ## [1.3.0] - 2026-08-24
 
 ### Added
