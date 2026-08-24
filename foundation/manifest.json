@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.4.0",
+  "ruleset_version": "1.5.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
@@ -24,6 +24,7 @@
       "foundation/AGENTS.template.md",
       "foundation/FOUNDATION_RULESET.template.md",
       "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md",
+      "foundation/feature_catalog.json",
       ".ai/PROJECT_RULES.md",
       ".ai/WORKING_RULES.md",
       ".ai/MODEL_ROUTING_POLICY.md",
@@ -107,6 +108,30 @@
     "reference_clients": "optional_capability",
     "reference_clients_must_match_shared_contract": true
   },
+  "upgrade_contract": {
+    "policy_source": "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md",
+    "policy_target": ".ai/foundation/UPGRADE_APPLICABILITY_POLICY.md",
+    "feature_catalog_source": "foundation/feature_catalog.json",
+    "feature_catalog_target": ".ai/foundation/feature_catalog.json",
+    "schema_targets": [
+      ".ai/foundation/schemas/feature-catalog.schema.json",
+      ".ai/foundation/schemas/upgrade-assessment.schema.json"
+    ],
+    "assessment_classifications": [
+      "NOT_APPLICABLE",
+      "ALREADY_EQUIVALENT",
+      "PROJECT_STRONGER",
+      "APPLY_DEFAULT",
+      "RECOMMENDED",
+      "DECISION_REQUIRED",
+      "CONFLICT"
+    ],
+    "complete_feature_delta_required": true,
+    "candidate_definition": "introduced_or_materially_changed_after_installed_through_source_version",
+    "silent_skip_prohibited": true,
+    "surface_results": ["RECOMMENDED", "DECISION_REQUIRED", "CONFLICT"],
+    "unknown_installed_version_behavior": "resolve_baseline_or_conservative_assessment"
+  },
   "validation_contract": {
     "foundation_validator_scope": "FOUNDATION_INTEGRITY",
     "project_semantic_authority": "target_repository",
@@ -137,9 +162,13 @@
     {"source": "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md", "target": ".ai/foundation/SEMANTIC_INTEGRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md", "target": ".ai/foundation/PERSISTENT_IDENTITY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md", "target": ".ai/foundation/ARTIFACT_REGISTRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
+    {"source": "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md", "target": ".ai/foundation/UPGRADE_APPLICABILITY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
+    {"source": "foundation/feature_catalog.json", "target": ".ai/foundation/feature_catalog.json", "kind": "feature-catalog", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-record.schema.json", "target": ".ai/foundation/schemas/artifact-record.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-registry.schema.json", "target": ".ai/foundation/schemas/artifact-registry.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-registration-request.schema.json", "target": ".ai/foundation/schemas/artifact-registration-request.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/feature-catalog.schema.json", "target": ".ai/foundation/schemas/feature-catalog.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/upgrade-assessment.schema.json", "target": ".ai/foundation/schemas/upgrade-assessment.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": ".ai/WORKING_RULES.md", "target": ".ai/foundation/WORKING_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/MODEL_ROUTING_POLICY.md", "target": ".ai/foundation/MODEL_ROUTING_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/VALIDATION_POLICY.md", "target": ".ai/foundation/VALIDATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
@@ -164,8 +193,8 @@
   },
   "never_transfer": [
     "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore",
-    ".ai/PROJECT_CONTEXT.md", ".ai/FOUNDATION.md", ".ai/PROJECT_STATUS.md", ".ai/HANDOVER.md", ".ai/BACKLOG.md", ".ai/ROADMAP.md", ".ai/TOOL_ADAPTERS.yaml", ".ai/repo_map.yaml",
+    ".ai/PROJECT_CONTEXT.md", ".ai/FOUNDATION.md", ".ai/PROJECT_STATUS.md", ".ai/HANDOVER.md", ".ai/BACKLOG.md", ".ai/ROADMAP.md", ".ai/TOOL_ADAPTERS.yaml", ".ai/repo_map.yaml", ".ai/identity/",
     "Documentation/Architecture/", "Documentation/Quality/",
-    "tools/bootstrap.py", "tools/install_foundation.py", "tools/foundation_validator.py", "tools/transfer_manifest_guard.py", "tests/"
+    "tools/bootstrap.py", "tools/install_foundation.py", "tools/foundation_validator.py", "tools/transfer_manifest_guard.py", "tools/feature_catalog_guard.py", "tools/upgrade_applicability.py", "tests/"
   ]
 }
