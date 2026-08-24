@@ -27,7 +27,12 @@ Foundation version: 1.4.0 candidate
 - opt-in `artifact-registration-clients` capability rather than a mandatory target runtime;
 - independent dependency-light Python and PowerShell reference clients using the same registry/record contract;
 - capability-aware installer and target validator;
-- cross-language deterministic contract fixtures and Foundation CI PowerShell runtime coverage.
+- cross-language deterministic contract fixtures and Foundation CI PowerShell runtime coverage;
+- `foundation/manifest.json#ruleset_version` as the single source ruleset-version authority;
+- machine-readable `transfer_coverage_contract` covering managed core roots, capability roots, fixed core sources, and version mirrors;
+- blocking source-side transfer completeness guard for unclassified policies, schemas, capability payloads, invalid capability locations, unresolved contract mappings, and version drift;
+- explicit distinction between current Foundation source version/capabilities and an older ruleset installed in a target repository;
+- negative regression tests proving that omitted policy/schema/capability entries and version drift fail.
 
 ## Validation evidence
 
@@ -35,10 +40,10 @@ Foundation version: 1.4.0 candidate
 - v1.2.0 semantic integration implementation: GitHub Actions `Foundation CI`, run `32646967820`, head `17662ba58a88abee8ef951d22918aa4c5543392d`: validated, conclusion `success`.
 - Existing-repository AI transfer: `validated` based on successful Foundation integration initiated and completed with AI assistance in five existing repositories: `gecompat/FolioTone`, `gecompat/SQL_Server_Lab`, `gecompat/SQL_Server_Toolbelt`, `gecompat/SQL_Server_Analyze`, and `gecompat/SQL_PerformanceSchulung`. See `Documentation/Quality/EXISTING_REPOSITORY_AI_TRANSFER_EVIDENCE.md`.
 - v1.3.0 persistent-identity implementation: GitHub Actions `Foundation CI`, run `32708542537`, head `a1f5463d5d32d0e04394303fd6f6aac8846810ce`: `validated`, conclusion `success`.
-- v1.4 development CI run `32711122382` established that the Foundation validator and PowerShell runtime were healthy but exposed a PowerShell result-scope defect in the new cross-language reference client tests; the defect was corrected.
-- v1.4 development CI run `32711344144` again passed Foundation validation and reduced the cross-language failures to two concrete parity/test defects: PowerShell null coercion for deferred `human_ref` and an incorrect UUID-version assertion in the Python test harness. Both defects were corrected on the PR branch. These failed development runs are diagnostic evidence, not completion evidence.
-- v1.4.0 artifact-registration implementation: GitHub Actions `Foundation CI`, run `32711801576`, head `e56017f06d0084a444c0a812896eb89f1386657b`: `validated`, conclusion `success`. `Verify PowerShell reference-client runtime`, `Validate Foundation project and transfer manifest`, and `Run installation and cross-language contract tests` all completed successfully.
-- The v1.4 deterministic coverage includes core registration policy/schema transfer, opt-in capability behavior, existing allocator preservation rules, manifest/repo-map registration contract, target-validator capability drift, direct/deferred allocation, later registration, stale registry revision rejection, resolve parity, and UUIDv7 generation across independent Python and PowerShell clients.
+- v1.4.0 artifact-registration implementation: GitHub Actions `Foundation CI`, run `32711801576`, head `e56017f06d0084a444c0a812896eb89f1386657b`: `validated`, conclusion `success`.
+- v1.4.0 final artifact-registration evidence head: GitHub Actions `Foundation CI`, run `32711959226`, head `b84677b8d591d46addfaea80bf1b9a13042cda18`: `validated`, conclusion `success`; PR #8 was then squash-merged as `07b7405d5dda27f8d3e0a5164e5cfcbe46396e24`.
+- Transfer-completeness implementation: GitHub Actions `Foundation CI`, run `32716654407`, head `f8b0d9f35379ebc9ab775bbfc5a8cd9b69c942cf`: `validated`, conclusion `success`. `Guard transfer manifest completeness and version consistency`, `Validate Foundation project and transfer manifest`, and `Run installation, transfer-guard, and cross-language contract tests` all completed successfully.
+- The transfer-guard regression suite includes explicit negative cases for version mismatch, an unmanifested reusable policy, an unmanifested schema, an unmanifested capability file, and a capability source outside registered managed roots.
 - Fresh-agent post-transfer continuation without prior conversation context: `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-FND-005, FND-008, FND-009, FND-010, and FND-011 are complete for their deterministic contracts. FND-001 remains in progress only for the separate fresh-agent post-transfer continuation criterion. The evidence-only final PR head must remain green before merge.
+FND-005, FND-008, FND-009, FND-010, FND-011, and FND-012 are complete for their deterministic contracts. FND-001 remains in progress only for the separate fresh-agent post-transfer continuation criterion. The evidence-only final PR #9 head must remain green before merge.

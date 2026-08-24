@@ -6,7 +6,7 @@ A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and hum
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
 
-`foundation/manifest.json` is the explicit whitelist of reusable core material and optional capabilities. `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md` defines coexistence with mature target-project governance. `Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md` defines long-lived artifact identity. `Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md` defines how humans and AI create/register those artifacts through the same project authority without depending on Python, PowerShell, or any other language.
+`foundation/manifest.json` is the explicit whitelist of reusable core material and optional capabilities **and the single ruleset-version authority**. `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md` defines coexistence with mature target-project governance. `Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md` defines long-lived artifact identity. `Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md` defines how humans and AI create/register those artifacts through the same project authority without depending on Python, PowerShell, or any other language.
 
 A target repository keeps its own README, root license, architecture, project context, decisions, state, backlog, model policy, validation system, identifier history, Registration Authority, and implementation.
 
@@ -16,7 +16,7 @@ A target repository keeps its own README, root license, architecture, project co
 
 An AI with read access to this repository and write access to the target repository reads:
 
-1. `foundation/manifest.json`;
+1. `foundation/manifest.json` from the exact Foundation ref being evaluated;
 2. `foundation/AI_TRANSFER.md`;
 3. `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md` for an existing repository;
 4. `Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md` when durable identifiers exist or are being introduced;
@@ -24,6 +24,8 @@ An AI with read access to this repository and write access to the target reposit
 6. only the manifest-listed core material, requested adapters, and explicitly selected optional capabilities it needs.
 
 For existing repositories the AI preserves target governance, identifier history, and compatible Registration Authorities, classifies semantic overlaps, ensures active project rules remain discoverable from root `AGENTS.md`, and never drops unique rules merely to thin a tool adapter.
+
+An installed target may carry an older Foundation version. That installed version describes the target's current state; it does **not** describe what the current Foundation source can transfer. Upgrade/capability questions use the source `foundation/manifest.json` at the exact requested Foundation ref and compare it with the target's installed `.ai/foundation/repo_map.yaml` version.
 
 ### Deterministic local installer
 
@@ -50,6 +52,25 @@ python tools/install_foundation.py TARGET --capabilities artifact-registration-c
 ```
 
 This does not make Python the target runtime; the installer is only one Foundation transfer path.
+
+## Transfer completeness invariant
+
+Reusable Foundation work is not complete merely because implementation or documentation exists in the source repository. The transfer plane is part of the feature contract.
+
+- `foundation/manifest.json#ruleset_version` is the only ruleset-version authority.
+- Every reusable policy under `Documentation/Standards/` must be classified in manifest `core`.
+- Every reusable schema under `foundation/schemas/` must be classified in manifest `core`.
+- New optional capability payloads belong under `foundation/capabilities/<capability>/` and must be classified in the matching manifest capability. Explicitly registered legacy capability roots remain validated until migrated.
+- Contract policy/schema references must resolve to manifest-listed transfer entries.
+- Version mirrors such as `.ai/FOUNDATION.md`, `.ai/PROJECT_STATUS.md`, `foundation/FOUNDATION_RULESET.template.md`, `foundation/repo_map.template.yaml`, and the current changelog release must match the manifest version.
+
+The source-side guard is:
+
+```text
+python tools/transfer_manifest_guard.py
+```
+
+CI treats any unclassified managed source or version mismatch as blocking. Negative tests deliberately remove policy/schema/capability entries and alter the version to prove that these cases fail.
 
 ## Semantic compatibility
 
@@ -101,11 +122,25 @@ The target repository's own root `LICENSE` is never copied from the Foundation, 
 
 ## Validation
 
+Validate transfer/version completeness first:
+
+```text
+python tools/transfer_manifest_guard.py
+```
+
 Validate this Foundation project:
 
 ```text
 python tools/foundation_validator.py --profile full
 ```
+
+Run deterministic Foundation tests:
+
+```text
+python -m unittest discover -s tests -v
+```
+
+All three form the Foundation source completion gate. CI executes them automatically.
 
 Validate an installed target ruleset from a Foundation checkout:
 
@@ -121,18 +156,13 @@ python tools/foundation_validator.py --target TARGET --capabilities artifact-reg
 
 The target validation command checks **Foundation integration only** (`FOUNDATION_INTEGRITY`). It does not replace project-specific semantic/static validation (`PROJECT_SEMANTIC`) or executable/empirical validation (`RUNTIME_EMPIRICAL`). Target projects may retain richer validation statuses as long as Foundation reserved meanings are not redefined. Historical identifier mappings, Registration Authority correctness, actual concurrency, and migration correctness remain target validation responsibilities.
 
-Run deterministic Foundation tests:
-
-```text
-python -m unittest discover -s tests -v
-```
-
 Foundation CI requires both CPython and PowerShell and executes the same deterministic registration fixtures against both reference clients.
 
 ## Core principles
 
 - repository state is durable project truth;
 - only manifest-listed core material and explicitly selected optional modules are transferable;
+- source transfer/version completeness is a blocking Foundation CI invariant;
 - active project governance remains discoverable from root `AGENTS.md` after integration;
 - stricter project rules are compatible unless a real logical/required-floor conflict exists;
 - existing durable identifiers are preserved by default and never silently reused or reinterpreted;
