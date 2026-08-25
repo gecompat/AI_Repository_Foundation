@@ -79,6 +79,9 @@ class CentralArtifactRegistryTests(unittest.TestCase):
         base = copy.deepcopy(self.registry)
         main = copy.deepcopy(base)
         head = copy.deepcopy(base)
+        base["artifacts"]["WI-0014"]["status"] = "in_progress"
+        main = copy.deepcopy(base)
+        head = copy.deepcopy(base)
         main["artifacts"]["WI-0014"]["status"] = "blocked"
         head["artifacts"]["WI-0014"]["priority"] = "medium"
         merged, conflicts = registry_semantic.semantic_merge(base, main, head)
@@ -88,6 +91,7 @@ class CentralArtifactRegistryTests(unittest.TestCase):
 
     def test_same_property_changed_differently_is_blocking(self) -> None:
         base = copy.deepcopy(self.registry)
+        base["artifacts"]["WI-0014"]["status"] = "in_progress"
         main = copy.deepcopy(base)
         head = copy.deepcopy(base)
         main["artifacts"]["WI-0014"]["status"] = "blocked"
