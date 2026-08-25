@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.5.0
+- version: 1.6.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -18,6 +18,7 @@ Status: AUTHORITATIVE
 - semantic_integration_policy: `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md`
 - persistent_identity_policy: `Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md`
 - artifact_registration_policy: `Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md`
+- central_artifact_registry_policy: `Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md`
 - upgrade_applicability_policy: `Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md`
 - registration_schemas: `foundation/schemas/`
 - transfer_model: explicit core whitelist plus semantic integration and explicitly selected optional capabilities
@@ -26,10 +27,11 @@ Status: AUTHORITATIVE
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
 - registration_contract: one Registration Authority per overlapping final-reference scope; humans and AI use the same authority; `DIRECT` or `DEFERRED` allocation semantics are language-neutral
+- central_registry_contract: repository-native JSON default = `foundation-artifact-registry/v2`; complete records are central; human ref is object key; no `next_sequence`; object-level merge plus Git-result verification
 - upgrade_contract: complete introduced/materially-changed feature delta; exactly one applicability classification per candidate; recommendations/decisions/conflicts surfaced explicitly
 - python_runtime_required: false
-- powershell_reference_client: supported first-class
-- optional_capabilities: `artifact-registration-clients` installs both Python and PowerShell reference clients only when selected
+- powershell_reference_client: supported first-class for the v1 compatibility profile
+- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`
 - target_project_license: never replaced or modified by installation
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none
@@ -40,9 +42,12 @@ The Foundation source repository itself uses its own persistent-identity model u
 
 - active work items use `WI-*`;
 - durable decisions use `DEC-*`;
-- `.ai/identity/registry.json` is the source-project Registration Authority state;
+- `.ai/identity/registry.json` is the source-project Registration Authority and canonical planning state;
+- the source registry uses `foundation-artifact-registry/v2` and stores complete records centrally;
+- `.ai/BACKLOG.md` is generated from the registry and is not an independent planning authority;
 - `Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md` preserves the old `FND-*` aliases;
-- new final Foundation project references are allocated through that authority, never inferred by scanning Markdown.
+- new final Foundation project references are derived from canonical registry keys, never inferred by scanning Markdown;
+- `next_sequence` and a mutable global registry revision are intentionally not persisted.
 
 This source-project profile is not transferable target governance and is intentionally kept outside the manifest transfer payload.
 
@@ -55,6 +60,10 @@ For existing repositories, semantic integration preserves target-owned governanc
 Persistent identifier integration follows the same compatibility rule. Existing published identifiers are preserved by default. `ADOPT_FORWARD` may introduce a better profile prospectively while retaining history; `MIGRATE_EXPLICIT` requires a separate explicit migration decision. Foundation installation never treats missing input as migration authority.
 
 Artifact registration is implementation-language neutral. Existing compatible issue trackers, databases, services, scripts/modules, and applications remain valid Registration Authorities. Humans and AI must use the same authority for the same scope; Foundation reference clients do not replace project tooling implicitly.
+
+For repository-native JSON authorities, v1.6 introduces `foundation-artifact-registry/v2` as the default profile. Complete records live in one canonical JSON registry. The next numeric reference is derived from existing canonical keys plus live reservations; `next_sequence` is not stored. Git-native concurrency uses Git state rather than a second mutable registry counter. The v1 allocation-only profile remains compatible for existing projects.
+
+A central JSON registry is not trusted to Git's text merge semantics. The optional `artifact-registry-github` capability computes an object/property-level three-way merge, runs cross-record integrity checks, performs early cross-PR collision preflight, simulates the Git file merge, and blocks when Git's parsed result differs from the semantic expected result.
 
 Foundation upgrades are semantic as well as file-based. `foundation/feature_catalog.json` records when reusable features were introduced or materially changed, their transfer sources, applicability signals, and recommendation/decision semantics. An upgrade from an older installed version must assess every catalog candidate; relevant improvements such as persistent identity/nomenclature must be surfaced without relying on the user to remember to ask.
 
