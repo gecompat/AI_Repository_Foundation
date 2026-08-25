@@ -4,24 +4,15 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation v1.6 is merged on `main` at `9176ecaea7c972d7f5ec48c66ed19caa0ca68d8c`. It adds the central `foundation-artifact-registry/v2`, derived sequence allocation, generated planning projection, object/property-level three-way merge, early cross-PR collision preflight, and Git-text-merge equivalence validation.
+Foundation v1.6 is merged on `main` at `ed6cb0834dc184653201acb38e3c35e858d0e49d`. It includes the central `foundation-artifact-registry/v2`, derived sequence allocation, generated planning projection, object/property-level three-way merge, early cross-PR collision preflight, Git-text-merge equivalence validation, and explicit GitHub merge-protection guidance.
 
-The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0014` and `DEC-0015` are complete.
+The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0014`/`DEC-0015` and `WI-0015`/`DEC-0016` are complete.
 
-A new source-project governance requirement is recorded by `WI-0015` and `DEC-0016`: GitHub `main` must have server-side branch protection with strict/up-to-date required checks `validate` and `registry-integrity`, administrator enforcement, linear history, force pushes disabled, and branch deletion disabled.
+GitHub `main` is now server-side protected. GitHub branch metadata reports `protected: true`, required checks `registry-integrity` and `validate`, and enforcement level `everyone`. Manual review of the saved repository rule confirms pull-request-only merge, approvals not required, branch up-to-date required, linear history required, bypass disabled, force pushes disabled, and deletion disabled.
 
-`Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` is the authoritative operational guide. `tools/github/configure_branch_protection.py` can apply and read back the desired configuration when run with a token that has repository `Administration: write`.
+`Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` is the authoritative operational record. `tools/github/configure_branch_protection.py` remains available to reproduce or verify the intended state with an Administration-write token.
 
-The connected ChatGPT GitHub interface does not expose a branch-protection/ruleset mutation, no suitable installable plugin was available, and the execution environment has no independent GitHub administration token. GitHub had reported `main` as `protected: false` with required-check enforcement `off`. Therefore `WI-0015` remains `blocked` until a repository administrator activates the setting and GitHub verification confirms it. Do not claim server-side enforcement before that verification.
-
-For target repositories, the behavior is intentionally different. `foundation/AI_TRANSFER.md` and `tools/install_foundation.py` now explicitly surface that GitHub Actions workflow files do not automatically become required checks. When the `artifact-registry-github` capability is relevant, enabling suitable branch protection/rulesets is recommended if the target wants hard merge enforcement, but Foundation transfer must not silently configure it and absence alone is not a `FOUNDATION_INTEGRITY` failure.
-
-## Next actions
-
-1. Apply the source-repository GitHub protection described in `Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` using repository administration or `tools/github/configure_branch_protection.py` with an Administration-write token.
-2. Verify the effective GitHub state; only then change `WI-0015` from `blocked` to `done` and record the verification evidence.
-3. Keep target-project protection as an explicit recommendation rather than a transferred hard requirement.
-4. Separately execute `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md` with a genuinely fresh AI session/test target; WI-0001 remains open only for that criterion.
+For target repositories, the behavior remains intentionally different. `foundation/AI_TRANSFER.md` and `tools/install_foundation.py` explicitly surface that GitHub Actions workflow files do not automatically become required checks. When the `artifact-registry-github` capability is relevant, enabling suitable branch protection/rulesets is recommended if the target wants hard merge enforcement, but Foundation transfer must not silently configure it and absence alone is not a `FOUNDATION_INTEGRITY` failure.
 
 ## Remaining project work
 
@@ -29,7 +20,6 @@ For target repositories, the behavior is intentionally different. `foundation/AI
 - `WI-0002`: manifest hashes/cross-version installed provenance.
 - `WI-0003`: evaluate packaged release artifact.
 - `WI-0004`: optional adapter modules.
-- `WI-0015`: source GitHub branch protection activation/verification.
 
 ## Open constraints
 
