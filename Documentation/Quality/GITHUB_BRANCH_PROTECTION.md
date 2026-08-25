@@ -16,26 +16,48 @@ The Foundation source repository requires server-side protection for `main` so t
 Required settings:
 
 - branch protection enabled for `main`;
+- pull request required before merging;
+- no mandatory human approval for this single-maintainer repository;
 - required status checks enabled and strict/up-to-date;
 - required checks:
   - `validate` from the `Foundation CI` workflow;
   - `registry-integrity` from the `Foundation Artifact Registry` workflow;
-- administrator enforcement enabled;
+- administrator/bypass enforcement enabled;
 - linear history required;
 - force pushes disabled;
 - branch deletion disabled.
 
-The two workflow files are necessary but not sufficient. A workflow can report a failing check while an unprotected branch may still be merged or pushed by a user with sufficient repository rights. Server-side branch protection/ruleset configuration is therefore a separate repository-administration control.
+The two workflow files are necessary but not sufficient. Server-side branch protection/ruleset configuration is a separate repository-administration control.
 
-## Current state
+## Current verified state
 
-At the time this requirement was recorded, GitHub reported `main` as `protected: false` with required-status-check enforcement `off`. The current ChatGPT GitHub connector exposes repository content, PR, branch, and Actions operations but no branch-protection/ruleset mutation; the execution environment also has no independent GitHub administration token. Therefore the desired server-side setting cannot be activated from this session and must remain explicitly tracked until a repository administrator applies it.
+Verified on 2026-08-25.
 
-Do not mark the protection requirement satisfied until GitHub itself reports the configured protection and the required checks.
+GitHub's branch metadata reports:
+
+- `main` is protected (`protected: true`);
+- required-status-check enforcement level is `everyone`;
+- required checks are `registry-integrity` and `validate`.
+
+The saved GitHub branch-protection rule was also reviewed in the repository UI and confirms:
+
+- branch pattern `main`;
+- pull request required before merge;
+- approvals not required;
+- required status checks enabled;
+- branch must be up to date before merge;
+- `registry-integrity` and `validate` selected as required GitHub Actions checks;
+- linear history required;
+- bypass of the above settings disabled, including administrators;
+- force pushes disabled;
+- branch deletion disabled;
+- conversation resolution, signed commits, deployments, and branch locking not required.
+
+This satisfies the source-project protection requirement defined by `WI-0015` and `DEC-0016`.
 
 ## Automated configuration helper
 
-A repository administrator may run:
+A repository administrator may reproduce or verify the intended state with:
 
 ```bash
 export GITHUB_ADMIN_TOKEN="..."
@@ -57,12 +79,13 @@ Do not commit, log, or paste the token into repository files, command arguments,
 
 Equivalent configuration can be applied in GitHub repository settings under branch protection/rulesets for `main`:
 
-1. require the relevant status checks before updating `main`;
-2. select the checks produced by `Foundation CI / validate` and `Foundation Artifact Registry / registry-integrity`;
-3. require the branch to be up to date before merge;
-4. apply enforcement to administrators/bypass-capable maintainers where the GitHub plan/UI permits it;
-5. require linear history;
-6. prohibit force pushes and branch deletion.
+1. require a pull request before merging but do not require human approvals unless project governance changes;
+2. require the relevant status checks before updating `main`;
+3. select `Foundation CI / validate` and `Foundation Artifact Registry / registry-integrity`;
+4. require the branch to be up to date before merge;
+5. apply enforcement to administrators/bypass-capable maintainers;
+6. require linear history;
+7. prohibit force pushes and branch deletion.
 
 After configuration, verify with GitHub rather than relying only on documentation.
 

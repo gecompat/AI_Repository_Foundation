@@ -64,6 +64,8 @@ source_github_protection:
   policy: Documentation/Quality/GITHUB_BRANCH_PROTECTION.md
   decision: Documentation/Architecture/decisions/DEC-0016-foundation-required-github-protection.md
   configurator: tools/github/configure_branch_protection.py
+  require_pull_request: true
+  require_approvals: false
   required_checks:
     - validate
     - registry-integrity
@@ -72,7 +74,8 @@ source_github_protection:
   require_linear_history: true
   allow_force_pushes: false
   allow_deletions: false
-  observed_state: pending_repository_admin_activation
+  observed_state: verified_active_2026-08-25
+  required_check_enforcement: everyone
   target_transfer_behavior: recommend_not_enforce
 transfer:
   manifest: foundation/manifest.json

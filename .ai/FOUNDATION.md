@@ -29,7 +29,7 @@ Status: AUTHORITATIVE
 - registration_contract: one Registration Authority per overlapping final-reference scope; humans and AI use the same authority; `DIRECT` or `DEFERRED` allocation semantics are language-neutral
 - central_registry_contract: repository-native JSON default = `foundation-artifact-registry/v2`; complete records are central; human ref is object key; no `next_sequence`; object-level merge plus Git-result verification
 - upgrade_contract: complete introduced/materially-changed feature delta; exactly one applicability classification per candidate; recommendations/decisions/conflicts surfaced explicitly
-- source_github_merge_protection: required for `main`; see `Documentation/Quality/GITHUB_BRANCH_PROTECTION.md`
+- source_github_merge_protection: required and verified for `main`; see `Documentation/Quality/GITHUB_BRANCH_PROTECTION.md`
 - target_github_merge_protection: recommended when relevant, never silently imposed by Foundation transfer
 - python_runtime_required: false
 - powershell_reference_client: supported first-class for the v1 compatibility profile
@@ -55,13 +55,11 @@ This source-project profile is not transferable target governance and is intenti
 
 ## Foundation source-project GitHub protection
 
-The Foundation source repository requires server-side protection of `main` in addition to repository workflow files. The desired state is authoritative in `Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` and `DEC-0016`.
+The Foundation source repository requires server-side protection of `main` in addition to repository workflow files. The authoritative state is documented in `Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` and `DEC-0016`.
 
-The required source controls are strict/up-to-date required checks for `validate` (`Foundation CI`) and `registry-integrity` (`Foundation Artifact Registry`), administrator enforcement, linear history, no force pushes, and no branch deletion.
+Verified 2026-08-25: GitHub reports `main` as protected with required checks `validate` (`Foundation CI`) and `registry-integrity` (`Foundation Artifact Registry`) enforced for `everyone`. The saved repository rule additionally requires pull-request-only merge, branch up-to-date validation and linear history, disables bypass including administrators, and disallows force pushes and branch deletion. Mandatory human approval is intentionally not required for the current single-maintainer model.
 
-This is a **Foundation source-project requirement**, not a universal target-project rule. Foundation transfer must instead tell relevant GitHub targets that workflow files alone do not make checks required and recommend repository protection when hard enforcement is desired. Target administration remains project-selectable and is not a `FOUNDATION_INTEGRITY` requirement.
-
-At the time WI-0015 was created, GitHub still reported source `main` as unprotected and the available connector exposed no branch-protection/ruleset mutation. Therefore source enforcement remains explicitly blocked/pending until GitHub repository administration confirms the setting. Do not infer enforcement from workflow presence alone.
+This is a **Foundation source-project requirement**, not a universal target-project rule. Foundation transfer tells relevant GitHub targets that workflow files alone do not make checks required and recommends repository protection when hard enforcement is desired. Target administration remains project-selectable and is not a `FOUNDATION_INTEGRITY` requirement.
 
 Versioning follows Semantic Versioning. PATCH fixes defects without new governance requirements; MINOR adds backward-compatible rules/capabilities/adapters or improves installation/integration semantics; MAJOR changes authority or governance incompatibly.
 
