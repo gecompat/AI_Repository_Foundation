@@ -17,6 +17,7 @@ PROJECT_REQUIRED = [
     ".ai/PROJECT_CONTEXT.md", ".ai/PROJECT_RULES.md", ".ai/WORKING_RULES.md",
     ".ai/MODEL_ROUTING_POLICY.md", ".ai/VALIDATION_POLICY.md", ".ai/FOUNDATION.md",
     ".ai/PROJECT_STATUS.md", ".ai/HANDOVER.md", ".ai/ROADMAP.md", ".ai/BACKLOG.md", ".ai/repo_map.yaml",
+    ".ai/identity/registry.json",
     "Documentation/Architecture/OVERVIEW.md", "Documentation/Architecture/DECISIONS.md",
     "Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md",
     "Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md",
@@ -27,13 +28,18 @@ PROJECT_REQUIRED = [
     "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
     "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md",
     "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md",
+    "Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
+    "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md",
     "Documentation/Quality/KNOWN_LIMITATIONS.md",
-    "foundation/manifest.json", "foundation/AI_TRANSFER.md", "foundation/AGENTS.template.md",
+    "foundation/manifest.json", "foundation/feature_catalog.json", "foundation/AI_TRANSFER.md", "foundation/AGENTS.template.md",
     "foundation/FOUNDATION_RULESET.template.md", "foundation/repo_map.template.yaml",
     "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md",
     "foundation/schemas/artifact-record.schema.json",
     "foundation/schemas/artifact-registry.schema.json",
+    "foundation/schemas/artifact-registry-v2.schema.json",
     "foundation/schemas/artifact-registration-request.schema.json",
+    "foundation/schemas/feature-catalog.schema.json",
+    "foundation/schemas/upgrade-assessment.schema.json",
     "tools/install_foundation.py", "tools/foundation_validator.py",
 ]
 
@@ -112,6 +118,7 @@ REGISTRATION_CONTRACT = {
     "schema_targets": [
         ".ai/foundation/schemas/artifact-record.schema.json",
         ".ai/foundation/schemas/artifact-registry.schema.json",
+        ".ai/foundation/schemas/artifact-registry-v2.schema.json",
         ".ai/foundation/schemas/artifact-registration-request.schema.json",
     ],
     "authority_scope": "one_registration_authority_per_overlapping_identifier_scope",
@@ -125,6 +132,25 @@ REGISTRATION_CONTRACT = {
     "final_human_reference_must_be_authority_allocated": True,
     "reference_clients": "optional_capability",
     "reference_clients_must_match_shared_contract": True,
+    "default_registry_profile": "foundation-artifact-registry/v2",
+    "compatible_registry_profiles": ["foundation-artifact-registry/v1", "foundation-artifact-registry/v2"],
+}
+CENTRAL_REGISTRY_CONTRACT = {
+    "policy_source": "Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
+    "policy_target": ".ai/foundation/CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
+    "schema_targets": [".ai/foundation/schemas/artifact-registry-v2.schema.json"],
+    "profile": "foundation-artifact-registry/v2",
+    "complete_records_in_single_registry": True,
+    "human_reference_is_object_key": True,
+    "persist_next_sequence": False,
+    "allocation_derivation": "max_existing_sequence_plus_one",
+    "persist_global_registry_revision": False,
+    "git_revision_is_concurrency_token": True,
+    "object_level_three_way_merge_required": True,
+    "git_merge_result_must_equal_semantic_merge": True,
+    "cross_pr_preflight_recommended": True,
+    "generated_views_supported": True,
+    "legacy_profile": "foundation-artifact-registry/v1",
 }
 MODEL_ROUTING_CONTRACT = {
     "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
@@ -166,7 +192,18 @@ REGISTRATION_MAP_MARKERS = [
     "python_required: false",
     "powershell_supported: true",
     "allocation_modes: DIRECT_DEFERRED",
+    "default_registry_profile: foundation-artifact-registry/v2",
     "reference_clients: optional_capability",
+]
+CENTRAL_REGISTRY_MAP_MARKERS = [
+    ".ai/foundation/CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
+    "profile: foundation-artifact-registry/v2",
+    "persist_next_sequence: false",
+    "allocation_derivation: max_existing_sequence_plus_one",
+    "persist_global_registry_revision: false",
+    "object_level_three_way_merge_required: true",
+    "git_merge_result_must_equal_semantic_merge: true",
+    "cross_pr_preflight_recommended: true",
 ]
 
 results: list[dict] = []
@@ -267,6 +304,14 @@ def validate_manifest(manifest: dict) -> None:
             if registration_contract.get(key) != expected:
                 add("ERROR", "REGISTRATION_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
 
+    central_registry_contract = manifest.get("central_registry_contract")
+    if not isinstance(central_registry_contract, dict):
+        add("BLOCKING", "CENTRAL_REGISTRY_CONTRACT", "foundation/manifest.json", "central_registry_contract is required")
+    else:
+        for key, expected in CENTRAL_REGISTRY_CONTRACT.items():
+            if central_registry_contract.get(key) != expected:
+                add("ERROR", "CENTRAL_REGISTRY_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
+
     model_contract = manifest.get("model_routing_contract")
     if not isinstance(model_contract, dict):
         add("BLOCKING", "MODEL_ROUTING_CONTRACT", "foundation/manifest.json", "model_routing_contract is required")
@@ -301,32 +346,27 @@ def validate_manifest(manifest: dict) -> None:
         if not source_path.is_file():
             add("ERROR", "MISSING_SOURCE", source, "manifest source does not exist")
 
-    integration_rows = [
-        row for row in rows
-        if row.get("source") == INTEGRATION_CONTRACT["policy_source"]
-        and row.get("target") == INTEGRATION_CONTRACT["policy_target"]
-    ]
+    integration_rows = [row for row in rows if row.get("source") == INTEGRATION_CONTRACT["policy_source"] and row.get("target") == INTEGRATION_CONTRACT["policy_target"]]
     if len(integration_rows) != 1:
         add("BLOCKING", "INTEGRATION_POLICY_MAPPING", "foundation/manifest.json", "semantic integration policy must be transferred exactly once")
 
-    identity_rows = [
-        row for row in rows
-        if row.get("source") == IDENTITY_CONTRACT["policy_source"]
-        and row.get("target") == IDENTITY_CONTRACT["policy_target"]
-    ]
+    identity_rows = [row for row in rows if row.get("source") == IDENTITY_CONTRACT["policy_source"] and row.get("target") == IDENTITY_CONTRACT["policy_target"]]
     if len(identity_rows) != 1:
         add("BLOCKING", "IDENTITY_POLICY_MAPPING", "foundation/manifest.json", "persistent identity policy must be transferred exactly once")
 
-    registration_rows = [
-        row for row in rows
-        if row.get("source") == REGISTRATION_CONTRACT["policy_source"]
-        and row.get("target") == REGISTRATION_CONTRACT["policy_target"]
-    ]
+    registration_rows = [row for row in rows if row.get("source") == REGISTRATION_CONTRACT["policy_source"] and row.get("target") == REGISTRATION_CONTRACT["policy_target"]]
     if len(registration_rows) != 1:
         add("BLOCKING", "REGISTRATION_POLICY_MAPPING", "foundation/manifest.json", "artifact registration policy must be transferred exactly once")
     for schema_target in REGISTRATION_CONTRACT["schema_targets"]:
         if sum(row.get("target") == schema_target for row in rows) != 1:
             add("BLOCKING", "REGISTRATION_SCHEMA_MAPPING", schema_target, "registration schema must be transferred exactly once")
+
+    central_rows = [row for row in rows if row.get("source") == CENTRAL_REGISTRY_CONTRACT["policy_source"] and row.get("target") == CENTRAL_REGISTRY_CONTRACT["policy_target"]]
+    if len(central_rows) != 1:
+        add("BLOCKING", "CENTRAL_REGISTRY_POLICY_MAPPING", "foundation/manifest.json", "central artifact registry policy must be transferred exactly once")
+    for schema_target in CENTRAL_REGISTRY_CONTRACT["schema_targets"]:
+        if sum(row.get("target") == schema_target for row in rows) != 1:
+            add("BLOCKING", "CENTRAL_REGISTRY_SCHEMA_MAPPING", schema_target, "central registry schema must be transferred exactly once")
 
     for adapter in manifest.get("default_adapters", []):
         if adapter not in manifest.get("adapters", {}):
@@ -385,6 +425,7 @@ def validate_foundation(profile: str) -> None:
             "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md",
             "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md",
             "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md",
+            "Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
             "Documentation/Architecture/DECISIONS.md",
         ]:
             if rel not in text:
@@ -397,6 +438,7 @@ def validate_foundation(profile: str) -> None:
         validate_markers(map_text, "foundation/repo_map.template.yaml", "INTEGRATION_SCOPE_MAP", INTEGRATION_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
+        validate_markers(map_text, "foundation/repo_map.template.yaml", "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
 
     agents_template = ROOT / "foundation" / "AGENTS.template.md"
     if agents_template.is_file():
@@ -431,30 +473,10 @@ def validate_target(target: Path, adapter_selection: str, capability_selection: 
         add("BLOCKING", "MANIFEST_READ", "foundation/manifest.json", str(exc))
         return
 
-    add(
-        "INFO",
-        "PROJECT_VALIDATION_OUT_OF_SCOPE",
-        ".",
-        "Foundation validator covers FOUNDATION_INTEGRITY only. PROJECT_SEMANTIC and RUNTIME_EMPIRICAL validation remain target-project responsibilities when affected.",
-    )
-    add(
-        "INFO",
-        "PROJECT_GOVERNANCE_DISCOVERY_SEMANTIC",
-        "AGENTS.md",
-        "Foundation validator can verify the discovery contract is installed but cannot prove that every active target-specific authority in an arbitrary repository was semantically inventoried and linked. Existing-repository integration must review this under PROJECT_SEMANTIC.",
-    )
-    add(
-        "INFO",
-        "PROJECT_IDENTITY_SEMANTICS_OUT_OF_SCOPE",
-        ".",
-        "Foundation validator verifies the installed identity contract but cannot prove that an arbitrary target's historical identifiers, aliases, relations, or migration mappings are semantically correct. Review them under PROJECT_SEMANTIC and RUNTIME_EMPIRICAL when affected.",
-    )
-    add(
-        "INFO",
-        "PROJECT_REGISTRATION_AUTHORITY_OUT_OF_SCOPE",
-        ".",
-        "Foundation validator verifies the installed registration contract and selected reference-client files, but cannot prove that a target-specific issue tracker, service, database, or allocator is the correct serialized Registration Authority. Review that under PROJECT_SEMANTIC/RUNTIME_EMPIRICAL.",
-    )
+    add("INFO", "PROJECT_VALIDATION_OUT_OF_SCOPE", ".", "Foundation validator covers FOUNDATION_INTEGRITY only. PROJECT_SEMANTIC and RUNTIME_EMPIRICAL validation remain target-project responsibilities when affected.")
+    add("INFO", "PROJECT_GOVERNANCE_DISCOVERY_SEMANTIC", "AGENTS.md", "Foundation validator can verify the discovery contract is installed but cannot prove that every active target-specific authority in an arbitrary repository was semantically inventoried and linked. Existing-repository integration must review this under PROJECT_SEMANTIC.")
+    add("INFO", "PROJECT_IDENTITY_SEMANTICS_OUT_OF_SCOPE", ".", "Foundation validator verifies the installed identity contract but cannot prove that an arbitrary target's historical identifiers, aliases, relations, or migration mappings are semantically correct. Review them under PROJECT_SEMANTIC and RUNTIME_EMPIRICAL when affected.")
+    add("INFO", "PROJECT_REGISTRATION_AUTHORITY_OUT_OF_SCOPE", ".", "Foundation validator verifies the installed registration/central-registry contracts and selected capability files, but cannot prove that a target-specific issue tracker, service, database, registry path, or allocator is the correct serialized Registration Authority. Review that under PROJECT_SEMANTIC/RUNTIME_EMPIRICAL.")
 
     selected_paths: list[Path] = []
     required_mit_notice = (ROOT / "LICENSE").read_text(encoding="utf-8")
@@ -481,13 +503,9 @@ def validate_target(target: Path, adapter_selection: str, capability_selection: 
             validate_markers(text, display, "INTEGRATION_SCOPE_MAP", INTEGRATION_MAP_MARKERS)
             validate_markers(text, display, "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
             validate_markers(text, display, "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
+            validate_markers(text, display, "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
         if display.startswith(".ai/foundation/") and source.is_file() and destination.read_bytes() != source.read_bytes():
-            add(
-                "WARNING",
-                "LOCAL_OVERRIDE_OR_DRIFT",
-                display,
-                "installed Foundation rule/provenance/capability file differs from current source; this detects drift only and does not establish semantic correctness of the override",
-            )
+            add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule/provenance/capability file differs from current source; this detects drift only and does not establish semantic correctness of the override")
 
     if profile != "quick":
         for path in selected_paths:
@@ -512,12 +530,7 @@ def main(argv: list[str] | None = None) -> int:
         validation_scope = "FOUNDATION_PROJECT_INTEGRITY"
 
     counts = {severity: sum(item["severity"] == severity for item in results) for severity in ["INFO", "WARNING", "ERROR", "BLOCKING"]}
-    payload = {
-        "schema_version": 1,
-        "validation_scope": validation_scope,
-        "counts": counts,
-        "results": results,
-    }
+    payload = {"schema_version": 1, "validation_scope": validation_scope, "counts": counts, "results": results}
     if args.json_output:
         print(json.dumps(payload, indent=2))
     else:
