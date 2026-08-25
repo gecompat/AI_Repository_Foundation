@@ -43,13 +43,18 @@ Foundation version: 1.6.0
 
 ## GitHub merge protection — WI-0015 / DEC-0016
 
-- Foundation source `main` now has an explicit project requirement for server-side GitHub merge protection;
-- required checks are `validate` and `registry-integrity`, strict/up-to-date, with administrator enforcement, linear history, no force pushes, and no branch deletion;
-- `Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` is the authoritative source-project configuration/verification guide;
-- `tools/github/configure_branch_protection.py` can apply and verify the desired state when an Administration-write token is available;
-- direct AI transfer and deterministic installation now explicitly tell relevant target projects that workflow files do not make checks required and recommend GitHub protection without making it a `FOUNDATION_INTEGRITY` requirement;
-- current repository administration remains `pending repository-admin activation`: the connected GitHub interface exposes no branch-protection/ruleset mutation and the execution environment has no independent Administration-write token;
-- `WI-0015` therefore remains `blocked` until GitHub itself reports the required protection as active.
+- Foundation source `main` has server-side GitHub branch protection enabled;
+- pull requests are required before merge and mandatory human approvals are disabled for the current single-maintainer model;
+- required checks are `validate` and `registry-integrity`;
+- branches must be up to date before merge;
+- required-check enforcement is reported by GitHub as `everyone`;
+- linear history is required;
+- bypass of the protection is disabled, including administrators;
+- force pushes and branch deletion are disabled;
+- `Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` records the required and verified source-project state;
+- `tools/github/configure_branch_protection.py` can reproduce/verify the state when an Administration-write token is available;
+- direct AI transfer and deterministic installation explicitly tell relevant target projects that workflow files do not make checks required and recommend GitHub protection without making it a `FOUNDATION_INTEGRITY` requirement;
+- GitHub API read-back plus manual GitHub settings review on 2026-08-25 satisfy the WI-0015 acceptance criteria.
 
 ## Validation evidence
 
@@ -59,6 +64,7 @@ Foundation version: 1.6.0
 - transfer completeness/version guard: Foundation CI runs `32716654407` and `32716818991`, success.
 - v1.5 semantic upgrade applicability: Foundation CI runs `32733817943` and `32735966279`, success; merged as `400c175dac222af0c4eaee159caa955e67bbdbb7`.
 - v1.6 central registry final: Foundation CI `32837891739`, Foundation Artifact Registry `32837891764`, success; merged as `9176ecaea7c972d7f5ec48c66ed19caa0ca68d8c`.
+- branch protection verification 2026-08-25: GitHub reports `main` protected with `registry-integrity` and `validate` required for `everyone`; saved repository settings confirm the remaining required source controls.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, and WI-0014 are complete for their deterministic contracts. WI-0015 is blocked only on GitHub repository-admin activation/verification. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.
+WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, and WI-0015 are complete for their deterministic/project-operation contracts. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.
