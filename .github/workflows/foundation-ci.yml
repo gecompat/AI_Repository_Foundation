@@ -26,7 +26,11 @@ jobs:
         run: python tools/transfer_manifest_guard.py
       - name: Guard semantic feature coverage and changed-source review
         run: python tools/feature_catalog_guard.py --base "$(git rev-parse HEAD^)"
+      - name: Validate central artifact registry v2
+        run: python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json
+      - name: Verify generated backlog projection
+        run: python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check
       - name: Validate Foundation project and transfer manifest
         run: python tools/foundation_validator.py --profile full
-      - name: Run installation, transfer-guard, feature-catalog, and cross-language contract tests
+      - name: Run installation, transfer, feature, registry, and cross-language contract tests
         run: python -m unittest discover -s tests -v

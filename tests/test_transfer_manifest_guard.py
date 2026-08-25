@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import copy
 import sys
+import tempfile
 import unittest
 from pathlib import Path
 
@@ -21,6 +22,17 @@ class TransferManifestGuardTests(unittest.TestCase):
 
     def test_current_repository_has_complete_transfer_coverage(self) -> None:
         self.assertEqual(transfer_manifest_guard.validate_transfer_coverage(ROOT, self.manifest), [])
+
+    def test_generated_python_runtime_cache_is_not_transfer_payload(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            capability = root / "foundation" / "capabilities" / "example"
+            cache = capability / "__pycache__"
+            cache.mkdir(parents=True)
+            (capability / "tool.py").write_text("print('ok')\n", encoding="utf-8")
+            (cache / "tool.cpython-312.pyc").write_bytes(b"runtime-cache")
+            files = transfer_manifest_guard.collect_files(root, "foundation/capabilities", [], True)
+            self.assertEqual(files, {"foundation/capabilities/example/tool.py"})
 
     def test_version_drift_is_blocking(self) -> None:
         manifest = copy.deepcopy(self.manifest)

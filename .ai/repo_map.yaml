@@ -11,6 +11,7 @@ authority:
     - .ai/FOUNDATION.md
     - .ai/identity/registry.json
     - Documentation/Architecture/DECISIONS.md
+    - Documentation/Architecture/decisions/DEC-0015-central-registry-semantic-merge.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -21,14 +22,16 @@ authority:
     - Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
     - Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
     - Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
+    - Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md
     - Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
     - foundation/feature_catalog.json
   informative:
     - README.md
     - .ai/ROADMAP.md
-    - .ai/BACKLOG.md
     - Documentation/Architecture/OVERVIEW.md
     - Documentation/Quality/KNOWN_LIMITATIONS.md
+  generated:
+    - .ai/BACKLOG.md
   generated_evidence:
     - .ai/PROJECT_STATUS.md
     - .ai/HANDOVER.md
@@ -39,12 +42,20 @@ state:
   roadmap: .ai/ROADMAP.md
 identity:
   registration_authority: .ai/identity/registry.json
+  registry_profile: foundation-artifact-registry/v2
+  canonical_planning_state: .ai/identity/registry.json
+  backlog_projection: .ai/BACKLOG.md
   preferred_work_item_reference: WI
   preferred_decision_reference: DEC
+  allocation_rule: max_existing_sequence_plus_one
+  persist_next_sequence: false
+  persist_registry_revision: false
   historical_alias_mapping: Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
   migration_mode: MIGRATE_EXPLICIT
+  semantic_merge_tool: foundation/capabilities/artifact-registry-github/registry_semantic.py
 decisions:
   index: Documentation/Architecture/DECISIONS.md
+  supplemental_records: Documentation/Architecture/decisions/
 transfer:
   manifest: foundation/manifest.json
   version_authority: foundation/manifest.json#ruleset_version
@@ -57,15 +68,20 @@ transfer:
   semantic_integration_policy: Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md
   persistent_identity_policy: Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md
   artifact_registration_policy: Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
+  central_artifact_registry_policy: Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md
   upgrade_applicability_policy: Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
   schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
+  optional_github_registry_capability: foundation/capabilities/artifact-registry-github/
 validation:
   transfer_completeness_command: python tools/transfer_manifest_guard.py
   semantic_feature_command: python tools/feature_catalog_guard.py
+  central_registry_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json
+  backlog_projection_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check
   foundation_command: python tools/foundation_validator.py
-  complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/feature_catalog_guard.py && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
+  complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/feature_catalog_guard.py && python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json && python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
   target_command: python tools/foundation_validator.py --target TARGET
 installation:
   command: python tools/install_foundation.py TARGET
   optional_registration_clients: python tools/install_foundation.py TARGET --capabilities artifact-registration-clients
+  optional_github_registry: python tools/install_foundation.py TARGET --capabilities artifact-registry-github

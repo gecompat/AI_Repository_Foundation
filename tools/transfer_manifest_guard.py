@@ -14,6 +14,8 @@ from typing import Any
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "foundation" / "manifest.json"
 SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+GENERATED_PATH_PARTS = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
+GENERATED_SUFFIXES = {".pyc", ".pyo"}
 
 
 def issue(code: str, path: str, message: str) -> dict[str, str]:
@@ -33,6 +35,10 @@ def rows_by_section(manifest: dict[str, Any]) -> tuple[list[dict[str, Any]], dic
     return core, capabilities
 
 
+def is_generated_runtime_file(path: Path) -> bool:
+    return any(part in GENERATED_PATH_PARTS for part in path.parts) or path.suffix in GENERATED_SUFFIXES
+
+
 def collect_files(root: Path, rel_root: str, suffixes: list[str], recursive: bool) -> set[str]:
     base = root / rel_root
     if not base.exists():
@@ -41,7 +47,7 @@ def collect_files(root: Path, rel_root: str, suffixes: list[str], recursive: boo
     allowed = set(suffixes)
     result: set[str] = set()
     for path in iterator:
-        if not path.is_file() or path.name in {".gitkeep", "README.md"}:
+        if not path.is_file() or path.name in {".gitkeep", "README.md"} or is_generated_runtime_file(path):
             continue
         if allowed and path.suffix not in allowed:
             continue

@@ -50,7 +50,11 @@ Every candidate must receive exactly one classification:
 
 For each candidate, inspect target evidence using the feature catalog's signals/questions and record rationale. Explicitly surface every `RECOMMENDED`, `DECISION_REQUIRED`, and `CONFLICT` result. A missing candidate is a defective upgrade assessment; silence is not equivalent to `NOT_APPLICABLE`.
 
-In particular, if a target upgraded from a pre-1.3 Foundation version and contains durable planning/decision/requirement/risk/test/release/etc. identifiers, `persistent-identity` must be assessed. If its established convention is compatible but materially weaker, recommend `ADOPT_FORWARD` for new identifiers while preserving historical references. Do not wait for the user to mention nomenclature explicitly.
+In particular:
+
+- pre-1.3 targets with durable planning/decision/requirement/risk/test/release/etc. identifiers must assess `persistent-identity`; if compatible but materially weaker, recommend `ADOPT_FORWARD` while preserving history;
+- pre-1.6 targets that use a repository-native JSON Registration Authority or split JSON planning records must assess `central-artifact-registry`; migration to v2 is a recommendation/project decision, never an automatic file rewrite;
+- a target with an existing stronger database/service/issue-tracker Registration Authority should normally preserve that authority rather than migrate merely because v2 exists.
 
 The helper `tools/upgrade_applicability.py --installed X.Y.Z --json` may compute the deterministic candidate set when the tool is available. An AI may perform the equivalent calculation directly from the catalog. Repository-specific classification remains semantic work, not a deterministic Foundation claim.
 
@@ -92,9 +96,38 @@ For every relevant identifier scope:
 6. use `DEFERRED` when concurrent/offline creation cannot safely allocate the final sequence yet;
 7. record a durable project choice when Registration Authority/allocation mode must be remembered.
 
-Python is not a Foundation requirement. PowerShell is a first-class supported reference client; any language is compatible when it preserves the contract.
+Python is not a Foundation requirement. Any implementation language is compatible when it preserves the contract.
 
-The optional manifest capability `artifact-registration-clients` installs the Python and PowerShell reference clients only when the target explicitly wants them. A compatible existing project allocator takes precedence.
+The optional `artifact-registration-clients` capability contains the Python and PowerShell **v1 compatibility-profile** reference clients. A compatible existing project allocator takes precedence.
+
+## Central repository-native JSON registry
+
+Read `CENTRAL_ARTIFACT_REGISTRY_POLICY.md` when a project uses or is considering a JSON-file Registration Authority.
+
+The Foundation v1.6 default for a new repository-native JSON authority is `foundation-artifact-registry/v2`:
+
+- complete artifact records live in one central `artifacts` object;
+- the canonical human reference is the object key;
+- `next_sequence` is not persisted; the authority derives `MAX(canonical sequence)+1`, including live reservations when the project defines them;
+- Git-native v2 does not require a mutable global `registry_revision`; Git state is the concurrency token;
+- registered/retired references remain present and non-reusable;
+- object-level three-way merge and semantic validation are authoritative for central-registry PR changes;
+- a textually clean Git merge is insufficient unless the parsed Git result equals the semantic expected result.
+
+Existing v1 allocation-only or split-artifact projects are compatible. Do not migrate them to v2 merely because v1.6 is installed. Treat a storage-authority migration as a durable project choice and preserve every canonical reference, UID, alias, retirement/no-reuse fact, and relevant relation.
+
+For GitHub repositories, the optional `artifact-registry-github` capability may install a reference semantic registry tool and workflow template. Select it only when the target wants GitHub-based preflight/merge gating. The normative v2 contract does not require GitHub or Python.
+
+When selected, the GitHub flow is expected to:
+
+1. validate the PR-head central registry;
+2. inspect other open PRs early for hard identity collisions and overlapping edits;
+3. compute the object-level three-way merge from merge base, current target branch, and PR head;
+4. run full semantic integrity on the merged candidate;
+5. simulate Git's actual textual registry merge and compare parsed JSON to the semantic result;
+6. block on text conflict, semantic conflict, or result mismatch.
+
+Repository administration may still need to configure those checks as required status checks/ruleset conditions. Do not claim hard server-side enforcement merely because the workflow file exists.
 
 ## Project-governance discovery
 
@@ -138,16 +171,17 @@ Do not replace richer target policies with simplified Foundation vocabulary.
 1. Resolve exact source ref; read its manifest and feature catalog.
 2. Determine installed target Foundation version separately.
 3. If upgrading from an older version, compute and classify the complete semantic feature delta; surface recommendations/decisions/conflicts.
-4. Read semantic integration policy plus feature-specific policies required by applicable candidates.
-5. Inspect target governance, identifiers, Registration Authority, adapters, repo maps, validation, model routing, privacy/license constraints.
+4. Read semantic integration policy plus feature-specific policies required by applicable candidates, including central-registry policy when relevant.
+5. Inspect target governance, identifiers, Registration Authority/storage profile, adapters, repo maps, validation, model routing, privacy/license constraints.
 6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities.
 7. Build deterministic file states (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) and semantic overlap classifications.
 8. Preserve equivalent, stronger, selectable-override, and complementary target behavior; resolve true required conflicts and target-internal conflicts separately.
-9. Apply identifier adoption and Registration Authority rules without silent migration/replacement.
+9. Apply identifier adoption, Registration Authority, and optional v2 migration rules without silent migration/replacement.
 10. Never replace a differing existing file wholesale; preserve target README, root license, domain docs, project state/backlog/decisions, repo map, identifier history, allocator, and project validation unless separately authorized.
-11. Run/perform `FOUNDATION_INTEGRITY`; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
-12. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration choices, discovery fixes, unresolved conflicts, and validation evidence by scope.
+11. If v2 central registry is selected, establish its canonical path, migration mapping, generated-view ownership, validation/merge gates, and any GitHub-required-check administration separately from Foundation file transfer.
+12. Run/perform `FOUNDATION_INTEGRITY`; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
+13. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry choices, discovery fixes, unresolved conflicts, and validation evidence by scope.
 
 ## Authorization
 
-The user's instruction to apply or upgrade Foundation authorizes ordinary file creation and compatible semantic merges described above. It does not authorize historical identifier migration, replacement of an established Registration Authority, or another durable project-selectable change unless explicitly selected. Do not request repeated confirmation for each file; stop only for a real unresolved semantic conflict, data-handling boundary, unexpected target/scope, destructive migration without authority, or another explicit gate.
+The user's instruction to apply or upgrade Foundation authorizes ordinary file creation and compatible semantic merges described above. It does not authorize historical identifier migration, replacement/migration of an established Registration Authority, or another durable project-selectable change unless explicitly selected. Do not request repeated confirmation for each file; stop only for a real unresolved semantic conflict, data-handling boundary, unexpected target/scope, destructive migration without authority, or another explicit gate.

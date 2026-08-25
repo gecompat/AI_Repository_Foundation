@@ -16,7 +16,7 @@ import upgrade_applicability  # noqa: E402
 
 
 class UpgradeInstallationTests(unittest.TestCase):
-    def test_installed_repo_map_exposes_upgrade_contract(self) -> None:
+    def test_installed_repo_map_exposes_upgrade_and_central_registry_contracts(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             with redirect_stdout(StringIO()):
@@ -26,20 +26,27 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("upgrade_contract:", repo_map)
             self.assertIn("feature_catalog: .ai/foundation/feature_catalog.json", repo_map)
             self.assertIn("silent_skip_prohibited: true", repo_map)
-            self.assertIn("RECOMMENDED_DECISION_REQUIRED_CONFLICT", repo_map)
+            self.assertIn("central_registry_contract:", repo_map)
+            self.assertIn("default_registry_profile: foundation-artifact-registry/v2", repo_map)
+            self.assertIn("persist_next_sequence: false", repo_map)
+            self.assertIn("object_level_three_way_merge_required: true", repo_map)
 
     def test_feature_catalog_and_manifest_versions_match(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.5.0")
+        self.assertEqual(manifest["ruleset_version"], "1.6.0")
 
-    def test_1_2_to_1_5_delta_forces_nomenclature_candidate(self) -> None:
+    def test_1_2_to_1_6_delta_forces_nomenclature_and_registry_candidates(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
-        candidates = upgrade_applicability.candidate_features(catalog, "1.2.0", "1.5.0")
-        identity = next(item for item in candidates if item["feature_id"] == "persistent-identity")
+        candidates = upgrade_applicability.candidate_features(catalog, "1.2.0", "1.6.0")
+        by_id = {item["feature_id"]: item for item in candidates}
+        identity = by_id["persistent-identity"]
         self.assertIn("durable_planning_identifiers", identity["applicability"]["signals"])
         self.assertIn("ADOPT_FORWARD", identity["recommendation"]["summary"])
+        central = by_id["central-artifact-registry"]
+        self.assertIn("json_file_registration_authority", central["applicability"]["signals"])
+        self.assertIn("object/property", central["recommendation"]["summary"])
 
 
 if __name__ == "__main__":

@@ -2,6 +2,33 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.6.0] - 2026-08-25
+
+### Added
+
+- `foundation-artifact-registry/v2`, a central JSON registry profile that stores complete artifact records under canonical human-reference object keys;
+- `CENTRAL_ARTIFACT_REGISTRY_POLICY.md` defining derived sequence allocation, cross-record integrity, object-level three-way merge, Git-merge verification, cross-PR preflight, deterministic serialization, and generated views;
+- `artifact-registry-v2.schema.json` as transferable core while the v1 allocation-only registry schema remains compatible legacy support;
+- optional `artifact-registry-github` capability with a reference semantic registry tool and GitHub Actions workflow template;
+- deterministic checks for duplicate UIDs/aliases, prefix-kind consistency, no-reuse/removal, relation resolution, self-relations, and `parent`/`depends_on` cycles;
+- early open-PR collision detection for newly introduced human references, UIDs, aliases, and concurrent artifact edits;
+- verification that Git's actual line-oriented merge result parses to exactly the same JSON object as the object-level semantic merge result.
+
+### Changed
+
+- repository-native JSON Registration Authorities now default to the v2 central profile;
+- `next_sequence` is no longer persisted in the v2 profile; the next candidate is derived from the maximum existing canonical sequence plus live reservations;
+- Git-native v2 registries do not persist a mutable global `registry_revision`; Git commit/blob state is the concurrency token;
+- the Foundation source project's `.ai/identity/registry.json` is migrated to v2 and now contains complete `WI-*` and `DEC-*` records;
+- `.ai/BACKLOG.md` is generated from the central registry rather than maintained as an independent planning authority;
+- central JSON correctness no longer depends on Git's textual merge heuristics.
+
+### Migration
+
+Existing `foundation-artifact-registry/v1` projects remain compatible and are not automatically migrated. When a project selects the v2 central registry, preserve canonical references and UIDs, move complete artifact records into the central `artifacts` object, remove redundant `human_ref`, `next_sequence`, and Git-redundant global revision state, and validate the migration before changing the project Registration Authority declaration.
+
+For GitHub repositories, the optional capability may be selected to provide early cross-PR preflight and the final object-level/Git-result merge gate. Another CI platform or implementation language is compatible when it enforces the same contract.
+
 ## [1.5.0] - 2026-08-24
 
 ### Added

@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.5.0
+Ruleset version: 1.6.0
 
 This directory contains reusable governance rules, machine-readable schemas, the semantic feature catalog, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -19,9 +19,10 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - semantic integration, compatibility, discovery, and adapter migration: `SEMANTIC_INTEGRATION_POLICY.md`
 - persistent artifact identity, human references, aliases, relations, revisions, and legacy-safe adoption: `PERSISTENT_IDENTITY_POLICY.md`
 - language-neutral artifact creation, Registration Authority, `DIRECT`/`DEFERRED`, concurrency, and human/AI allocation: `ARTIFACT_REGISTRATION_POLICY.md`
+- central JSON registry v2, derived sequence allocation, object-level merge, Git-merge verification, cross-PR preflight, and generated planning views: `CENTRAL_ARTIFACT_REGISTRY_POLICY.md`
 - semantic upgrade delta/applicability and mandatory recommendation surfacing: `UPGRADE_APPLICABILITY_POLICY.md`
 - semantic feature catalog: `feature_catalog.json`
-- registration schemas: `schemas/artifact-record.schema.json`, `schemas/artifact-registry.schema.json`, `schemas/artifact-registration-request.schema.json`
+- registration schemas: `schemas/artifact-record.schema.json`, `schemas/artifact-registry.schema.json`, `schemas/artifact-registry-v2.schema.json`, `schemas/artifact-registration-request.schema.json`
 - upgrade schemas: `schemas/feature-catalog.schema.json`, `schemas/upgrade-assessment.schema.json`
 - authorization and working behavior: `WORKING_RULES.md`
 - model/resource selection and target-policy mapping: `MODEL_ROUTING_POLICY.md`
@@ -32,7 +33,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - third-party/licensing: `THIRD_PARTY_AND_LICENSING.md`
 - evidence/sources: `SOURCE_AND_EVIDENCE_POLICY.md`
 - dependencies/services: `DEPENDENCY_POLICY.md`
-- machine-readable authority, integration, identity, registration, upgrade, and validation index: `repo_map.yaml`
+- machine-readable authority, integration, identity, registration, central-registry, upgrade, and validation index: `repo_map.yaml`
 
 ## Discovery boundary
 
@@ -60,7 +61,11 @@ Persistent identity, human-readable reference, aliases/external references, muta
 
 Humans and AI systems use the same project-selected Registration Authority for a given identifier scope. Final sequence references are allocated by that authority, not guessed by individual clients. `DIRECT` requires serialized or equivalent uniqueness; `DEFERRED` creates the final machine UID first and allocates the human reference later.
 
-Python is not a required runtime. PowerShell is a first-class supported reference client. The optional `artifact-registration-clients` capability may install both reference clients, but a project-specific compatible allocator takes precedence and does not need to be replaced.
+For repository-native JSON Registration Authorities, the Foundation default is `foundation-artifact-registry/v2`: complete artifact records are stored centrally, the canonical human reference is the object key, and the next sequence is derived from existing canonical keys rather than persisted as `next_sequence`. The v1 allocation-only registry remains a compatible legacy profile.
+
+A central JSON registry is merged on JSON object/property semantics. Git's line-oriented merge result must be compared with the expected object-level three-way merge and rejected when the two differ. GitHub projects may select the optional `artifact-registry-github` capability for reference preflight and merge-gate tooling.
+
+Python is not a required runtime. PowerShell remains a first-class supported reference client for the v1 compatibility profile. The optional capabilities are implementation aids; a project-specific compatible authority or implementation language takes precedence.
 
 ## Validation boundary
 
