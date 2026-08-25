@@ -107,6 +107,28 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((target / ".ai" / "foundation" / "artifact_registry_github" / "registry_semantic.py").is_file())
             self.assertTrue((target / ".github" / "workflows" / "artifact-registry-integrity.yml").is_file())
 
+    def test_github_registry_capability_surfaces_non_blocking_protection_recommendation(self) -> None:
+        notices = install_foundation.capability_notices(["artifact-registry-github"])
+        self.assertEqual(len(notices), 1)
+        self.assertEqual(notices[0]["code"], "GITHUB_REQUIRED_CHECKS_RECOMMENDED")
+        self.assertEqual(notices[0]["severity"], "RECOMMENDATION")
+        self.assertIn("do not enable GitHub branch protection", notices[0]["message"])
+        self.assertIn("not required for FOUNDATION_INTEGRITY", notices[0]["message"])
+
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            output = StringIO()
+            with redirect_stdout(output):
+                rc = install_foundation.main([
+                    str(target),
+                    "--adapters", "none",
+                    "--capabilities", "artifact-registry-github",
+                ])
+            self.assertEqual(rc, 0)
+            text = output.getvalue()
+            self.assertIn("[RECOMMENDATION] GITHUB_REQUIRED_CHECKS_RECOMMENDED", text)
+            self.assertIn("target-project administration choice", text)
+
     def test_second_install_is_idempotent(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
@@ -210,6 +232,8 @@ class InstallationModelTests(unittest.TestCase):
         self.assertIn("object-level", central.lower())
         self.assertIn("silently skipped", upgrade)
         self.assertIn("persistent-identity", transfer)
+        self.assertIn("workflow files and green Actions runs do **not** automatically", transfer)
+        self.assertIn("MUST NOT be silently applied", transfer)
 
     def test_v1_bootstrap_compatibility_semantics_remain_intact(self) -> None:
         dry = bootstrap.compatibility_args(["target", "--dry-run"])

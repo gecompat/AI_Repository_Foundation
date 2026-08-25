@@ -127,7 +127,18 @@ When selected, the GitHub flow is expected to:
 5. simulate Git's actual textual registry merge and compare parsed JSON to the semantic result;
 6. block on text conflict, semantic conflict, or result mismatch.
 
-Repository administration may still need to configure those checks as required status checks/ruleset conditions. Do not claim hard server-side enforcement merely because the workflow file exists.
+### Non-blocking GitHub repository-administration recommendation
+
+When the target uses GitHub and selects or already has semantic registry workflows, the transfer process MUST explicitly surface this distinction:
+
+- workflow files and green Actions runs do **not** automatically make those checks required before merge;
+- GitHub branch protection/rulesets are configured separately from repository files;
+- enabling the semantic registry check and the project's normal CI as required status checks, with an up-to-date/strict policy and force-push protection, is recommended when the target wants hard server-side enforcement;
+- the recommendation is a target-project administration choice and MUST NOT be silently applied by Foundation transfer;
+- declining or omitting this administration setting is not by itself a `FOUNDATION_INTEGRITY` failure;
+- do not claim hard server-side enforcement unless GitHub itself has been inspected and confirms the protection/ruleset state.
+
+This recommendation is intentionally informative rather than coercive: projects may use another Git host, another merge-control mechanism, or an existing stronger policy.
 
 ## Project-governance discovery
 
@@ -178,10 +189,10 @@ Do not replace richer target policies with simplified Foundation vocabulary.
 8. Preserve equivalent, stronger, selectable-override, and complementary target behavior; resolve true required conflicts and target-internal conflicts separately.
 9. Apply identifier adoption, Registration Authority, and optional v2 migration rules without silent migration/replacement.
 10. Never replace a differing existing file wholesale; preserve target README, root license, domain docs, project state/backlog/decisions, repo map, identifier history, allocator, and project validation unless separately authorized.
-11. If v2 central registry is selected, establish its canonical path, migration mapping, generated-view ownership, validation/merge gates, and any GitHub-required-check administration separately from Foundation file transfer.
+11. If v2 central registry is selected, establish its canonical path, migration mapping, generated-view ownership, validation/merge gates, and surface the non-blocking GitHub repository-protection recommendation when GitHub is used; do not silently change target repository administration.
 12. Run/perform `FOUNDATION_INTEGRITY`; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
-13. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry choices, discovery fixes, unresolved conflicts, and validation evidence by scope.
+13. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry choices, GitHub administration recommendation/state when relevant, discovery fixes, unresolved conflicts, and validation evidence by scope.
 
 ## Authorization
 
-The user's instruction to apply or upgrade Foundation authorizes ordinary file creation and compatible semantic merges described above. It does not authorize historical identifier migration, replacement/migration of an established Registration Authority, or another durable project-selectable change unless explicitly selected. Do not request repeated confirmation for each file; stop only for a real unresolved semantic conflict, data-handling boundary, unexpected target/scope, destructive migration without authority, or another explicit gate.
+The user's instruction to apply or upgrade Foundation authorizes ordinary file creation and compatible semantic merges described above. It does not authorize historical identifier migration, replacement/migration of an established Registration Authority, or repository-administration changes such as enabling/disabling GitHub branch protection unless explicitly selected. Do not request repeated confirmation for each file; stop only for a real unresolved semantic conflict, data-handling boundary, unexpected target/scope, destructive migration without authority, or another explicit gate.

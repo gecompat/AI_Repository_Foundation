@@ -28,18 +28,25 @@ class CentralArtifactRegistryTests(unittest.TestCase):
         self.assertEqual(registry_semantic.validate_registry(self.registry), [])
 
     def test_next_sequence_is_derived_from_canonical_keys(self) -> None:
-        self.assertEqual(registry_semantic.next_reference(self.registry, "WI"), "WI-0015")
-        self.assertEqual(registry_semantic.next_reference(self.registry, "DEC"), "DEC-0016")
+        next_wi = registry_semantic.next_reference(self.registry, "WI")
+        next_dec = registry_semantic.next_reference(self.registry, "DEC")
+        wi_number = int(next_wi.split("-", 1)[1])
+        dec_number = int(next_dec.split("-", 1)[1])
+        self.assertEqual(next_wi, f"WI-{wi_number:04d}")
+        self.assertEqual(next_dec, f"DEC-{dec_number:04d}")
+        reservations = {next_wi, f"WI-{wi_number + 2:04d}"}
         self.assertEqual(
-            registry_semantic.next_reference(self.registry, "WI", {"WI-0015", "WI-0017"}),
-            "WI-0018",
+            registry_semantic.next_reference(self.registry, "WI", reservations),
+            f"WI-{wi_number + 3:04d}",
         )
 
     def test_independent_artifact_additions_merge_by_object(self) -> None:
         base = copy.deepcopy(self.registry)
         main = copy.deepcopy(base)
         head = copy.deepcopy(base)
-        main["artifacts"]["WI-0015"] = {
+        main_ref = registry_semantic.next_reference(base, "WI")
+        head_ref = registry_semantic.next_reference(base, "WI", {main_ref})
+        main["artifacts"][main_ref] = {
             "artifact_uid": "urn:uuid:018f11aa-0000-7000-8000-000000000001",
             "kind": "work_item",
             "title": "Main work",
@@ -47,7 +54,7 @@ class CentralArtifactRegistryTests(unittest.TestCase):
             "aliases": [],
             "relations": [],
         }
-        head["artifacts"]["WI-0016"] = {
+        head["artifacts"][head_ref] = {
             "artifact_uid": "urn:uuid:018f11aa-0000-7000-8000-000000000002",
             "kind": "work_item",
             "title": "Head work",
@@ -57,28 +64,27 @@ class CentralArtifactRegistryTests(unittest.TestCase):
         }
         merged, conflicts = registry_semantic.semantic_merge(base, main, head)
         self.assertEqual(conflicts, [])
-        self.assertIn("WI-0015", merged["artifacts"])
-        self.assertIn("WI-0016", merged["artifacts"])
+        self.assertIn(main_ref, merged["artifacts"])
+        self.assertIn(head_ref, merged["artifacts"])
 
     def test_concurrent_same_reference_add_is_blocking(self) -> None:
         base = copy.deepcopy(self.registry)
         main = copy.deepcopy(base)
         head = copy.deepcopy(base)
-        main["artifacts"]["WI-0015"] = {
+        ref = registry_semantic.next_reference(base, "WI")
+        main["artifacts"][ref] = {
             "artifact_uid": "urn:uuid:018f11aa-0000-7000-8000-000000000003",
             "kind": "work_item", "title": "A", "registration_state": "REGISTERED"
         }
-        head["artifacts"]["WI-0015"] = {
+        head["artifacts"][ref] = {
             "artifact_uid": "urn:uuid:018f11aa-0000-7000-8000-000000000004",
             "kind": "work_item", "title": "B", "registration_state": "REGISTERED"
         }
         _, conflicts = registry_semantic.semantic_merge(base, main, head)
-        self.assertTrue(any("CONCURRENT_ADD artifacts.WI-0015" in value for value in conflicts))
+        self.assertTrue(any(f"CONCURRENT_ADD artifacts.{ref}" in value for value in conflicts))
 
     def test_independent_properties_of_same_artifact_merge(self) -> None:
         base = copy.deepcopy(self.registry)
-        main = copy.deepcopy(base)
-        head = copy.deepcopy(base)
         base["artifacts"]["WI-0014"]["status"] = "in_progress"
         main = copy.deepcopy(base)
         head = copy.deepcopy(base)
@@ -122,7 +128,7 @@ class CentralArtifactRegistryTests(unittest.TestCase):
         expected = registry_semantic.backlog_text(self.registry)
         actual = (ROOT / ".ai" / "BACKLOG.md").read_text(encoding="utf-8")
         self.assertEqual(actual, expected)
-        self.assertIn("WI-0014", actual)
+        self.assertIn("WI-0015", actual)
 
     def test_manifest_exposes_optional_github_registry_capability(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))

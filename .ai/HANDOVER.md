@@ -4,33 +4,37 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation v1.6 adds a central repository-native artifact registry and semantic merge layer on top of persistent identity, Registration Authority, and semantic Foundation upgrades.
+Foundation v1.6 is merged on `main` at `9176ecaea7c972d7f5ec48c66ed19caa0ca68d8c`. It adds the central `foundation-artifact-registry/v2`, derived sequence allocation, generated planning projection, object/property-level three-way merge, early cross-PR collision preflight, and Git-text-merge equivalence validation.
 
-`foundation-artifact-registry/v2` is the default profile when a project chooses a JSON-file Registration Authority. Complete records live in one `artifacts` object keyed by canonical human reference. The v2 profile does not persist `next_sequence`; the next candidate derives from the maximum existing canonical sequence plus live reservations. For Git-native repositories, a second mutable global `registry_revision` is omitted because Git commit/blob state is the concurrency token.
+The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0014` and `DEC-0015` are complete.
 
-`Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md` is transferred core. It requires cross-record validation and an object/property-level three-way merge over the merge-base registry, current target-branch registry, and PR-head registry. Independent properties may combine; divergent changes to the same value and concurrent different additions of the same canonical reference block. Lists are atomic unless a narrower project contract defines safe element semantics.
+A new source-project governance requirement is recorded by `WI-0015` and `DEC-0016`: GitHub `main` must have server-side branch protection with strict/up-to-date required checks `validate` and `registry-integrity`, administrator enforcement, linear history, force pushes disabled, and branch deletion disabled.
 
-The optional `artifact-registry-github` capability provides `registry_semantic.py` plus a GitHub Actions workflow template. It performs early open-PR preflight for duplicate new human references, duplicate UIDs, alias collisions, and overlapping artifact edits. At final PR validation it computes the object-level merge, separately simulates Git's textual registry merge, and requires the parsed Git result to equal the semantic expected object. A normal textually clean Git merge is therefore not accepted as correctness evidence by itself.
+`Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` is the authoritative operational guide. `tools/github/configure_branch_protection.py` can apply and read back the desired configuration when run with a token that has repository `Administration: write`.
 
-The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. It contains complete records through `WI-0014` and `DEC-0015`; `WI-0014` is complete. `.ai/BACKLOG.md` is generated from the registry and CI-checked. `DEC-0015` records the architecture decision in `Documentation/Architecture/decisions/DEC-0015-central-registry-semantic-merge.md`.
+The connected ChatGPT GitHub interface does not expose a branch-protection/ruleset mutation, no suitable installable plugin was available, and the execution environment has no independent GitHub administration token. GitHub had reported `main` as `protected: false` with required-check enforcement `off`. Therefore `WI-0015` remains `blocked` until a repository administrator activates the setting and GitHub verification confirms it. Do not claim server-side enforcement before that verification.
 
-The v1 allocation-only registry remains a compatible legacy profile. Existing projects are not auto-migrated. The existing optional Python/PowerShell `artifact-registration-clients` remain v1 reference implementations; v2 is normative through policy/schema and the optional GitHub reference capability. Another language or CI platform may implement the same v2 contract.
+For target repositories, the behavior is intentionally different. `foundation/AI_TRANSFER.md` and `tools/install_foundation.py` now explicitly surface that GitHub Actions workflow files do not automatically become required checks. When the `artifact-registry-github` capability is relevant, enabling suitable branch protection/rulesets is recommended if the target wants hard merge enforcement, but Foundation transfer must not silently configure it and absence alone is not a `FOUNDATION_INTEGRITY` failure.
 
-Implementation evidence on head `1bd2a9bb0a487780e2d12401ae2747cadef3f6d3`: Foundation CI run `32837531482` succeeded and Foundation Artifact Registry run `32837531385` succeeded. The latter passed registry validation, generated-backlog verification, early cross-PR preflight, object-level three-way merge, and Git-text-merge equivalence. A transient transfer-guard failure caused by generated Python `__pycache__/*.pyc` files was corrected by excluding runtime cache artifacts from managed-source discovery and adding a regression test.
+## Next actions
+
+1. Apply the source-repository GitHub protection described in `Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` using repository administration or `tools/github/configure_branch_protection.py` with an Administration-write token.
+2. Verify the effective GitHub state; only then change `WI-0015` from `blocked` to `done` and record the verification evidence.
+3. Keep target-project protection as an explicit recommendation rather than a transferred hard requirement.
+4. Separately execute `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md` with a genuinely fresh AI session/test target; WI-0001 remains open only for that criterion.
 
 ## Remaining project work
 
-- `WI-0001` remains open only for the separate genuinely fresh-agent continuation validation under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
-- `WI-0002` remains proposed for manifest hashes/cross-version installed provenance.
-- `WI-0003` remains proposed for evaluating a packaged release artifact.
-- `WI-0004` remains proposed for optional adapter modules.
+- `WI-0001`: fresh-agent continuation validation.
+- `WI-0002`: manifest hashes/cross-version installed provenance.
+- `WI-0003`: evaluate packaged release artifact.
+- `WI-0004`: optional adapter modules.
+- `WI-0015`: source GitHub branch protection activation/verification.
 
 ## Open constraints
 
-- The GitHub workflow files provide deterministic checks, but this repository currently has no connector-exposed mutation for configuring branch protection/rulesets. Hard server-side enforcement that these checks are *required* must not be claimed unless repository administration is separately verified/configured.
 - Early cross-PR preflight is a snapshot and cannot replace the final check against current `main`.
 - The reference GitHub capability treats arrays as atomic merge values unless a project defines narrower safe semantics.
-- The central v2 profile improves repository-native state consistency but is still not a high-frequency distributed database; projects with stronger service/database authorities should preserve them.
+- The central v2 profile is not a high-frequency distributed database; projects with stronger service/database authorities should preserve them.
 - Migration from v1/split artifact storage to v2 is a project decision because it changes Registration Authority storage representation even when canonical IDs stay unchanged.
-- Manifest hashes/cross-version installed provenance remain pending under WI-0002.
-- Vendor adapter discovery behavior can change and must be rechecked against current primary documentation when adapters change.
+- GitHub repository-administration controls are outside ordinary Foundation file transfer and must not be silently changed in target repositories.
