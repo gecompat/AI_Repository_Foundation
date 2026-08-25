@@ -13,26 +13,38 @@ class FoundationIdentityMigrationTests(unittest.TestCase):
         backlog = (ROOT / ".ai" / "BACKLOG.md").read_text(encoding="utf-8")
         self.assertNotRegex(backlog, r"(?m)^\| FND-[0-9]+ \|")
         refs = re.findall(r"(?m)^\| (WI-[0-9]{4}) \|", backlog)
-        self.assertEqual(refs, [f"WI-{index:04d}" for index in range(1, 14)])
+        self.assertEqual(refs, [f"WI-{index:04d}" for index in range(1, 15)])
 
-    def test_registry_contains_all_current_work_items_and_decisions(self) -> None:
+    def test_registry_contains_complete_v2_work_items_and_decisions(self) -> None:
         registry = json.loads((ROOT / ".ai" / "identity" / "registry.json").read_text(encoding="utf-8"))
-        allocations = registry["allocations"]
-        for index in range(1, 14):
-            self.assertIn(f"WI-{index:04d}", allocations)
+        self.assertEqual(registry["schema_version"], 2)
+        self.assertEqual(registry["profile"], "foundation-artifact-registry/v2")
+        self.assertNotIn("registry_revision", registry)
+        self.assertTrue(all("next_sequence" not in row for row in registry["prefixes"].values()))
+        artifacts = registry["artifacts"]
         for index in range(1, 15):
-            self.assertIn(f"DEC-{index:04d}", allocations)
-        self.assertEqual(len(allocations.values()), len(set(allocations.values())))
-        self.assertEqual(registry["prefixes"]["WI"]["next_sequence"], 14)
-        self.assertEqual(registry["prefixes"]["DEC"]["next_sequence"], 15)
+            ref = f"WI-{index:04d}"
+            self.assertIn(ref, artifacts)
+            self.assertNotIn("human_ref", artifacts[ref])
+            self.assertEqual(artifacts[ref]["kind"], "work_item")
+        for index in range(1, 16):
+            ref = f"DEC-{index:04d}"
+            self.assertIn(ref, artifacts)
+            self.assertNotIn("human_ref", artifacts[ref])
+            self.assertEqual(artifacts[ref]["kind"], "decision")
+        uids = [record["artifact_uid"] for record in artifacts.values()]
+        self.assertEqual(len(uids), len(set(uids)))
 
     def test_historical_fnd_aliases_are_mapped_one_to_one(self) -> None:
         mapping_path = ROOT / "Documentation" / "Architecture" / "IDENTIFIER_MIGRATION_2026-08-24.md"
         mapping = mapping_path.read_text(encoding="utf-8")
+        registry = json.loads((ROOT / ".ai" / "identity" / "registry.json").read_text(encoding="utf-8"))
         for index in range(1, 13):
             self.assertIn(f"`FND-{index:03d}` | `WI-{index:04d}`", mapping)
+            self.assertIn(f"FND-{index:03d}", registry["artifacts"][f"WI-{index:04d}"]["aliases"])
         repo_map = (ROOT / ".ai" / "repo_map.yaml").read_text(encoding="utf-8")
-        self.assertIn("historical_alias_mapping: Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md", repo_map)
+        self.assertIn("registry_profile: foundation-artifact-registry/v2", repo_map)
+        self.assertIn("persist_next_sequence: false", repo_map)
         self.assertIn("migration_mode: MIGRATE_EXPLICIT", repo_map)
 
     def test_source_project_identity_is_not_transfer_payload(self) -> None:
