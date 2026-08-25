@@ -78,6 +78,24 @@ def transfer_entries(
     return result
 
 
+def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
+    notices: list[dict[str, str]] = []
+    if "artifact-registry-github" in capabilities:
+        notices.append(
+            {
+                "code": "GITHUB_REQUIRED_CHECKS_RECOMMENDED",
+                "severity": "RECOMMENDATION",
+                "message": (
+                    "The artifact-registry-github workflow files do not enable GitHub branch protection or make checks required. "
+                    "If hard server-side enforcement is desired, configure branch protection/rulesets separately and require the "
+                    "semantic registry check plus the project's normal CI. This is a target-project administration choice and is "
+                    "not required for FOUNDATION_INTEGRITY."
+                ),
+            }
+        )
+    return notices
+
+
 def build_plan(target: Path, entries: list[TransferEntry]) -> list[PlanItem]:
     plan: list[PlanItem] = []
     for entry in entries:
@@ -94,7 +112,7 @@ def build_plan(target: Path, entries: list[TransferEntry]) -> list[PlanItem]:
     return plan
 
 
-def plan_payload(plan: list[PlanItem]) -> dict:
+def plan_payload(plan: list[PlanItem], notices: list[dict[str, str]] | None = None) -> dict:
     return {
         "schema_version": 1,
         "items": [
@@ -107,7 +125,13 @@ def plan_payload(plan: list[PlanItem]) -> dict:
             }
             for item in plan
         ],
+        "notices": notices or [],
     }
+
+
+def print_notices(notices: list[dict[str, str]]) -> None:
+    for notice in notices:
+        print(f"[{notice['severity']}] {notice['code']}: {notice['message']}")
 
 
 def main(argv: list[str] | None = None) -> int:
@@ -141,13 +165,15 @@ def main(argv: list[str] | None = None) -> int:
         print(f"[BLOCK] {exc}")
         return 2
 
+    notices = capability_notices(capabilities)
     plan = build_plan(target, entries)
-    payload = plan_payload(plan)
+    payload = plan_payload(plan, notices)
     if args.json_output:
         print(json.dumps(payload, indent=2))
     else:
         for item in plan:
             print(f"[{item.state}] {item.entry.target_rel.as_posix()}")
+        print_notices(notices)
 
     blocked = [item for item in plan if item.state in {"MERGE_REQUIRED", "CONFLICT"}]
     if args.apply and blocked:
