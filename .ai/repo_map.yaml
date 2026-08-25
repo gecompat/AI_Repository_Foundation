@@ -11,6 +11,7 @@ authority:
     - .ai/FOUNDATION.md
     - .ai/identity/registry.json
     - Documentation/Architecture/DECISIONS.md
+    - Documentation/Architecture/decisions/DEC-0015-central-registry-semantic-merge.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -54,6 +55,7 @@ identity:
   semantic_merge_tool: foundation/capabilities/artifact-registry-github/registry_semantic.py
 decisions:
   index: Documentation/Architecture/DECISIONS.md
+  supplemental_records: Documentation/Architecture/decisions/
 transfer:
   manifest: foundation/manifest.json
   version_authority: foundation/manifest.json#ruleset_version
