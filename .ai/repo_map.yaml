@@ -12,6 +12,7 @@ authority:
     - .ai/identity/registry.json
     - Documentation/Architecture/DECISIONS.md
     - Documentation/Architecture/decisions/DEC-0015-central-registry-semantic-merge.md
+    - Documentation/Architecture/decisions/DEC-0016-foundation-required-github-protection.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -24,6 +25,7 @@ authority:
     - Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
     - Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md
     - Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
+    - Documentation/Quality/GITHUB_BRANCH_PROTECTION.md
     - foundation/feature_catalog.json
   informative:
     - README.md
@@ -56,6 +58,22 @@ identity:
 decisions:
   index: Documentation/Architecture/DECISIONS.md
   supplemental_records: Documentation/Architecture/decisions/
+source_github_protection:
+  branch: main
+  required: true
+  policy: Documentation/Quality/GITHUB_BRANCH_PROTECTION.md
+  decision: Documentation/Architecture/decisions/DEC-0016-foundation-required-github-protection.md
+  configurator: tools/github/configure_branch_protection.py
+  required_checks:
+    - validate
+    - registry-integrity
+  require_up_to_date: true
+  enforce_admins: true
+  require_linear_history: true
+  allow_force_pushes: false
+  allow_deletions: false
+  observed_state: pending_repository_admin_activation
+  target_transfer_behavior: recommend_not_enforce
 transfer:
   manifest: foundation/manifest.json
   version_authority: foundation/manifest.json#ruleset_version
@@ -78,6 +96,7 @@ validation:
   semantic_feature_command: python tools/feature_catalog_guard.py
   central_registry_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json
   backlog_projection_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check
+  source_github_protection_verify: python tools/github/configure_branch_protection.py --verify-only
   foundation_command: python tools/foundation_validator.py
   complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/feature_catalog_guard.py && python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json && python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
   target_command: python tools/foundation_validator.py --target TARGET
