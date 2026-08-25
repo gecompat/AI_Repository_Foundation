@@ -40,8 +40,8 @@ Initial governance, metadata, adapters, bootstrap skeleton, and validator skelet
 - `DIRECT` serialized allocation and `DEFERRED` permanent-UID-first workflow;
 - core language-neutral registration policy and JSON Schemas;
 - preservation of compatible target issue-tracker/database/service/project allocators;
-- opt-in reference-client capability rather than mandatory target runtime;
-- independent Python and PowerShell reference clients with shared deterministic contract fixtures;
+- opt-in v1 reference-client capability rather than mandatory target runtime;
+- independent Python and PowerShell v1 reference clients with shared deterministic contract fixtures;
 - capability-aware installer, target validator, and cross-language CI.
 
 ## v1.5 — Semantic upgrade applicability
@@ -55,9 +55,23 @@ Initial governance, metadata, adapters, bootstrap skeleton, and validator skelet
 - changed-source CI requiring ruleset version bump plus feature-catalog review;
 - Foundation source-project migration from active `FND-*` planning IDs to registered `WI-*` references with durable aliases.
 
+## v1.6 — Central repository-native artifact registry
+
+- `foundation-artifact-registry/v2` as the default profile for repository-native JSON Registration Authorities;
+- complete artifact records in one canonical JSON object keyed by human reference;
+- no persisted `next_sequence`; allocation derives `MAX(canonical sequence)+1` plus live reservations;
+- no Git-redundant global registry revision counter; Git state is the concurrency token;
+- cross-record UID/alias/no-reuse/relation/graph validation;
+- deterministic object/property-level three-way merge over base, current main, and PR head;
+- verification that Git's actual textual merge result equals the semantic object merge result;
+- early cross-PR collision preflight for human references, UIDs, aliases, and overlapping artifact edits;
+- generated Markdown planning views with central JSON remaining the sole authority;
+- optional `artifact-registry-github` capability for reference implementation and GitHub Actions;
+- Foundation source-project registry migrated to v2 and `.ai/BACKLOG.md` generated from it.
+
 ## Later
 
-- optional adapter/capability modules beyond current registration clients;
+- optional adapter/capability modules beyond current registration/registry clients;
 - stronger drift hashes and installed provenance under WI-0002;
 - packaged release artifacts only if they add value beyond manifest-driven transfer;
-- evaluate additional reference clients or GUI/IDE frontends only when target-project evidence justifies them; keep the registration protocol independent of any client implementation.
+- evaluate additional v2 reference clients, GUI/IDE frontends, or non-GitHub CI adapters only when project evidence justifies them; keep the normative registry/merge protocol implementation-neutral.
