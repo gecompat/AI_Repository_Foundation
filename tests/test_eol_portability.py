@@ -47,6 +47,7 @@ class EolPortabilityTests(unittest.TestCase):
                     install_foundation.main([str(target), "--adapters", "none", "--apply"]),
                     0,
                 )
+            self.assertFalse((target / ".gitattributes").exists())
 
             git("add", ".")
             git("commit", "-m", "Install Foundation")
