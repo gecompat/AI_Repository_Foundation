@@ -3,7 +3,10 @@ from __future__ import annotations
 import importlib.util
 import json
 import unittest
+from contextlib import redirect_stderr, redirect_stdout
+from io import StringIO
 from pathlib import Path
+from unittest import mock
 
 ROOT = Path(__file__).resolve().parents[1]
 TOOL = ROOT / "tools" / "github" / "configure_rulesets.py"
@@ -28,6 +31,17 @@ class RepositoryContinuityTests(unittest.TestCase):
         pull = next(row for row in payload["rules"] if row["type"] == "pull_request")
         self.assertEqual(pull["parameters"]["required_approving_review_count"], 0)
         self.assertEqual(configure_rulesets.verify_core(payload, "main"), [])
+
+    def test_core_ruleset_rejects_missing_or_extra_safety_state(self) -> None:
+        payload = configure_rulesets.core_payload("main")
+        payload.pop("bypass_actors")
+        payload["conditions"]["ref_name"]["include"].append("refs/heads/release")
+        pull = next(row for row in payload["rules"] if row["type"] == "pull_request")
+        pull["parameters"]["required_approving_review_count"] = 1
+        joined = "\n".join(configure_rulesets.verify_core(payload, "main"))
+        self.assertIn("no bypass actors", joined)
+        self.assertIn("target only refs/heads/main", joined)
+        self.assertIn("required_approving_review_count", joined)
 
     def test_ci_ruleset_has_strict_checks_and_pull_request_only_user_bypass(self) -> None:
         payload = configure_rulesets.ci_payload(
@@ -64,7 +78,110 @@ class RepositoryContinuityTests(unittest.TestCase):
             )
         )
         self.assertIn("pull_request-only bypass", joined)
-        self.assertIn("registry-integrity", joined)
+        self.assertIn("required checks must be exactly", joined)
+
+    def test_ci_ruleset_rejects_additional_bypass_or_direct_push_path(self) -> None:
+        payload = configure_rulesets.ci_payload(
+            "main", ["validate", "registry-integrity"], 48807214
+        )
+        payload["bypass_actors"].append(
+            {"actor_id": 5, "actor_type": "RepositoryRole", "bypass_mode": "always"}
+        )
+        joined = "\n".join(
+            configure_rulesets.verify_ci(
+                payload, "main", ["validate", "registry-integrity"], 48807214
+            )
+        )
+        self.assertIn("exactly the authorized user", joined)
+        self.assertIn("no other bypass actors", joined)
+
+    def test_ci_ruleset_rejects_non_exact_conditions_and_status_parameters(self) -> None:
+        payload = configure_rulesets.ci_payload(
+            "main", ["validate", "registry-integrity"], 48807214
+        )
+        payload["conditions"]["ref_name"]["exclude"] = ["refs/heads/main"]
+        status = next(row for row in payload["rules"] if row["type"] == "required_status_checks")
+        status["parameters"].pop("do_not_enforce_on_create")
+        status["parameters"]["required_status_checks"].append(
+            {"context": "unexpected", "integration_id": 99}
+        )
+        joined = "\n".join(
+            configure_rulesets.verify_ci(
+                payload, "main", ["validate", "registry-integrity"], 48807214
+            )
+        )
+        self.assertIn("target only refs/heads/main", joined)
+        self.assertIn("enforced on branch creation", joined)
+        self.assertIn("required checks must be exactly", joined)
+        self.assertIn("unexpected integration", joined)
+
+    def test_migration_deletes_classic_only_after_verified_rulesets(self) -> None:
+        core = configure_rulesets.core_payload("main")
+        ci = configure_rulesets.ci_payload(
+            "main", ["validate", "registry-integrity"], 48807214
+        )
+        events: list[str] = []
+
+        def fake_upsert(base_url: str, token: str, payload: dict) -> dict:
+            events.append(f"upsert:{payload['name']}")
+            return payload
+
+        locate_values = iter([None, core, ci])
+
+        def fake_locate(base_url: str, token: str, name: str) -> dict | None:
+            events.append(f"locate:{name}")
+            return next(locate_values)
+
+        protection_values = iter([True, True, False])
+
+        def fake_protection(base_url: str, token: str, branch: str) -> bool:
+            value = next(protection_values)
+            events.append(f"classic:{value}")
+            return value
+
+        def fake_request(method: str, url: str, token: str, payload: dict | None = None) -> None:
+            self.assertEqual(method, "DELETE")
+            events.append("delete-classic")
+
+        with (
+            mock.patch.dict("os.environ", {"GITHUB_ADMIN_TOKEN": "test-token"}),
+            mock.patch.object(configure_rulesets, "resolve_user_id", return_value=48807214),
+            mock.patch.object(configure_rulesets, "upsert", side_effect=fake_upsert),
+            mock.patch.object(configure_rulesets, "locate", side_effect=fake_locate),
+            mock.patch.object(
+                configure_rulesets,
+                "classic_protection_exists",
+                side_effect=fake_protection,
+            ),
+            mock.patch.object(configure_rulesets, "request", side_effect=fake_request),
+            redirect_stdout(StringIO()),
+            redirect_stderr(StringIO()),
+        ):
+            self.assertEqual(configure_rulesets.main([]), 0)
+
+        delete_index = events.index("delete-classic")
+        self.assertLess(events.index(f"upsert:{configure_rulesets.CORE_NAME}"), delete_index)
+        self.assertLess(events.index(f"upsert:{configure_rulesets.CI_NAME}"), delete_index)
+        self.assertEqual(events[-1], "classic:False")
+
+    def test_verify_only_fails_when_classic_protection_remains(self) -> None:
+        core = configure_rulesets.core_payload("main")
+        ci = configure_rulesets.ci_payload(
+            "main", ["validate", "registry-integrity"], 48807214
+        )
+        with (
+            mock.patch.dict("os.environ", {"GITHUB_ADMIN_TOKEN": "test-token"}),
+            mock.patch.object(configure_rulesets, "resolve_user_id", return_value=48807214),
+            mock.patch.object(
+                configure_rulesets,
+                "classic_protection_exists",
+                side_effect=[True, True],
+            ),
+            mock.patch.object(configure_rulesets, "locate", side_effect=[core, ci, core, ci]),
+            redirect_stdout(StringIO()),
+            redirect_stderr(StringIO()),
+        ):
+            self.assertEqual(configure_rulesets.main(["--verify-only"]), 2)
 
     def test_transfer_contains_continuity_policy_and_break_glass_is_not_auto_admin(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))

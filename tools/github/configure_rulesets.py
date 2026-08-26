@@ -27,6 +27,14 @@ CORE_NAME = "foundation-main-core-safety"
 CI_NAME = "foundation-main-ci-gates"
 
 
+class GitHubApiError(RuntimeError):
+    """GitHub REST failure with a machine-checkable HTTP status."""
+
+    def __init__(self, status: int, detail: str) -> None:
+        super().__init__(f"GitHub API {status}: {detail}")
+        self.status = status
+
+
 def request(method: str, url: str, token: str, payload: dict | None = None) -> Any:
     data = None if payload is None else json.dumps(payload).encode("utf-8")
     req = urllib.request.Request(url, data=data, method=method)
@@ -40,7 +48,7 @@ def request(method: str, url: str, token: str, payload: dict | None = None) -> A
             return None if not raw else json.loads(raw.decode("utf-8"))
     except urllib.error.HTTPError as exc:
         detail = exc.read().decode("utf-8", errors="replace")
-        raise RuntimeError(f"GitHub API {exc.code}: {detail}") from exc
+        raise GitHubApiError(exc.code, detail) from exc
 
 
 def ref_condition(branch: str) -> dict:
@@ -131,23 +139,61 @@ def upsert(base_url: str, token: str, payload: dict) -> dict:
     return full_ruleset(base_url, token, ruleset_id)
 
 
-def rule_types(value: dict) -> set[str]:
-    return {row.get("type") for row in value.get("rules", []) if isinstance(row, dict) and isinstance(row.get("type"), str)}
+def verify_exact_ref_condition(value: dict, branch: str, label: str) -> list[str]:
+    conditions = value.get("conditions")
+    ref_name = conditions.get("ref_name") if isinstance(conditions, dict) else None
+    if not isinstance(ref_name, dict):
+        return [f"{label} ruleset has no valid ref_name condition"]
+    include = ref_name.get("include")
+    exclude = ref_name.get("exclude")
+    expected = [f"refs/heads/{branch}"]
+    if include != expected or exclude != []:
+        return [f"{label} ruleset must target only refs/heads/{branch} with no exclusions"]
+    return []
+
+
+def rules_by_type(value: dict, rule_type: str) -> list[dict]:
+    rules = value.get("rules")
+    if not isinstance(rules, list):
+        return []
+    return [
+        row
+        for row in rules
+        if isinstance(row, dict) and row.get("type") == rule_type
+    ]
 
 
 def verify_core(value: dict, branch: str) -> list[str]:
     problems: list[str] = []
     if value.get("name") != CORE_NAME or value.get("enforcement") != "active" or value.get("target") != "branch":
         problems.append("core ruleset name/target/enforcement mismatch")
-    if value.get("bypass_actors"):
+    if value.get("bypass_actors") != []:
         problems.append("core ruleset must have no bypass actors")
-    include = (((value.get("conditions") or {}).get("ref_name") or {}).get("include") or [])
-    if f"refs/heads/{branch}" not in include:
-        problems.append(f"core ruleset does not target refs/heads/{branch}")
+    problems.extend(verify_exact_ref_condition(value, branch, "core"))
     required = {"pull_request", "required_linear_history", "non_fast_forward", "deletion"}
-    missing = sorted(required - rule_types(value))
-    if missing:
-        problems.append("core ruleset missing rules: " + ", ".join(missing))
+    rules = value.get("rules")
+    if not isinstance(rules, list):
+        rules = []
+        problems.append("core ruleset rules must be an array")
+    actual_types = [
+        row.get("type")
+        for row in rules
+        if isinstance(row, dict) and isinstance(row.get("type"), str)
+    ]
+    if len(rules) != len(required) or len(actual_types) != len(required) or set(actual_types) != required:
+        problems.append("core ruleset must contain exactly pull_request, required_linear_history, non_fast_forward, and deletion")
+
+    pull_rules = rules_by_type(value, "pull_request")
+    if len(pull_rules) != 1:
+        problems.append("core ruleset must contain exactly one pull_request rule")
+    else:
+        params = pull_rules[0].get("parameters") or {}
+        expected_params = pull_request_rule()["parameters"]
+        for key, expected in expected_params.items():
+            if params.get(key) != expected:
+                problems.append(f"core pull_request parameter {key} must be {expected!r}")
+        if params.get("required_reviewers") not in (None, []):
+            problems.append("core pull_request rule must not require named reviewers")
     return problems
 
 
@@ -155,33 +201,82 @@ def verify_ci(value: dict, branch: str, checks: list[str], bypass_user_id: int) 
     problems: list[str] = []
     if value.get("name") != CI_NAME or value.get("enforcement") != "active" or value.get("target") != "branch":
         problems.append("CI ruleset name/target/enforcement mismatch")
-    include = (((value.get("conditions") or {}).get("ref_name") or {}).get("include") or [])
-    if f"refs/heads/{branch}" not in include:
-        problems.append(f"CI ruleset does not target refs/heads/{branch}")
-    bypass = value.get("bypass_actors") or []
+    problems.extend(verify_exact_ref_condition(value, branch, "CI"))
+    bypass = value.get("bypass_actors")
+    if not isinstance(bypass, list):
+        bypass = []
+        problems.append("CI ruleset bypass actors must be an array")
     expected_actor = {
         "actor_id": bypass_user_id,
         "actor_type": "User",
         "bypass_mode": "pull_request",
     }
-    if not any(
-        row.get("actor_id") == expected_actor["actor_id"]
-        and row.get("actor_type") == expected_actor["actor_type"]
-        and row.get("bypass_mode") == expected_actor["bypass_mode"]
-        for row in bypass if isinstance(row, dict)
-    ):
-        problems.append("CI ruleset lacks the authorized user with pull_request-only bypass")
-    status_rules = [row for row in value.get("rules", []) if isinstance(row, dict) and row.get("type") == "required_status_checks"]
+    normalized_bypass = [
+        {
+            "actor_id": row.get("actor_id"),
+            "actor_type": row.get("actor_type"),
+            "bypass_mode": row.get("bypass_mode"),
+        }
+        for row in bypass
+        if isinstance(row, dict)
+    ]
+    if len(bypass) != 1 or normalized_bypass != [expected_actor]:
+        problems.append("CI ruleset must have exactly the authorized user with pull_request-only bypass and no other bypass actors")
+
+    rules = value.get("rules")
+    if not isinstance(rules, list):
+        rules = []
+        problems.append("CI ruleset rules must be an array")
+    actual_types = [
+        row.get("type")
+        for row in rules
+        if isinstance(row, dict) and isinstance(row.get("type"), str)
+    ]
+    if len(rules) != 1 or actual_types != ["required_status_checks"]:
+        problems.append("CI ruleset must contain only one required_status_checks rule")
+    status_rules = rules_by_type(value, "required_status_checks")
     if len(status_rules) != 1:
         problems.append("CI ruleset must contain exactly one required_status_checks rule")
     else:
         params = status_rules[0].get("parameters") or {}
+        if params.get("do_not_enforce_on_create") is not False:
+            problems.append("CI status checks must be enforced on branch creation")
         if params.get("strict_required_status_checks_policy") is not True:
             problems.append("CI status checks are not strict/up-to-date")
-        actual = {row.get("context") for row in params.get("required_status_checks", []) if isinstance(row, dict)}
-        missing = sorted(set(checks) - {item for item in actual if isinstance(item, str)})
-        if missing:
-            problems.append("CI ruleset missing checks: " + ", ".join(missing))
+        rows = params.get("required_status_checks")
+        if not isinstance(rows, list):
+            problems.append("CI required status checks are not an array")
+        else:
+            contexts = [row.get("context") for row in rows if isinstance(row, dict)]
+            if len(contexts) != len(rows) or len(contexts) != len(set(contexts)) or set(contexts) != set(checks):
+                problems.append("CI ruleset required checks must be exactly: " + ", ".join(checks))
+            if any(row.get("integration_id") is not None for row in rows if isinstance(row, dict)):
+                problems.append("CI required checks must not be restricted to an unexpected integration")
+    return problems
+
+
+def classic_protection_exists(base_url: str, token: str, branch: str) -> bool:
+    try:
+        value = request("GET", f"{base_url}/branches/{branch}/protection", token)
+    except GitHubApiError as exc:
+        if exc.status == 404:
+            return False
+        raise
+    if not isinstance(value, dict):
+        raise RuntimeError("GitHub classic branch-protection response is not an object")
+    return True
+
+
+def verify_pair(core: dict | None, ci: dict | None, branch: str, checks: list[str], user_id: int) -> list[str]:
+    problems: list[str] = []
+    if core is None:
+        problems.append(f"missing ruleset {CORE_NAME}")
+    else:
+        problems.extend(verify_core(core, branch))
+    if ci is None:
+        problems.append(f"missing ruleset {CI_NAME}")
+    else:
+        problems.extend(verify_ci(ci, branch, checks, user_id))
     return problems
 
 
@@ -228,22 +323,22 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         user_id = resolve_user_id(token, args.bypass_user_id)
+        classic_before = classic_protection_exists(base_url, token, args.branch)
+        existing_core = locate(base_url, token, CORE_NAME)
+        existing_core_valid = existing_core is not None and not verify_core(existing_core, args.branch)
+        if not classic_before and not existing_core_valid:
+            raise RuntimeError(
+                "main has neither verified classic protection nor a verified core-safety ruleset; refusing migration from an unprotected state"
+            )
+
         if args.verify_only:
-            core = locate(base_url, token, CORE_NAME)
+            core = existing_core
             ci = locate(base_url, token, CI_NAME)
         else:
             core = upsert(base_url, token, core_payload(args.branch))
             ci = upsert(base_url, token, ci_payload(args.branch, checks, user_id))
 
-        problems: list[str] = []
-        if core is None:
-            problems.append(f"missing ruleset {CORE_NAME}")
-        else:
-            problems.extend(verify_core(core, args.branch))
-        if ci is None:
-            problems.append(f"missing ruleset {CI_NAME}")
-        else:
-            problems.extend(verify_ci(ci, args.branch, checks, user_id))
+        problems = verify_pair(core, ci, args.branch, checks, user_id)
         if problems:
             for problem in problems:
                 print(f"[BLOCK] {problem}", file=sys.stderr)
@@ -251,19 +346,15 @@ def main(argv: list[str] | None = None) -> int:
 
         if not args.verify_only and not args.keep_classic_protection:
             protection_url = f"{base_url}/branches/{args.branch}/protection"
-            try:
+            if classic_protection_exists(base_url, token, args.branch):
                 request("DELETE", protection_url, token)
-            except RuntimeError as exc:
-                if "GitHub API 404" not in str(exc):
-                    raise
 
         core = locate(base_url, token, CORE_NAME)
         ci = locate(base_url, token, CI_NAME)
-        final_problems = ([] if core else [f"missing ruleset {CORE_NAME}"]) + ([] if ci else [f"missing ruleset {CI_NAME}"])
-        if core:
-            final_problems.extend(verify_core(core, args.branch))
-        if ci:
-            final_problems.extend(verify_ci(ci, args.branch, checks, user_id))
+        final_problems = verify_pair(core, ci, args.branch, checks, user_id)
+        classic_after = classic_protection_exists(base_url, token, args.branch)
+        if not args.keep_classic_protection and classic_after:
+            final_problems.append("legacy classic branch protection still exists after migration")
         if final_problems:
             for problem in final_problems:
                 print(f"[BLOCK] {problem}", file=sys.stderr)
@@ -277,9 +368,10 @@ def main(argv: list[str] | None = None) -> int:
     print(f"[OK] CI gates allow user {user_id} bypass only through pull requests: {CI_NAME}")
     print("[OK] required checks: " + ", ".join(checks))
     if args.keep_classic_protection:
-        print("[INFO] legacy classic branch protection was intentionally retained")
-    elif not args.verify_only:
-        print("[OK] legacy classic branch protection removed after Ruleset verification")
+        state = "retained" if classic_after else "already absent"
+        print(f"[INFO] legacy classic branch protection was {state}")
+    else:
+        print("[OK] legacy classic branch protection is absent after Ruleset verification")
     return 0
 
 
