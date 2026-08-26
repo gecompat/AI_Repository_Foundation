@@ -90,8 +90,12 @@ def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
                 "message": (
                     "The artifact-registry-github workflow files do not enable GitHub branch protection or make checks required. "
                     "If hard server-side enforcement is desired, configure branch protection/rulesets separately and require the "
-                    "semantic registry check plus the project's normal CI. This is a target-project administration choice and is "
-                    "not required for FOUNDATION_INTEGRITY."
+                    "semantic registry check plus the project's normal CI. Mandatory external CI can also become an availability "
+                    "dependency: if repository continuity matters, consider separating unbypassable core branch safety from a CI "
+                    "ruleset with a narrowly authorized pull-request-only bypass for infrastructure-unavailable checks. Never use "
+                    "that path for a substantive validation failure. Repository protection, break-glass actors, and outage thresholds "
+                    "are target-project administration choices; Foundation installation does not configure them and they are not "
+                    "required for FOUNDATION_INTEGRITY."
                 ),
             }
         )
