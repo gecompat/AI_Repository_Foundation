@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 import subprocess
 import sys
 import tempfile
@@ -51,9 +52,12 @@ class EolPortabilityTests(unittest.TestCase):
 
             git("add", ".")
             git("commit", "-m", "Install Foundation")
-            git("reset", "--hard", "HEAD")
 
-            probe = target / ".ai" / "foundation" / "PROJECT_RULES.md"
+            foundation_dir = target / ".ai" / "foundation"
+            shutil.rmtree(foundation_dir)
+            git("checkout", "--", ".ai/foundation")
+
+            probe = foundation_dir / "PROJECT_RULES.md"
             self.assertIn(b"\r\n", probe.read_bytes(), "core.autocrlf=true did not create the intended CRLF test fixture")
 
             manifest = install_foundation.load_manifest()
