@@ -9,6 +9,8 @@ import re
 import sys
 from pathlib import Path
 
+from content_equivalence import files_equivalent
+
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "foundation" / "manifest.json"
 
@@ -40,7 +42,7 @@ PROJECT_REQUIRED = [
     "foundation/schemas/artifact-registration-request.schema.json",
     "foundation/schemas/feature-catalog.schema.json",
     "foundation/schemas/upgrade-assessment.schema.json",
-    "tools/install_foundation.py", "tools/foundation_validator.py",
+    "tools/content_equivalence.py", "tools/install_foundation.py", "tools/foundation_validator.py",
 ]
 
 FORBIDDEN_TARGETS = {"README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore"}
@@ -504,8 +506,8 @@ def validate_target(target: Path, adapter_selection: str, capability_selection: 
             validate_markers(text, display, "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
             validate_markers(text, display, "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
             validate_markers(text, display, "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
-        if display.startswith(".ai/foundation/") and source.is_file() and destination.read_bytes() != source.read_bytes():
-            add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule/provenance/capability file differs from current source; this detects drift only and does not establish semantic correctness of the override")
+        if display.startswith(".ai/foundation/") and source.is_file() and not files_equivalent(destination, source):
+            add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule/provenance/capability file differs from current source after portable text-EOL normalization; this detects drift only and does not establish semantic correctness of the override")
 
     if profile != "quick":
         for path in selected_paths:
