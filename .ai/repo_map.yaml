@@ -89,7 +89,7 @@ source_github_protection:
     infrastructure_unavailable: authorized_pr_only
     unknown: prohibited
     deferred_validation_after_recovery: required
-  observed_state: classic_protection_active_ruleset_migration_pending
+  observed_state: layered_rulesets_verified_active_2026-08-26
   target_transfer_behavior: recommend_not_enforce
 transfer:
   manifest: foundation/manifest.json

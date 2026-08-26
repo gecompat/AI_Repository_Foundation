@@ -46,6 +46,18 @@ Active:
 
 The CI bypass is used only for `INFRASTRUCTURE_UNAVAILABLE` according to `REPOSITORY_CONTINUITY_POLICY.md` and `GITHUB_BREAK_GLASS.md`. A check that ran and failed substantively is not bypassable under this policy.
 
+## Current verified server state
+
+Verified by authenticated GitHub API read-back on 2026-08-26:
+
+- `foundation-main-core-safety` is active as Ruleset `21588442`, targets only `refs/heads/main`, has no bypass actors, requires a pull request with zero mandatory approvals and linear history, and blocks non-fast-forward updates and deletion;
+- `foundation-main-ci-gates` is active as Ruleset `21588444`, targets only `refs/heads/main`, requires strict/up-to-date `validate` and `registry-integrity`, and has exactly user `48807214` with bypass mode `pull_request`;
+- GitHub reports the current user's CI bypass as `pull_requests_only` and the core-safety bypass as `never`;
+- the effective rules for `main` are the union of the CI status checks and the unbypassable pull-request, linear-history, non-fast-forward, and deletion rules;
+- the legacy classic branch-protection endpoint returns HTTP 404 after the Rulesets were verified, while branch metadata still reports `main` as protected.
+
+The migration tool created and read back both Rulesets before deleting classic protection and read both Rulesets back again afterward. This satisfies WI-0017's server-administration acceptance criterion.
+
 ## Migration from classic branch protection
 
 The previously verified state used classic branch protection with required checks enforced for everyone and administrator bypass disabled. That state protects integrity but cannot provide the narrow PR-only CI escape hatch required for repository continuity.

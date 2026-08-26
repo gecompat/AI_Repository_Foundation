@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-08-26
-Foundation version: 1.7.0 candidate
+Foundation version: 1.7.0
 
 ## Implemented baseline
 
@@ -36,12 +36,11 @@ Foundation version: 1.7.0 candidate
 
 ## GitHub merge protection — WI-0015 / DEC-0016
 
-- Foundation source `main` currently has the previously verified classic branch protection enabled;
-- pull requests, strict `validate` and `registry-integrity`, up-to-date validation, linear history, no bypass, no force push, and no deletion are enforced;
+- WI-0015 established the previously verified classic branch protection with pull requests, strict `validate` and `registry-integrity`, up-to-date validation, linear history, no bypass, no force push, and no deletion;
 - GitHub API read-back plus manual settings review on 2026-08-25 satisfied WI-0015;
-- this classic configuration remains active until the fail-safe Ruleset migration under WI-0017 is verified.
+- WI-0017 subsequently migrated the same core protections and CI gates to two layered Rulesets so only CI-gate unavailability has a controlled PR-only bypass path.
 
-## v1.7.0 candidate — WI-0016
+## v1.7.0 — WI-0016
 
 - installation planning and target drift validation share `tools/content_equivalence.py`;
 - UTF-8 LF and CRLF-only working-tree representations are treated as equivalent;
@@ -49,21 +48,25 @@ Foundation version: 1.7.0 candidate
 - direct AI transfer does not create/change target `.gitattributes` merely to silence EOL-only comparison;
 - `tests/test_eol_portability.py` creates a temporary Git repository with `core.autocrlf=true`, installs/commits Foundation, forces a fresh checkout, re-plans and validates without false drift, then introduces true drift and verifies detection;
 - the first regression implementation exposed a real test-fixture defect; this was correctly treated as `VALIDATION_FAILURE`, not as an outage/bypass candidate, and the fixture was corrected to force a fresh checkout of the tracked Foundation directory;
-- WI-0016 remains `in_progress` until the corrected autonomous regression and full deterministic suite succeed.
+- corrected focused EOL/Ruleset tests, all deterministic Foundation gates, and the complete 72-test suite succeeded locally on 2026-08-26;
+- PR #14 head `fdd67225edaccb912a96f7e2fe1286d0749975c6` passed Foundation CI run `33002938158` and Foundation Artifact Registry run `33002938204`;
+- WI-0016 is `done`.
 
-## v1.7.0 candidate — WI-0017 / DEC-0017
+## v1.7.0 — WI-0017 / DEC-0017
 
 - new transferable `REPOSITORY_CONTINUITY_POLICY.md` protects repository availability without weakening validation truth;
 - required-check blocking is classified as `VALIDATION_FAILURE`, `INFRASTRUCTURE_UNAVAILABLE`, or `UNKNOWN`;
 - break-glass is prohibited for `VALIDATION_FAILURE` and `UNKNOWN` and may be project-authorized only for `INFRASTRUCTURE_UNAVAILABLE`;
 - break-glass preserves a PR/audit path, local/manual evidence where reproducible, residual-risk recording, and mandatory post-recovery validation;
-- Foundation source target GitHub architecture is layered Rulesets:
-  - `foundation-main-core-safety`: no bypass, PR required, linear history, no force push, no deletion;
-  - `foundation-main-ci-gates`: strict `validate` and `registry-integrity`, authorized source-maintainer bypass **for pull requests only**;
+- Foundation source GitHub architecture is now active as layered Rulesets:
+  - `foundation-main-core-safety` (ID `21588442`): no bypass, PR required, linear history, no force push, no deletion;
+  - `foundation-main-ci-gates` (ID `21588444`): strict `validate` and `registry-integrity`, only authorized user `48807214` with `pull_request` bypass;
 - `tools/github/configure_rulesets.py` creates/verifies both Rulesets and removes legacy classic protection only after replacement verification;
 - `Documentation/Quality/GITHUB_BREAK_GLASS.md` defines exact source procedure and prohibited uses;
+- authenticated GitHub read-back on 2026-08-26 verified both exact active Rulesets, their `refs/heads/main` condition, bypass state, required checks, strict policy, and effective combined branch rules;
+- classic branch protection was removed only after replacement verification and its endpoint then returned HTTP 404 while `main` remained protected by the Rulesets;
 - target projects receive the continuity recommendation but Foundation does not silently create Rulesets/bypass permissions;
-- WI-0017 is `blocked` until GitHub repository administration is migrated and connector/API read-back confirms the two active Rulesets.
+- WI-0017 is `done`; DEC-0017 remains `Accepted`.
 
 ## Validation evidence
 
@@ -75,7 +78,9 @@ Foundation version: 1.7.0 candidate
 - v1.6 central registry final: Foundation CI `32837891739`, Foundation Artifact Registry `32837891764`, success; merged as `9176ecaea7c972d7f5ec48c66ed19caa0ca68d8c`.
 - classic branch protection verification 2026-08-25: GitHub reports `main` protected with `registry-integrity` and `validate` required for `everyone`; saved repository settings confirm the remaining required controls.
 - PR #14 prior head: registry-integrity succeeded; Foundation CI reached the EOL regression and found a project-owned fixture failure. This evidence is intentionally recorded as validation failure, not infrastructure unavailability.
-- v1.7.0 corrected EOL/continuity implementation: pending current PR-head deterministic/CI checks and source Ruleset administration verification.
+- v1.7.0 implementation head `fdd67225edaccb912a96f7e2fe1286d0749975c6`: Foundation CI `33002938158` and Foundation Artifact Registry `33002938204`, success.
+- local completion gate on 2026-08-26: transfer manifest guard, feature catalog guard, central registry validation, backlog projection, full Foundation validator, focused EOL/Ruleset tests, and all 72 unit tests succeeded; validator reported two non-blocking pre-existing warnings.
+- source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, and WI-0015 are complete. WI-0016 is in progress pending corrected deterministic evidence. WI-0017 is blocked only on Ruleset administration/read-back after code/policy validation. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.
+WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, and WI-0017 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.

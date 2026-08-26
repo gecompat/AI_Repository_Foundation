@@ -68,7 +68,7 @@ The target source configuration is two layered GitHub branch Rulesets:
 
 Break-glass is permitted only after explicit classification as `INFRASTRUCTURE_UNAVAILABLE`. A check that ran and found a substantive defect is `VALIDATION_FAILURE` and must not be bypassed. `UNKNOWN` remains non-bypassable. Break-glass keeps the PR/audit path, requires local/manual evidence where available, records residual risk, and creates deferred-validation debt that must be discharged after service recovery.
 
-The currently active server configuration remains the previously verified classic branch protection until the two Rulesets are created and read back. `WI-0017` therefore remains blocked on repository-admin migration/verification. Never remove the classic protection before both replacement Rulesets are active and verified.
+GitHub read-back on 2026-08-26 verified both active Rulesets on `main`: `foundation-main-core-safety` (ID `21588442`) has no bypass actors, and `foundation-main-ci-gates` (ID `21588444`) has only the authorized source maintainer with `pull_request` bypass plus strict `validate` and `registry-integrity`. Effective branch rules retain pull-request-only change, linear history, non-fast-forward, and deletion protection. The legacy classic protection endpoint returned HTTP 404 only after both replacement Rulesets had been verified. `WI-0017` is complete.
 
 This is a **Foundation source-project requirement**. Target projects receive `REPOSITORY_CONTINUITY_POLICY.md` and an explicit recommendation when mandatory external CI can become an availability single point of failure, but Foundation transfer never creates bypass permissions or repository Rulesets silently.
 

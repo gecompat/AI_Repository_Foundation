@@ -93,9 +93,9 @@ Break-glass MUST NOT be used to:
 - force-push or delete `main`;
 - fabricate successful status checks.
 
-## Current migration
+## Verified current state
 
-The repository historically used classic branch protection with administrator bypass disabled. That configuration provides integrity but cannot express the required PR-only CI bypass. The target source-project state is therefore layered Rulesets as described above.
+The repository historically used classic branch protection with administrator bypass disabled. On 2026-08-26 it was migrated fail-safely to the layered Rulesets described above. Authenticated GitHub read-back verified core Ruleset `21588442` with no bypass and CI Ruleset `21588444` with only user `48807214` in `pull_request` mode; classic protection was removed only afterward and then returned HTTP 404.
 
 `tools/github/configure_rulesets.py` can create/verify the two Rulesets and remove the legacy classic branch protection only after both Rulesets have been verified. Repository `Administration: write` is required.
 
