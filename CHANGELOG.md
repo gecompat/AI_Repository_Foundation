@@ -2,6 +2,20 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.6.1] - 2026-08-26
+
+### Fixed
+
+- Foundation installation planning and target drift validation no longer treat Git working-tree LF/CRLF conversion as a project override or Foundation drift;
+- installer and validator now use one shared UTF-8 content-equivalence implementation, while true text changes and binary/non-UTF-8 differences remain detectable;
+- repeat installation/upgrade checks on Windows no longer create spurious `MERGE_REQUIRED` work solely because `core.autocrlf` materialized CRLF files.
+
+### Changed
+
+- direct AI transfer explicitly treats UTF-8 LF/CRLF-only differences as equivalent and prohibits creating or changing a target `.gitattributes` merely to silence Foundation EOL-only drift;
+- target projects retain ownership of their own `.gitattributes` and line-ending policy;
+- CI now runs an autonomous temporary Git-repository regression test with `core.autocrlf=true`: install, commit, fresh checkout, re-plan, validate, detect a real edit, and automatic cleanup.
+
 ## [1.6.0] - 2026-08-25
 
 ### Added
