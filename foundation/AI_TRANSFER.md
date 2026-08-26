@@ -32,6 +32,21 @@ For every upgrade/capability question:
 
 Never treat the stale target copy as the current source manifest/catalog.
 
+## Cross-platform text representation
+
+Git may materialize the same committed UTF-8 text as LF on one working tree and CRLF on another, especially on Windows with `core.autocrlf` or equivalent checkout configuration. Foundation transfer correctness is based on logical text content, not on that platform-specific working-tree representation.
+
+When planning, validating, or performing post-merge verification:
+
+- treat UTF-8 LF/CRLF-only differences as equivalent Foundation content;
+- do not report `LOCAL_OVERRIDE_OR_DRIFT`, `MERGE_REQUIRED`, or an incomplete integration solely because Git changed LF to CRLF;
+- continue to treat any content difference remaining after CRLF-to-LF normalization as real drift/merge work;
+- keep non-UTF-8/binary content byte-exact;
+- do not create, replace, or modify the target's `.gitattributes` merely to silence an LF/CRLF-only Foundation comparison;
+- preserve an existing target EOL policy; a target may independently choose a namespaced `eol=lf` or stronger byte-stability rule when its own build/runtime semantics require one.
+
+When the source tools are available, use `tools/install_foundation.py` and `tools/foundation_validator.py`; both use the same portable text-equivalence contract. If an AI implements the equivalent comparison directly, it must preserve the same narrow semantics: CRLF versus LF may normalize, lone CR/final-newline/content changes remain significant, and binary data remains byte-exact.
+
 ## Mandatory semantic upgrade assessment
 
 If the installed target version is older than the source version, read `Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md` before deciding what to adopt.
@@ -185,12 +200,12 @@ Do not replace richer target policies with simplified Foundation vocabulary.
 4. Read semantic integration policy plus feature-specific policies required by applicable candidates, including central-registry policy when relevant.
 5. Inspect target governance, identifiers, Registration Authority/storage profile, adapters, repo maps, validation, model routing, privacy/license constraints.
 6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities.
-7. Build deterministic file states (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) and semantic overlap classifications.
+7. Build deterministic file states (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) using portable UTF-8 LF/CRLF equivalence; do not manufacture `.gitattributes` work for an EOL-only difference.
 8. Preserve equivalent, stronger, selectable-override, and complementary target behavior; resolve true required conflicts and target-internal conflicts separately.
 9. Apply identifier adoption, Registration Authority, and optional v2 migration rules without silent migration/replacement.
 10. Never replace a differing existing file wholesale; preserve target README, root license, domain docs, project state/backlog/decisions, repo map, identifier history, allocator, and project validation unless separately authorized.
 11. If v2 central registry is selected, establish its canonical path, migration mapping, generated-view ownership, validation/merge gates, and surface the non-blocking GitHub repository-protection recommendation when GitHub is used; do not silently change target repository administration.
-12. Run/perform `FOUNDATION_INTEGRITY`; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
+12. Run/perform `FOUNDATION_INTEGRITY` with portable text-EOL comparison; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
 13. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry choices, GitHub administration recommendation/state when relevant, discovery fixes, unresolved conflicts, and validation evidence by scope.
 
 ## Authorization
