@@ -36,6 +36,7 @@ class InstallationModelTests(unittest.TestCase):
         self.assertFalse(any(path.startswith("Documentation/Architecture/") for path in targets))
         self.assertFalse(any(path.startswith("Documentation/Quality/") for path in targets))
         self.assertNotIn(".ai/identity/registry.json", {row["source"] for row in self.manifest["core"]})
+        self.assertIn("tools/content_equivalence.py", self.manifest["never_transfer"])
 
     def test_existing_readme_and_license_are_preserved_and_notice_is_installed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -49,7 +50,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue(notice.is_file())
             self.assertIn((ROOT / "LICENSE").read_text(encoding="utf-8"), notice.read_text(encoding="utf-8"))
 
-    def test_core_semantic_identity_registration_registry_and_upgrade_material_is_installed(self) -> None:
+    def test_core_semantic_identity_registration_registry_upgrade_eol_and_continuity_material_is_installed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             self.assertEqual(self.install(target), 0)
@@ -60,6 +61,8 @@ class InstallationModelTests(unittest.TestCase):
                 "ARTIFACT_REGISTRATION_POLICY.md",
                 "CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
                 "UPGRADE_APPLICABILITY_POLICY.md",
+                "REPOSITORY_CONTINUITY_POLICY.md",
+                "VALIDATION_POLICY.md",
                 "feature_catalog.json",
             ]
             for name in expected:
@@ -70,10 +73,19 @@ class InstallationModelTests(unittest.TestCase):
             central = (root / "CENTRAL_ARTIFACT_REGISTRY_POLICY.md").read_text(encoding="utf-8")
             self.assertIn("next_sequence", central)
             self.assertIn("Object-level three-way merge", central)
+            validation = (root / "VALIDATION_POLICY.md").read_text(encoding="utf-8")
+            self.assertIn("CRLF", validation)
+            self.assertIn("INFRASTRUCTURE_UNAVAILABLE", validation)
+            self.assertIn("Do not create, replace, or modify a target repository's `.gitattributes`", validation)
+            continuity = (root / "REPOSITORY_CONTINUITY_POLICY.md").read_text(encoding="utf-8")
+            self.assertIn("VALIDATION_FAILURE", continuity)
+            self.assertIn("INFRASTRUCTURE_UNAVAILABLE", continuity)
+            self.assertIn("For pull requests only", continuity)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.6.0")
+            self.assertEqual(catalog["ruleset_version"], "1.7.0")
             self.assertIn("central-artifact-registry", catalog["features"])
+            self.assertIn("repository-continuity-break-glass", catalog["features"])
             for name in [
                 "artifact-record.schema.json",
                 "artifact-registry.schema.json",
@@ -223,6 +235,8 @@ class InstallationModelTests(unittest.TestCase):
         identity = (ROOT / "Documentation" / "Standards" / "PERSISTENT_IDENTITY_POLICY.md").read_text(encoding="utf-8")
         registration = (ROOT / "Documentation" / "Standards" / "ARTIFACT_REGISTRATION_POLICY.md").read_text(encoding="utf-8")
         central = (ROOT / "Documentation" / "Standards" / "CENTRAL_ARTIFACT_REGISTRY_POLICY.md").read_text(encoding="utf-8")
+        continuity = (ROOT / "Documentation" / "Standards" / "REPOSITORY_CONTINUITY_POLICY.md").read_text(encoding="utf-8")
+        validation = (ROOT / ".ai" / "VALIDATION_POLICY.md").read_text(encoding="utf-8")
         upgrade = (ROOT / "Documentation" / "Standards" / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8")
         transfer = (ROOT / "foundation" / "AI_TRANSFER.md").read_text(encoding="utf-8")
         self.assertIn("complete semantic feature delta", project_rules)
@@ -230,10 +244,17 @@ class InstallationModelTests(unittest.TestCase):
         self.assertIn("MIGRATE_EXPLICIT", identity)
         self.assertIn("same authority", registration.lower())
         self.assertIn("object-level", central.lower())
+        self.assertIn("INFRASTRUCTURE_UNAVAILABLE", continuity)
+        self.assertIn("VALIDATION_FAILURE", continuity)
+        self.assertIn("CRLF", validation)
+        self.assertIn("INFRASTRUCTURE_UNAVAILABLE", validation)
         self.assertIn("silently skipped", upgrade)
         self.assertIn("persistent-identity", transfer)
         self.assertIn("workflow files and green Actions runs do **not** automatically", transfer)
         self.assertIn("MUST NOT be silently applied", transfer)
+        self.assertIn("do not create, replace, or modify the target's `.gitattributes`", transfer)
+        self.assertIn("For pull requests only", transfer)
+        self.assertIn("MUST NOT silently create Rulesets", transfer)
 
     def test_v1_bootstrap_compatibility_semantics_remain_intact(self) -> None:
         dry = bootstrap.compatibility_args(["target", "--dry-run"])
@@ -242,7 +263,7 @@ class InstallationModelTests(unittest.TestCase):
         apply = bootstrap.compatibility_args(["target"])
         self.assertIn("--apply", apply)
 
-    def test_manifest_sources_exist_targets_unique_and_version_is_v1_6(self) -> None:
+    def test_manifest_sources_exist_targets_unique_and_version_is_v1_7(self) -> None:
         rows = list(self.manifest["core"])
         for adapter_rows in self.manifest["adapters"].values():
             rows.extend(adapter_rows)
@@ -253,7 +274,7 @@ class InstallationModelTests(unittest.TestCase):
         for row in rows:
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.6.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.7.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

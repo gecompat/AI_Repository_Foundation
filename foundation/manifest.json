@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.6.0",
+  "ruleset_version": "1.7.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
@@ -155,6 +155,7 @@
     {"source": "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md", "target": ".ai/foundation/ARTIFACT_REGISTRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md", "target": ".ai/foundation/CENTRAL_ARTIFACT_REGISTRY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md", "target": ".ai/foundation/UPGRADE_APPLICABILITY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
+    {"source": "Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md", "target": ".ai/foundation/REPOSITORY_CONTINUITY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "foundation/feature_catalog.json", "target": ".ai/foundation/feature_catalog.json", "kind": "feature-catalog", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-record.schema.json", "target": ".ai/foundation/schemas/artifact-record.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-registry.schema.json", "target": ".ai/foundation/schemas/artifact-registry.schema.json", "kind": "schema", "merge": "review_if_exists"},
@@ -192,6 +193,6 @@
     "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore",
     ".ai/PROJECT_CONTEXT.md", ".ai/FOUNDATION.md", ".ai/PROJECT_STATUS.md", ".ai/HANDOVER.md", ".ai/BACKLOG.md", ".ai/ROADMAP.md", ".ai/TOOL_ADAPTERS.yaml", ".ai/repo_map.yaml", ".ai/identity/",
     "Documentation/Architecture/", "Documentation/Quality/",
-    "tools/bootstrap.py", "tools/install_foundation.py", "tools/foundation_validator.py", "tools/transfer_manifest_guard.py", "tools/feature_catalog_guard.py", "tools/upgrade_applicability.py", "tests/"
+    "tools/bootstrap.py", "tools/content_equivalence.py", "tools/install_foundation.py", "tools/foundation_validator.py", "tools/transfer_manifest_guard.py", "tools/feature_catalog_guard.py", "tools/upgrade_applicability.py", "tests/"
   ]
 }

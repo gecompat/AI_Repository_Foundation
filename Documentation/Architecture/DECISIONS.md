@@ -139,3 +139,27 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Consequences: v1.5 adds `UPGRADE_APPLICABILITY_POLICY.md`, a transferred feature catalog and schemas, deterministic delta tooling, a feature-catalog/change-review guard, CI gating, and explicit source/target version reporting. Future material changes to transferable Foundation sources require both a version bump and a feature-catalog review record.
 - Affected areas: upgrades, semantic integration, persistent identity/nomenclature, direct AI transfer, manifest, feature catalog, CI, validation, project recommendations and decisions.
 - Evidence: Foundation CI run `32733817943` on implementation head `9e91cd21e3941a77cbb2e5a3abbf501c2d6a4788` completed successfully, including transfer completeness, semantic feature coverage/change review, Foundation validation, installation/self-migration tests, and cross-language registration tests.
+
+## DEC-0015 — Central registry uses derived allocation and object-level merge gates
+
+- Status: Accepted
+- Date: 2026-08-25
+- Decision: The Foundation's repository-native v2 Registration Authority stores complete artifact records in one central `artifacts` object, derives allocation from the highest registered sequence, and protects concurrent changes with object-level three-way merge, semantic integrity, and comparison with Git's actual textual merge result.
+- Consequences: `.ai/identity/registry.json` is canonical source-project planning state, `.ai/BACKLOG.md` is generated, and the optional GitHub capability provides early cross-PR collision detection plus final semantic merge enforcement.
+- Full record: `decisions/DEC-0015-central-registry-semantic-merge.md`.
+
+## DEC-0016 — Foundation source requires GitHub merge protection; targets receive a recommendation
+
+- Status: Accepted
+- Date: 2026-08-25
+- Decision: The Foundation source protects `main` with PR-only integration, strict `validate` and `registry-integrity` checks, linear history, no force pushes, and no deletion. Target repositories receive a recommendation, never silent administration changes or a universal `FOUNDATION_INTEGRITY` requirement.
+- Consequences: Source merge gates require server-side enforcement; target administration remains project-owned.
+- Full record: `decisions/DEC-0016-foundation-required-github-protection.md`.
+
+## DEC-0017 — Repository protection includes a controlled infrastructure break-glass path
+
+- Status: Accepted
+- Date: 2026-08-26
+- Decision: Only `INFRASTRUCTURE_UNAVAILABLE` may use break-glass. Unbypassable core-safety rules remain active, while strict CI gates grant the authorized maintainer bypass only through pull requests; `VALIDATION_FAILURE` and `UNKNOWN` remain non-bypassable.
+- Consequences: The Foundation source uses layered GitHub Rulesets, preserves the PR audit path, requires incident evidence and deferred post-recovery validation, and does not transfer repository-admin mutations to target projects.
+- Full record: `decisions/DEC-0017-break-glass-repository-continuity.md`.

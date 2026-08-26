@@ -4,15 +4,48 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation v1.6 is merged on `main` at `ed6cb0834dc184653201acb38e3c35e858d0e49d`. It includes the central `foundation-artifact-registry/v2`, derived sequence allocation, generated planning projection, object/property-level three-way merge, early cross-PR collision preflight, Git-text-merge equivalence validation, and explicit GitHub merge-protection guidance.
+PR #14 / branch `codex/eol-portable-transfer-integrity` is the Foundation 1.7.0 integration record containing completed `WI-0016` (portable EOL transfer integrity) and `WI-0017` / accepted `DEC-0017` (repository continuity/break-glass). Its last pre-migration implementation head was `fdd67225edaccb912a96f7e2fe1286d0749975c6`; always re-read the exact PR and `origin/main` heads before integration.
 
-The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0014`/`DEC-0015` and `WI-0015`/`DEC-0016` are complete.
+The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0016` and `WI-0017` are `done` based on executed deterministic/CI evidence and authenticated GitHub Ruleset read-back.
 
-GitHub `main` is now server-side protected. GitHub branch metadata reports `protected: true`, required checks `registry-integrity` and `validate`, and enforcement level `everyone`. Manual review of the saved repository rule confirms pull-request-only merge, approvals not required, branch up-to-date required, linear history required, bypass disabled, force pushes disabled, and deletion disabled.
+## EOL portability — WI-0016
 
-`Documentation/Quality/GITHUB_BRANCH_PROTECTION.md` is the authoritative operational record. `tools/github/configure_branch_protection.py` remains available to reproduce or verify the intended state with an Administration-write token.
+A Windows integration exposed a portability defect: Git checkout can materialize transferred UTF-8 Foundation text with CRLF while the Foundation source uses LF. The old byte comparison misclassified EOL-only representation as `MERGE_REQUIRED` / `LOCAL_OVERRIDE_OR_DRIFT`.
 
-For target repositories, the behavior remains intentionally different. `foundation/AI_TRANSFER.md` and `tools/install_foundation.py` explicitly surface that GitHub Actions workflow files do not automatically become required checks. When the `artifact-registry-github` capability is relevant, enabling suitable branch protection/rulesets is recommended if the target wants hard merge enforcement, but Foundation transfer must not silently configure it and absence alone is not a `FOUNDATION_INTEGRITY` failure.
+The candidate uses shared `tools/content_equivalence.py` in installer and validator. UTF-8 CRLF/LF-only differences compare equal; lone CR, final-newline changes, actual text changes, non-UTF-8 data, and binary differences remain significant. Target `.gitattributes` remains project-owned and is not changed merely to make Foundation validation green.
+
+`tests/test_eol_portability.py` creates a temporary Git repository with `core.autocrlf=true`, installs/commits Foundation, deletes the tracked `.ai/foundation` working-tree directory and checks it out again to force conversion, verifies no false drift, introduces real drift, verifies detection, and cleans up automatically.
+
+An earlier PR-head test used `git reset --hard` without first removing the unchanged working-tree files, so Git on the Linux runner did not rewrite them to CRLF. That test failed substantively. It was correctly treated as `VALIDATION_FAILURE`, not as a GitHub Actions outage or break-glass opportunity. The corrected regression, focused tests, complete 72-test suite, and PR-head checks subsequently succeeded; WI-0016 is complete.
+
+## Repository continuity — WI-0017 / DEC-0017
+
+Mandatory external CI must not be the only availability gate for the durable repository/agent-coordination channel. The new transferable `Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md` distinguishes:
+
+- `VALIDATION_FAILURE`: check ran and found a substantive defect — break-glass prohibited;
+- `INFRASTRUCTURE_UNAVAILABLE`: validation cannot produce a trustworthy result because the execution platform/runners/service are unavailable or materially degraded — project-authorized break-glass may be used;
+- `UNKNOWN`: cause not established — break-glass prohibited until classified.
+
+The Foundation source GitHub state is two verified active Rulesets targeting exactly `refs/heads/main`:
+
+- `foundation-main-core-safety` (ID `21588442`): no bypass actors; PR required, zero mandatory approvals, linear history, no force push, no branch deletion;
+- `foundation-main-ci-gates` (ID `21588444`): strict required checks `validate` and `registry-integrity`; only user `48807214` may bypass with mode `pull_request` / **For pull requests only**.
+
+This means break-glass never enables direct push to `main`. The PR must record outage evidence, immutable base/head, local/manual checks, unreproduced checks, residual risk, and deferred post-recovery validation. Missing CI remains pending rather than being represented as green.
+
+`Documentation/Quality/GITHUB_BREAK_GLASS.md` defines the source procedure. `tools/github/configure_rulesets.py` implements fail-safe migration: create both Rulesets, read back/verify both, then and only then remove legacy classic branch protection, then verify the Rulesets again.
+
+On 2026-08-26, `tools/github/configure_rulesets.py` created and read back both Rulesets, then removed classic protection, then read both Rulesets again. Independent authenticated GitHub API read-back confirmed the exact actors/rules and effective `main` rules; the classic branch-protection endpoint returned HTTP 404 only after replacement verification. `main` remained reported as protected. WI-0017 is complete.
+
+## Target-project behavior
+
+Foundation 1.7.0 transfers repository-continuity semantics but not repository-administration changes. Targets are told that making external CI mandatory can create an availability dependency; projects needing continuity should consider separating unbypassable core safety from PR-only bypassable CI gates. Foundation does not silently select bypass actors, create Rulesets, weaken existing protection, or treat missing break-glass configuration as a `FOUNDATION_INTEGRITY` defect.
+
+## Continuation
+
+- Re-read exact `origin/main`, PR head, Required Checks, and Rulesets before any future integration or administration change.
+- Treat the Ruleset IDs and actor/mode read-back above as the 2026-08-26 evidence snapshot; GitHub remains authoritative for current state.
+- For future break-glass use, require an actual `INFRASTRUCTURE_UNAVAILABLE` classification and the complete evidence/recovery procedure. Never use it for `VALIDATION_FAILURE` or `UNKNOWN`.
 
 ## Remaining project work
 
@@ -24,7 +57,7 @@ For target repositories, the behavior remains intentionally different. `foundati
 ## Open constraints
 
 - Early cross-PR preflight is a snapshot and cannot replace the final check against current `main`.
-- The reference GitHub capability treats arrays as atomic merge values unless a project defines narrower safe semantics.
+- The reference GitHub registry capability treats arrays as atomic merge values unless a project defines narrower safe semantics.
 - The central v2 profile is not a high-frequency distributed database; projects with stronger service/database authorities should preserve them.
-- Migration from v1/split artifact storage to v2 is a project decision because it changes Registration Authority storage representation even when canonical IDs stay unchanged.
 - GitHub repository-administration controls are outside ordinary Foundation file transfer and must not be silently changed in target repositories.
+- Break-glass solves CI-service unavailability only; it cannot make GitHub Git/PR/API itself available during a broader GitHub outage.

@@ -32,6 +32,21 @@ For every upgrade/capability question:
 
 Never treat the stale target copy as the current source manifest/catalog.
 
+## Cross-platform text representation
+
+Git may materialize the same committed UTF-8 text as LF on one working tree and CRLF on another, especially on Windows with `core.autocrlf` or equivalent checkout configuration. Foundation transfer correctness is based on logical text content, not on that platform-specific working-tree representation.
+
+When planning, validating, or performing post-merge verification:
+
+- treat UTF-8 LF/CRLF-only differences as equivalent Foundation content;
+- do not report `LOCAL_OVERRIDE_OR_DRIFT`, `MERGE_REQUIRED`, or an incomplete integration solely because Git changed LF to CRLF;
+- continue to treat any content difference remaining after CRLF-to-LF normalization as real drift/merge work;
+- keep non-UTF-8/binary content byte-exact;
+- do not create, replace, or modify the target's `.gitattributes` merely to silence an LF/CRLF-only Foundation comparison;
+- preserve an existing target EOL policy; a target may independently choose a namespaced `eol=lf` or stronger byte-stability rule when its own build/runtime semantics require one.
+
+When the source tools are available, use `tools/install_foundation.py` and `tools/foundation_validator.py`; both use the same portable text-equivalence contract. If an AI implements the equivalent comparison directly, it must preserve the same narrow semantics: CRLF versus LF may normalize, lone CR/final-newline/content changes remain significant, and binary data remains byte-exact.
+
 ## Mandatory semantic upgrade assessment
 
 If the installed target version is older than the source version, read `Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md` before deciding what to adopt.
@@ -54,6 +69,7 @@ In particular:
 
 - pre-1.3 targets with durable planning/decision/requirement/risk/test/release/etc. identifiers must assess `persistent-identity`; if compatible but materially weaker, recommend `ADOPT_FORWARD` while preserving history;
 - pre-1.6 targets that use a repository-native JSON Registration Authority or split JSON planning records must assess `central-artifact-registry`; migration to v2 is a recommendation/project decision, never an automatic file rewrite;
+- pre-1.7 targets that make external CI checks mandatory and use the repository as a durable coordination channel must assess `repository-continuity-break-glass`; surfacing the recommendation does not authorize repository-admin changes or bypass actors;
 - a target with an existing stronger database/service/issue-tracker Registration Authority should normally preserve that authority rather than migrate merely because v2 exists.
 
 The helper `tools/upgrade_applicability.py --installed X.Y.Z --json` may compute the deterministic candidate set when the tool is available. An AI may perform the equivalent calculation directly from the catalog. Repository-specific classification remains semantic work, not a deterministic Foundation claim.
@@ -114,7 +130,7 @@ The Foundation v1.6 default for a new repository-native JSON authority is `found
 - object-level three-way merge and semantic validation are authoritative for central-registry PR changes;
 - a textually clean Git merge is insufficient unless the parsed Git result equals the semantic expected result.
 
-Existing v1 allocation-only or split-artifact projects are compatible. Do not migrate them to v2 merely because v1.6 is installed. Treat a storage-authority migration as a durable project choice and preserve every canonical reference, UID, alias, retirement/no-reuse fact, and relevant relation.
+Existing v1 allocation-only or split-artifact projects are compatible. Do not migrate them to v2 merely because a newer Foundation is installed. Treat a storage-authority migration as a durable project choice and preserve every canonical reference, UID, alias, retirement/no-reuse fact, and relevant relation.
 
 For GitHub repositories, the optional `artifact-registry-github` capability may install a reference semantic registry tool and workflow template. Select it only when the target wants GitHub-based preflight/merge gating. The normative v2 contract does not require GitHub or Python.
 
@@ -139,6 +155,26 @@ When the target uses GitHub and selects or already has semantic registry workflo
 - do not claim hard server-side enforcement unless GitHub itself has been inspected and confirms the protection/ruleset state.
 
 This recommendation is intentionally informative rather than coercive: projects may use another Git host, another merge-control mechanism, or an existing stronger policy.
+
+## Repository continuity and validation-infrastructure outages
+
+Read `REPOSITORY_CONTINUITY_POLICY.md` when required CI/status checks can block updates to the durable repository or agent-coordination channel.
+
+Do not confuse an unavailable validation service with a failed validation result. Before any break-glass recommendation or use, classify the blocked check:
+
+- `VALIDATION_FAILURE`: the check ran and reported a substantive defect. Break-glass is prohibited.
+- `INFRASTRUCTURE_UNAVAILABLE`: the required check cannot produce a trustworthy result because its execution service/runners/platform are unavailable or materially degraded. A project-defined break-glass path may be considered.
+- `UNKNOWN`: the cause is not established. Break-glass is prohibited until classified.
+
+When a GitHub target wants both hard normal-mode CI enforcement and continuity during Actions outages, recommend a layered Ruleset architecture when compatible with target governance:
+
+1. an unbypassable core-safety Ruleset that preserves PR-based integration, linear history, no force push, and no deletion;
+2. a CI-gates Ruleset with strict required checks and a narrowly authorized bypass actor configured **For pull requests only**;
+3. break-glass PR evidence covering outage, immutable base/head, locally reproducible checks, unavailable checks, residual risk, and deferred post-recovery validation.
+
+Never recommend general `always` administrator bypass merely for convenience when PR-only bypass is available. Never synthesize a green status to satisfy protection. Missing validation remains pending and must run after recovery; a later substantive failure requires corrective/incident work.
+
+Repository-continuity administration is always target-owned. Foundation transfer MUST NOT silently create Rulesets, bypass actors, disable classic protection, or otherwise change target repository administration. Selecting a bypass actor or outage threshold is a durable target-project decision. An existing stricter no-bypass policy is compatible.
 
 ## Project-governance discovery
 
@@ -175,24 +211,26 @@ Do not replace richer target policies with simplified Foundation vocabulary.
 
 - Preserve detailed model/cost policy and map overlapping semantics to `LOCAL`, `ECONOMICAL`, `BALANCED`, `FRONTIER` when useful.
 - Preserve existing validation systems. Foundation validator covers only `FOUNDATION_INTEGRITY`; target `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` remain authoritative.
+- Preserve truthful validation availability/outcome distinctions; never represent unavailable or failed validation as `validated`.
 - Foundation-green does not imply target-project semantic/runtime correctness.
 
 ## Procedure
 
 1. Resolve exact source ref; read its manifest and feature catalog.
 2. Determine installed target Foundation version separately.
-3. If upgrading from an older version, compute and classify the complete semantic feature delta; surface recommendations/decisions/conflicts.
-4. Read semantic integration policy plus feature-specific policies required by applicable candidates, including central-registry policy when relevant.
-5. Inspect target governance, identifiers, Registration Authority/storage profile, adapters, repo maps, validation, model routing, privacy/license constraints.
+3. If upgrading from an older version, compute and classify the complete semantic feature delta; surface recommendations/decisions/conflicts, including repository continuity when relevant.
+4. Read semantic integration policy plus feature-specific policies required by applicable candidates, including central-registry and repository-continuity policy when relevant.
+5. Inspect target governance, identifiers, Registration Authority/storage profile, adapters, repo maps, validation, CI availability dependencies, model routing, privacy/license constraints.
 6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities.
-7. Build deterministic file states (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) and semantic overlap classifications.
+7. Build deterministic file states (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) using portable UTF-8 LF/CRLF equivalence; do not manufacture `.gitattributes` work for an EOL-only difference.
 8. Preserve equivalent, stronger, selectable-override, and complementary target behavior; resolve true required conflicts and target-internal conflicts separately.
 9. Apply identifier adoption, Registration Authority, and optional v2 migration rules without silent migration/replacement.
-10. Never replace a differing existing file wholesale; preserve target README, root license, domain docs, project state/backlog/decisions, repo map, identifier history, allocator, and project validation unless separately authorized.
+10. Never replace a differing existing file wholesale; preserve target README, root license, domain docs, project state/backlog/decisions, repo map, identifier history, allocator, project validation, and repository-administration choices unless separately authorized.
 11. If v2 central registry is selected, establish its canonical path, migration mapping, generated-view ownership, validation/merge gates, and surface the non-blocking GitHub repository-protection recommendation when GitHub is used; do not silently change target repository administration.
-12. Run/perform `FOUNDATION_INTEGRITY`; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
-13. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry choices, GitHub administration recommendation/state when relevant, discovery fixes, unresolved conflicts, and validation evidence by scope.
+12. If mandatory external CI can block repository continuity, assess `repository-continuity-break-glass`; surface the recommendation/decision boundary without choosing bypass actors or changing Rulesets automatically.
+13. Run/perform `FOUNDATION_INTEGRITY` with portable text-EOL comparison; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
+14. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry choices, GitHub administration and continuity recommendations/state when relevant, discovery fixes, unresolved conflicts, and validation evidence by scope.
 
 ## Authorization
 
-The user's instruction to apply or upgrade Foundation authorizes ordinary file creation and compatible semantic merges described above. It does not authorize historical identifier migration, replacement/migration of an established Registration Authority, or repository-administration changes such as enabling/disabling GitHub branch protection unless explicitly selected. Do not request repeated confirmation for each file; stop only for a real unresolved semantic conflict, data-handling boundary, unexpected target/scope, destructive migration without authority, or another explicit gate.
+The user's instruction to apply or upgrade Foundation authorizes ordinary file creation and compatible semantic merges described above. It does not authorize historical identifier migration, replacement/migration of an established Registration Authority, or repository-administration changes such as enabling/disabling GitHub branch protection, Rulesets, or bypass permissions unless explicitly selected. Do not request repeated confirmation for each file; stop only for a real unresolved semantic conflict, data-handling boundary, unexpected target/scope, destructive migration without authority, or another explicit gate.

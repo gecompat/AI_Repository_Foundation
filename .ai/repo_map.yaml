@@ -13,6 +13,7 @@ authority:
     - Documentation/Architecture/DECISIONS.md
     - Documentation/Architecture/decisions/DEC-0015-central-registry-semantic-merge.md
     - Documentation/Architecture/decisions/DEC-0016-foundation-required-github-protection.md
+    - Documentation/Architecture/decisions/DEC-0017-break-glass-repository-continuity.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -25,7 +26,9 @@ authority:
     - Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
     - Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md
     - Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
+    - Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md
     - Documentation/Quality/GITHUB_BRANCH_PROTECTION.md
+    - Documentation/Quality/GITHUB_BREAK_GLASS.md
     - foundation/feature_catalog.json
   informative:
     - README.md
@@ -62,20 +65,31 @@ source_github_protection:
   branch: main
   required: true
   policy: Documentation/Quality/GITHUB_BRANCH_PROTECTION.md
-  decision: Documentation/Architecture/decisions/DEC-0016-foundation-required-github-protection.md
-  configurator: tools/github/configure_branch_protection.py
-  require_pull_request: true
-  require_approvals: false
-  required_checks:
-    - validate
-    - registry-integrity
-  require_up_to_date: true
-  enforce_admins: true
-  require_linear_history: true
-  allow_force_pushes: false
-  allow_deletions: false
-  observed_state: verified_active_2026-08-25
-  required_check_enforcement: everyone
+  continuity_policy: Documentation/Quality/GITHUB_BREAK_GLASS.md
+  protection_decision: Documentation/Architecture/decisions/DEC-0016-foundation-required-github-protection.md
+  continuity_decision: Documentation/Architecture/decisions/DEC-0017-break-glass-repository-continuity.md
+  ruleset_configurator: tools/github/configure_rulesets.py
+  core_ruleset:
+    name: foundation-main-core-safety
+    bypass: none
+    require_pull_request: true
+    require_approvals: false
+    require_linear_history: true
+    allow_force_pushes: false
+    allow_deletions: false
+  ci_ruleset:
+    name: foundation-main-ci-gates
+    required_checks:
+      - validate
+      - registry-integrity
+    require_up_to_date: true
+    authorized_bypass_mode: pull_request_only
+  break_glass:
+    validation_failure: prohibited
+    infrastructure_unavailable: authorized_pr_only
+    unknown: prohibited
+    deferred_validation_after_recovery: required
+  observed_state: layered_rulesets_verified_active_2026-08-26
   target_transfer_behavior: recommend_not_enforce
 transfer:
   manifest: foundation/manifest.json
@@ -91,6 +105,7 @@ transfer:
   artifact_registration_policy: Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md
   central_artifact_registry_policy: Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md
   upgrade_applicability_policy: Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
+  repository_continuity_policy: Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md
   schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
   optional_github_registry_capability: foundation/capabilities/artifact-registry-github/
@@ -99,7 +114,7 @@ validation:
   semantic_feature_command: python tools/feature_catalog_guard.py
   central_registry_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json
   backlog_projection_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check
-  source_github_protection_verify: python tools/github/configure_branch_protection.py --verify-only
+  source_github_rulesets_verify: python tools/github/configure_rulesets.py --verify-only
   foundation_command: python tools/foundation_validator.py
   complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/feature_catalog_guard.py && python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json && python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
   target_command: python tools/foundation_validator.py --target TARGET
