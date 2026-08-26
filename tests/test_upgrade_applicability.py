@@ -45,7 +45,7 @@ class UpgradeApplicabilityTests(unittest.TestCase):
         self.assertIn("layered-validation", reasons)
         self.assertIn("material_change:1.7.0", reasons["layered-validation"])
         self.assertIn("repository-continuity-break-glass", reasons)
-        self.assertIn("introduced:1.7.0", reasons["repository-continuity-break-glass"])
+        self.assertIn("introduced_in:1.7.0", reasons["repository-continuity-break-glass"])
         self.assertNotIn("persistent-identity", reasons)
 
     def test_upgrade_from_1_6_surfaces_validation_and_continuity(self) -> None:
@@ -54,7 +54,7 @@ class UpgradeApplicabilityTests(unittest.TestCase):
         self.assertIn("layered-validation", reasons)
         self.assertEqual(reasons["layered-validation"], ["material_change:1.7.0"])
         self.assertIn("repository-continuity-break-glass", reasons)
-        self.assertEqual(reasons["repository-continuity-break-glass"], ["introduced:1.7.0"])
+        self.assertEqual(reasons["repository-continuity-break-glass"], ["introduced_in:1.7.0"])
 
     def test_identity_feature_explicitly_recommends_adopt_forward(self) -> None:
         feature = self.catalog["features"]["persistent-identity"]
