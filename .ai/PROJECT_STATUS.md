@@ -1,8 +1,8 @@
 # Project Status
 
 Status: GENERATED/EVIDENCE
-Last updated: 2026-08-25
-Foundation version: 1.6.0
+Last updated: 2026-08-26
+Foundation version: 1.6.1 candidate
 
 ## Implemented baseline
 
@@ -56,6 +56,17 @@ Foundation version: 1.6.0
 - direct AI transfer and deterministic installation explicitly tell relevant target projects that workflow files do not make checks required and recommend GitHub protection without making it a `FOUNDATION_INTEGRITY` requirement;
 - GitHub API read-back plus manual GitHub settings review on 2026-08-25 satisfy the WI-0015 acceptance criteria.
 
+## v1.6.1 candidate — WI-0016
+
+- installation planning and target drift validation share `tools/content_equivalence.py`;
+- UTF-8 LF and CRLF-only working-tree representations are treated as equivalent;
+- lone CR, final-newline changes, true content changes, non-UTF-8 data, and binary differences remain significant;
+- direct AI transfer explicitly prohibits creating or changing target `.gitattributes` merely to silence an EOL-only Foundation comparison;
+- target repositories retain their own line-ending governance;
+- `tests/test_eol_portability.py` creates a real temporary Git repository, configures `core.autocrlf=true`, installs Foundation, commits, forces a fresh checkout, re-plans and validates without false drift, introduces true drift and verifies detection, then automatically removes the temporary repository;
+- semantic feature catalog records the portable EOL behavior as a material `layered-validation` change in 1.6.1;
+- deterministic/CI validation is pending before WI-0016 may be marked done.
+
 ## Validation evidence
 
 - v1.2.0 semantic integration: Foundation CI run `32646967820`, success.
@@ -65,6 +76,7 @@ Foundation version: 1.6.0
 - v1.5 semantic upgrade applicability: Foundation CI runs `32733817943` and `32735966279`, success; merged as `400c175dac222af0c4eaee159caa955e67bbdbb7`.
 - v1.6 central registry final: Foundation CI `32837891739`, Foundation Artifact Registry `32837891764`, success; merged as `9176ecaea7c972d7f5ec48c66ed19caa0ca68d8c`.
 - branch protection verification 2026-08-25: GitHub reports `main` protected with `registry-integrity` and `validate` required for `everyone`; saved repository settings confirm the remaining required source controls.
+- v1.6.1 portable EOL regression: pending PR-head Foundation CI and Artifact Registry checks.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, and WI-0015 are complete for their deterministic/project-operation contracts. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.
+WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, and WI-0015 are complete. WI-0016 is in progress pending its deterministic/CI evidence. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.
