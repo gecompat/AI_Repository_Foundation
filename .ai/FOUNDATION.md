@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.6.0
+- version: 1.6.1
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -24,6 +24,7 @@ Status: AUTHORITATIVE
 - transfer_model: explicit core whitelist plus semantic integration and explicitly selected optional capabilities
 - attribution_notice: `foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md` -> target `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`
 - validation_scope_contract: Foundation validator = `FOUNDATION_INTEGRITY`; target repository retains `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL`
+- portable_text_equivalence: UTF-8 CRLF/LF-only Git working-tree differences are equivalent for Foundation install/drift checks; true text/binary differences remain detectable
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
 - registration_contract: one Registration Authority per overlapping final-reference scope; humans and AI use the same authority; `DIRECT` or `DEFERRED` allocation semantics are language-neutral
@@ -60,6 +61,12 @@ The Foundation source repository requires server-side protection of `main` in ad
 Verified 2026-08-25: GitHub reports `main` as protected with required checks `validate` (`Foundation CI`) and `registry-integrity` (`Foundation Artifact Registry`) enforced for `everyone`. The saved repository rule additionally requires pull-request-only merge, branch up-to-date validation and linear history, disables bypass including administrators, and disallows force pushes and branch deletion. Mandatory human approval is intentionally not required for the current single-maintainer model.
 
 This is a **Foundation source-project requirement**, not a universal target-project rule. Foundation transfer tells relevant GitHub targets that workflow files alone do not make checks required and recommends repository protection when hard enforcement is desired. Target administration remains project-selectable and is not a `FOUNDATION_INTEGRITY` requirement.
+
+## Cross-platform transfer integrity
+
+Foundation 1.6.1 fixes a Windows/Git portability defect in installation planning and target drift detection. The installer and validator now share `tools/content_equivalence.py`: UTF-8 LF and CRLF representations compare equal, while lone CR, final-newline changes, actual text changes, non-UTF-8 data, and binary differences remain significant.
+
+A target repository's `.gitattributes` is not modified merely to make Foundation validation green. Existing target EOL policy remains project-owned. The autonomous regression test creates a temporary Git repository, enables `core.autocrlf=true`, installs and commits Foundation, forces a fresh checkout, verifies re-plan/validation without false drift, introduces a real edit, verifies drift detection, and then removes the temporary repository.
 
 Versioning follows Semantic Versioning. PATCH fixes defects without new governance requirements; MINOR adds backward-compatible rules/capabilities/adapters or improves installation/integration semantics; MAJOR changes authority or governance incompatibly.
 
