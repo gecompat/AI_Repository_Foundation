@@ -10,6 +10,8 @@ import sys
 from dataclasses import dataclass
 from pathlib import Path
 
+from content_equivalence import files_equivalent
+
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "foundation" / "manifest.json"
 
@@ -104,7 +106,7 @@ def build_plan(target: Path, entries: list[TransferEntry]) -> list[PlanItem]:
             state = "CREATE"
         elif not destination.is_file():
             state = "CONFLICT"
-        elif destination.read_bytes() == entry.source.read_bytes():
+        elif files_equivalent(destination, entry.source):
             state = "UNCHANGED"
         else:
             state = "MERGE_REQUIRED"
