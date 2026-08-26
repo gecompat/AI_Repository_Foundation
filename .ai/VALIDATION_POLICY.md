@@ -14,6 +14,22 @@ The Foundation validator establishes only `FOUNDATION_INTEGRITY` for an installe
 
 Existing target-project validators, static contracts, tests, reviews, and manual validation remain authoritative for their respective scopes. Installing or upgrading the Foundation must not delete, disable, weaken, or silently replace them. Select `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks impact-by-impact when the affected contract requires them.
 
+## Portable text representation and drift
+
+Foundation installation planning and installed-rule drift detection distinguish logical text content from platform-specific Git working-tree representation.
+
+For UTF-8 text managed by Foundation, CRLF line endings produced by Git checkout settings such as `core.autocrlf` are normalized to LF before deciding whether content is unchanged or drifted. An LF/CRLF-only difference is therefore **not** `LOCAL_OVERRIDE_OR_DRIFT` and must not make an otherwise valid Foundation integration incomplete.
+
+The normalization is deliberately narrow:
+
+- CRLF and LF are treated as equivalent for UTF-8 text;
+- lone CR characters remain significant;
+- final-newline presence remains significant;
+- non-UTF-8 or binary content remains byte-exact;
+- any textual content change that remains after EOL normalization is real drift and must still be surfaced.
+
+Do not create, replace, or modify a target repository's `.gitattributes` merely to make Foundation validation green when the only difference is LF versus CRLF. Preserve existing target line-ending governance. A target project may independently choose a namespaced `eol=lf` policy or stronger byte-stability rule when its own build/runtime/repository semantics require one; that choice belongs to `PROJECT_SEMANTIC`/repository administration rather than the Foundation integrity floor.
+
 ## Validation progression
 
 Use the smallest local, reproducible method that reliably tests the affected contract:
