@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.6.0
+foundation_ruleset_version: 1.6.1
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -111,6 +111,12 @@ validation_contract:
     label: RUNTIME_EMPIRICAL
     authority: target_repository
     purpose: tests_builds_integrations_runtime_research_data_and_manual_validation
+  text_content_equivalence:
+    utf8_crlf_lf_equivalent: true
+    lone_cr_significant: true
+    final_newline_significant: true
+    binary_byte_exact: true
+    target_gitattributes_behavior: preserve_project_policy_do_not_create_for_eol_only_foundation_drift
   status_vocabulary:
     foundation_reserved_meanings: not_executed_pending_manual_validation_validated
     target_extensions_allowed: true
