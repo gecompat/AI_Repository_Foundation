@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.6.0
+Ruleset version: 1.6.1
 
 This directory contains reusable governance rules, machine-readable schemas, the semantic feature catalog, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -26,7 +26,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - upgrade schemas: `schemas/feature-catalog.schema.json`, `schemas/upgrade-assessment.schema.json`
 - authorization and working behavior: `WORKING_RULES.md`
 - model/resource selection and target-policy mapping: `MODEL_ROUTING_POLICY.md`
-- validation, status vocabulary, and manual test plans: `VALIDATION_POLICY.md`
+- validation, status vocabulary, portable LF/CRLF drift semantics, and manual test plans: `VALIDATION_POLICY.md`
 - data handling and narrow provenance exceptions: `DATA_PRIVACY_AND_CONFIDENTIALITY.md`
 - safe operations: `SECURITY_AND_SAFE_OPERATIONS.md`
 - documentation truth: `DOCUMENTATION_POLICY.md`
@@ -70,6 +70,8 @@ Python is not a required runtime. PowerShell remains a first-class supported ref
 ## Validation boundary
 
 Foundation validation supplements rather than replaces the target repository's validation system. The Foundation validator covers `FOUNDATION_INTEGRITY` only. Project-specific semantic correctness remains under `PROJECT_SEMANTIC`; executable/empirical behavior remains under `RUNTIME_EMPIRICAL`. Existing project validators, static contracts, tests, reviews, and manual validation remain authoritative for those scopes when affected.
+
+For UTF-8 Foundation text, LF and CRLF-only working-tree representations are equivalent for installation planning and drift detection. Do not create or modify target `.gitattributes` solely to silence Git EOL conversion. Lone CR, final-newline changes, actual content changes, and binary/non-UTF-8 differences remain significant.
 
 A local override or drift warning identifies a difference; it is not semantic approval of that difference. A green Foundation validator must never be used as evidence that the entire target project is validated.
 
