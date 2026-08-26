@@ -30,6 +30,20 @@ The normalization is deliberately narrow:
 
 Do not create, replace, or modify a target repository's `.gitattributes` merely to make Foundation validation green when the only difference is LF versus CRLF. Preserve existing target line-ending governance. A target project may independently choose a namespaced `eol=lf` policy or stronger byte-stability rule when its own build/runtime/repository semantics require one; that choice belongs to `PROJECT_SEMANTIC`/repository administration rather than the Foundation integrity floor.
 
+## Validation infrastructure availability
+
+A required validation service can fail independently of the project being validated. Repository protection should therefore distinguish validation outcome from validation infrastructure availability according to `REPOSITORY_CONTINUITY_POLICY.md`.
+
+Classify a blocked required check as one of:
+
+- `VALIDATION_FAILURE`: the check ran and found a substantive defect. This result may not be converted into success or bypassed under break-glass policy.
+- `INFRASTRUCTURE_UNAVAILABLE`: the check cannot produce a trustworthy result because the CI/runners/platform are unavailable or materially degraded. A project-defined break-glass path may be used when authorized.
+- `UNKNOWN`: the cause is not established. Treat as non-bypassable until classified.
+
+A break-glass merge does not make missing validation green. The bypassed validation remains pending and must be executed after service recovery. Record the outage evidence, locally reproduced checks, residual risk, immutable revision, and post-recovery validation obligation.
+
+Projects may use stronger continuity controls or no break-glass path at all. Foundation transfer does not silently create repository bypass permissions or weaken existing branch/ruleset protection.
+
 ## Validation progression
 
 Use the smallest local, reproducible method that reliably tests the affected contract:
