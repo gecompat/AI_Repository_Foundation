@@ -72,8 +72,7 @@
       "introduced_in": "1.3.0",
       "change_history": [],
       "transfer_sources": ["Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md", ".ai/PROJECT_RULES.md", "foundation/repo_map.template.yaml"],
-      "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["durable_planning_identifiers", "decision_identifiers", "requirement_identifiers", "risk_identifiers", "test_identifiers", "release_identifiers", "incident_identifiers", "operational_identifiers", "cross_referenced_artifacts"],
-      "questions": ["Does the repository contain durable identifiers that encode mutable hierarchy, phase, status, owner, or location?", "Is the existing convention equivalent/stronger, or would layered identity improve stability and machine resolution?", "Should new identifiers use the improved convention prospectively while historical references remain unchanged?"],
+      "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["durable_planning_identifiers", "decision_identifiers", "requirement_identifiers", "risk_identifiers", "test_identifiers", "release_identifiers", "incident_identifiers", "operational_identifiers", "cross_referenced_artifacts"], "questions": ["Does the repository contain durable identifiers that encode mutable hierarchy, phase, status, owner, or location?", "Is the existing convention equivalent/stronger, or would layered identity improve stability and machine resolution?", "Should new identifiers use the improved convention prospectively while historical references remain unchanged?"]},
       "recommendation": {"when_applicable": "RECOMMENDED", "summary": "If the existing convention is materially weaker, recommend ADOPT_FORWARD: preserve historical IDs and use the improved layered identity/nomenclature prospectively.", "decision_required_when": ["changing the future project identifier convention", "selecting MIGRATE_EXPLICIT for historical identifiers"]}
     },
     "artifact-registration": {
