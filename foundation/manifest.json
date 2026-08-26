@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.6.0",
+  "ruleset_version": "1.6.1",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
@@ -192,6 +192,6 @@
     "README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore",
     ".ai/PROJECT_CONTEXT.md", ".ai/FOUNDATION.md", ".ai/PROJECT_STATUS.md", ".ai/HANDOVER.md", ".ai/BACKLOG.md", ".ai/ROADMAP.md", ".ai/TOOL_ADAPTERS.yaml", ".ai/repo_map.yaml", ".ai/identity/",
     "Documentation/Architecture/", "Documentation/Quality/",
-    "tools/bootstrap.py", "tools/install_foundation.py", "tools/foundation_validator.py", "tools/transfer_manifest_guard.py", "tools/feature_catalog_guard.py", "tools/upgrade_applicability.py", "tests/"
+    "tools/bootstrap.py", "tools/content_equivalence.py", "tools/install_foundation.py", "tools/foundation_validator.py", "tools/transfer_manifest_guard.py", "tools/feature_catalog_guard.py", "tools/upgrade_applicability.py", "tests/"
   ]
 }
