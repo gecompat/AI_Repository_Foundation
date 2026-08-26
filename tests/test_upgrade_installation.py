@@ -49,7 +49,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         self.assertIn("object/property", central["recommendation"]["summary"])
         self.assertIn("material_change:1.7.0", by_id["layered-validation"]["candidate_reasons"])
         continuity = by_id["repository-continuity-break-glass"]
-        self.assertIn("introduced:1.7.0", continuity["candidate_reasons"])
+        self.assertIn("introduced_in:1.7.0", continuity["candidate_reasons"])
         self.assertIn("required_ci_checks", continuity["applicability"]["signals"])
 
 
