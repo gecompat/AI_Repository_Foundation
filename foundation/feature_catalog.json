@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.6.0",
+  "ruleset_version": "1.6.1",
   "assessment_classifications": ["NOT_APPLICABLE", "ALREADY_EQUIVALENT", "PROJECT_STRONGER", "APPLY_DEFAULT", "RECOMMENDED", "DECISION_REQUIRED", "CONFLICT"],
   "features": {
     "foundation-baseline": {
@@ -46,7 +46,7 @@
     "layered-validation": {
       "title": "Layered Foundation/project/runtime validation ownership",
       "introduced_in": "1.1.2",
-      "change_history": [],
+      "change_history": [{"version": "1.6.1", "impact": "MATERIAL", "summary": "Foundation transfer integrity now treats UTF-8 LF/CRLF-only Git working-tree differences as equivalent while preserving true text and binary drift detection."}],
       "transfer_sources": [".ai/VALIDATION_POLICY.md"],
       "applicability": {"mode": "ALWAYS", "signals": ["project_has_validation_or_tests"], "questions": ["Which target semantic and runtime checks remain authoritative beyond Foundation integrity?"]},
       "recommendation": {"when_applicable": "APPLY_DEFAULT", "summary": "Separate FOUNDATION_INTEGRITY from PROJECT_SEMANTIC and RUNTIME_EMPIRICAL validation.", "decision_required_when": []}
@@ -72,7 +72,8 @@
       "introduced_in": "1.3.0",
       "change_history": [],
       "transfer_sources": ["Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md", ".ai/PROJECT_RULES.md", "foundation/repo_map.template.yaml"],
-      "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["durable_planning_identifiers", "decision_identifiers", "requirement_identifiers", "risk_identifiers", "test_identifiers", "release_identifiers", "incident_identifiers", "operational_identifiers", "cross_referenced_artifacts"], "questions": ["Does the repository contain durable identifiers that encode mutable hierarchy, phase, status, owner, or location?", "Is the existing convention equivalent/stronger, or would layered identity improve stability and machine resolution?", "Should new identifiers use the improved convention prospectively while historical references remain unchanged?"]},
+      "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["durable_planning_identifiers", "decision_identifiers", "requirement_identifiers", "risk_identifiers", "test_identifiers", "release_identifiers", "incident_identifiers", "operational_identifiers", "cross_referenced_artifacts"],
+      "questions": ["Does the repository contain durable identifiers that encode mutable hierarchy, phase, status, owner, or location?", "Is the existing convention equivalent/stronger, or would layered identity improve stability and machine resolution?", "Should new identifiers use the improved convention prospectively while historical references remain unchanged?"],
       "recommendation": {"when_applicable": "RECOMMENDED", "summary": "If the existing convention is materially weaker, recommend ADOPT_FORWARD: preserve historical IDs and use the improved layered identity/nomenclature prospectively.", "decision_required_when": ["changing the future project identifier convention", "selecting MIGRATE_EXPLICIT for historical identifiers"]}
     },
     "artifact-registration": {
@@ -87,7 +88,7 @@
     "semantic-upgrade-applicability": {
       "title": "Complete semantic feature-delta assessment for Foundation upgrades",
       "introduced_in": "1.5.0",
-      "change_history": [{"version": "1.6.0", "impact": "NON_MATERIAL", "summary": "Feature catalog extended for the central registry feature; assessment mechanics are unchanged."}],
+      "change_history": [{"version": "1.6.0", "impact": "NON_MATERIAL", "summary": "Feature catalog extended for the central registry feature; assessment mechanics are unchanged."}, {"version": "1.6.1", "impact": "NON_MATERIAL", "summary": "Catalog and version mirrors advanced for the portable EOL validation patch; upgrade-assessment mechanics are unchanged."}],
       "transfer_sources": ["Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md", "foundation/feature_catalog.json", "foundation/schemas/feature-catalog.schema.json", "foundation/schemas/upgrade-assessment.schema.json", "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md", ".ai/PROJECT_RULES.md", "foundation/FOUNDATION_RULESET.template.md", "foundation/repo_map.template.yaml"],
       "dependencies": ["semantic-integration"],
       "applicability": {"mode": "ALWAYS", "signals": ["installed_foundation_version_is_older_than_source"], "questions": ["What features were introduced or materially changed since the installed version?", "What repository evidence applies to each candidate?", "Which recommendations or project decisions must be surfaced explicitly?"]},
