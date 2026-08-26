@@ -2,7 +2,15 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
-## [1.6.1] - 2026-08-26
+## [1.7.0] - 2026-08-26
+
+### Added
+
+- transferable `REPOSITORY_CONTINUITY_POLICY.md` distinguishing `VALIDATION_FAILURE`, `INFRASTRUCTURE_UNAVAILABLE`, and `UNKNOWN` so repository availability can be preserved without treating a known red validation result as acceptable;
+- an audited break-glass contract requiring PR continuity, outage evidence, locally reproducible validation, residual-risk recording, and deferred post-recovery validation;
+- source-project `GITHUB_BREAK_GLASS.md` and `DEC-0017` defining a layered GitHub Ruleset architecture: unbypassable core branch safety plus strict CI gates with authorized **pull-request-only** bypass;
+- `tools/github/configure_rulesets.py` for fail-safe creation/read-back of the two source Rulesets and removal of legacy classic branch protection only after replacement verification;
+- autonomous Git checkout regression coverage that creates a temporary repository, enables `core.autocrlf=true`, installs Foundation, commits, forces a fresh checkout, validates EOL equivalence, detects real drift, and cleans itself up.
 
 ### Fixed
 
@@ -14,7 +22,14 @@ All notable Foundation changes follow Semantic Versioning.
 
 - direct AI transfer explicitly treats UTF-8 LF/CRLF-only differences as equivalent and prohibits creating or changing a target `.gitattributes` merely to silence Foundation EOL-only drift;
 - target projects retain ownership of their own `.gitattributes` and line-ending policy;
-- CI now runs an autonomous temporary Git-repository regression test with `core.autocrlf=true`: install, commit, fresh checkout, re-plan, validate, detect a real edit, and automatic cleanup.
+- required validation now has explicit availability semantics: a substantive failed check is never break-glass eligible, infrastructure-unavailable validation may follow an authorized project path, and unknown failure causes remain non-bypassable;
+- GitHub projects that make external CI mandatory are advised to consider separating core safety from PR-only bypassable CI gates when repository continuity matters; Foundation does not silently create target Rulesets or bypass permissions.
+
+### Migration
+
+The Foundation source repository migrates from its previously verified classic branch protection to two layered branch Rulesets. Create and verify `foundation-main-core-safety` and `foundation-main-ci-gates` before removing classic protection. Core safety has no bypass; only CI gates may be bypassed by the authorized source maintainer and only through a pull request.
+
+Existing target repositories are not automatically reconfigured. During upgrade, assess `repository-continuity-break-glass`; projects may preserve stronger/no-break-glass controls or explicitly choose their own actors, outage thresholds, and recovery evidence.
 
 ## [1.6.0] - 2026-08-25
 
@@ -91,7 +106,7 @@ The Foundation source repository itself deliberately selected `MIGRATE_EXPLICIT`
 
 ### Migration
 
-Existing repositories do not need to install either Foundation reference client. Preserve a compatible existing Registration Authority and make it discoverable to humans and AI. If the Foundation sequential human-reference profile is adopted, establish a safe allocator before publishing final sequence references. Use `DEFERRED` when concurrent/offline work cannot safely allocate a final sequence at creation time.
+Existing repositories do not need to install either Foundation reference client. Preserve a compatible existing Registration Authority and make it discoverable to humans and AI. If the Foundation sequential human-reference profile is adopted, establish a safe allocator before publishing those references. Use `DEFERRED` when concurrent/offline work cannot safely allocate a final sequence at creation time.
 
 ## [1.3.0] - 2026-08-24
 
