@@ -22,22 +22,31 @@ class UpgradeApplicabilityTests(unittest.TestCase):
     def test_current_catalog_covers_all_transferable_core_and_capabilities(self) -> None:
         self.assertEqual(feature_catalog_guard.validate_catalog(self.manifest, self.catalog), [])
 
-    def test_upgrade_from_1_2_surfaces_identity_registration_upgrade_and_central_registry(self) -> None:
-        candidates = upgrade_applicability.candidate_features(self.catalog, "1.2.0", "1.6.0")
+    def test_upgrade_from_1_2_surfaces_identity_registration_upgrade_registry_and_eol_fix(self) -> None:
+        candidates = upgrade_applicability.candidate_features(self.catalog, "1.2.0", "1.6.1")
         ids = {item["feature_id"] for item in candidates}
         self.assertIn("persistent-identity", ids)
         self.assertIn("artifact-registration", ids)
         self.assertIn("semantic-upgrade-applicability", ids)
         self.assertIn("central-artifact-registry", ids)
         self.assertIn("semantic-integration", ids)
+        self.assertIn("layered-validation", ids)
 
-    def test_upgrade_from_1_5_surfaces_v2_registry_and_registration_material_change(self) -> None:
-        candidates = upgrade_applicability.candidate_features(self.catalog, "1.5.0", "1.6.0")
+    def test_upgrade_from_1_5_surfaces_v2_registry_registration_and_eol_material_changes(self) -> None:
+        candidates = upgrade_applicability.candidate_features(self.catalog, "1.5.0", "1.6.1")
         reasons = {item["feature_id"]: item["candidate_reasons"] for item in candidates}
         self.assertIn("central-artifact-registry", reasons)
         self.assertIn("artifact-registration", reasons)
         self.assertIn("material_change:1.6.0", reasons["artifact-registration"])
+        self.assertIn("layered-validation", reasons)
+        self.assertIn("material_change:1.6.1", reasons["layered-validation"])
         self.assertNotIn("persistent-identity", reasons)
+
+    def test_upgrade_from_1_6_surfaces_only_material_eol_validation_change(self) -> None:
+        candidates = upgrade_applicability.candidate_features(self.catalog, "1.6.0", "1.6.1")
+        reasons = {item["feature_id"]: item["candidate_reasons"] for item in candidates}
+        self.assertEqual(set(reasons), {"layered-validation"})
+        self.assertEqual(reasons["layered-validation"], ["material_change:1.6.1"])
 
     def test_identity_feature_explicitly_recommends_adopt_forward(self) -> None:
         feature = self.catalog["features"]["persistent-identity"]
