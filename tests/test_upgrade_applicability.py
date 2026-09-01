@@ -56,6 +56,11 @@ class UpgradeApplicabilityTests(unittest.TestCase):
         self.assertIn("repository-continuity-break-glass", reasons)
         self.assertEqual(reasons["repository-continuity-break-glass"], ["introduced_in:1.7.0"])
 
+    def test_upgrade_from_1_7_surfaces_rule_context_cache(self) -> None:
+        candidates = upgrade_applicability.candidate_features(self.catalog, "1.7.0", "1.8.0")
+        reasons = {item["feature_id"]: item["candidate_reasons"] for item in candidates}
+        self.assertEqual(reasons["rule-context-cache"], ["introduced_in:1.8.0"])
+
     def test_identity_feature_explicitly_recommends_adopt_forward(self) -> None:
         feature = self.catalog["features"]["persistent-identity"]
         self.assertEqual(feature["recommendation"]["when_applicable"], "RECOMMENDED")
@@ -75,6 +80,13 @@ class UpgradeApplicabilityTests(unittest.TestCase):
         self.assertEqual(feature["recommendation"]["when_applicable"], "RECOMMENDED")
         self.assertIn("required_ci_checks", feature["applicability"]["signals"])
         self.assertIn("never bypass a known substantive validation failure", feature["recommendation"]["summary"])
+
+    def test_rule_context_cache_feature_is_opt_in_and_fail_closed(self) -> None:
+        feature = self.catalog["features"]["rule-context-cache"]
+        self.assertEqual(feature["introduced_in"], "1.8.0")
+        self.assertEqual(feature["recommendation"]["when_applicable"], "RECOMMENDED")
+        self.assertIn("dirty_worktrees", feature["applicability"]["signals"])
+        self.assertIn("session-local analysis", feature["recommendation"]["summary"])
 
     def test_uncovered_transfer_source_is_blocking(self) -> None:
         catalog = copy.deepcopy(self.catalog)

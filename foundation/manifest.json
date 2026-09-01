@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.7.0",
+  "ruleset_version": "1.8.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
@@ -110,6 +110,25 @@
     "generated_views_supported": true,
     "legacy_profile": "foundation-artifact-registry/v1"
   },
+  "rule_context_cache_contract": {
+    "policy_source": "Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md",
+    "policy_target": ".ai/foundation/RULE_CONTEXT_CACHE_POLICY.md",
+    "schema_targets": [".ai/foundation/schemas/rule-context-cache.schema.json"],
+    "profile": "foundation-rule-context-cache/v1",
+    "native_instruction_discovery_per_run": true,
+    "repository_files_are_source_of_truth": true,
+    "statuses": ["CACHE_HIT", "PARTIAL_INVALIDATION", "CACHE_MISS"],
+    "head_only_hit_prohibited": true,
+    "dirty_worktree_inputs": ["staged", "unstaged", "untracked"],
+    "partial_invalidation": "changed_sources_plus_transitive_dependents",
+    "uncertainty_behavior": "CACHE_MISS",
+    "semantic_analysis_storage": "session_local_by_analysis_key",
+    "persistent_record_content": "fingerprints_and_dependency_metadata_only",
+    "persistent_record_authority": "none",
+    "persistent_record_version_control": "prohibited",
+    "atomic_write_and_lock_required": true,
+    "reference_implementation": "optional_capability"
+  },
   "upgrade_contract": {
     "policy_source": "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md",
     "policy_target": ".ai/foundation/UPGRADE_APPLICABILITY_POLICY.md",
@@ -156,6 +175,7 @@
     {"source": "Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md", "target": ".ai/foundation/CENTRAL_ARTIFACT_REGISTRY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md", "target": ".ai/foundation/UPGRADE_APPLICABILITY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md", "target": ".ai/foundation/REPOSITORY_CONTINUITY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
+    {"source": "Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md", "target": ".ai/foundation/RULE_CONTEXT_CACHE_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "foundation/feature_catalog.json", "target": ".ai/foundation/feature_catalog.json", "kind": "feature-catalog", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-record.schema.json", "target": ".ai/foundation/schemas/artifact-record.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-registry.schema.json", "target": ".ai/foundation/schemas/artifact-registry.schema.json", "kind": "schema", "merge": "review_if_exists"},
@@ -163,6 +183,7 @@
     {"source": "foundation/schemas/artifact-registration-request.schema.json", "target": ".ai/foundation/schemas/artifact-registration-request.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/feature-catalog.schema.json", "target": ".ai/foundation/schemas/feature-catalog.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/upgrade-assessment.schema.json", "target": ".ai/foundation/schemas/upgrade-assessment.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/rule-context-cache.schema.json", "target": ".ai/foundation/schemas/rule-context-cache.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": ".ai/WORKING_RULES.md", "target": ".ai/foundation/WORKING_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/MODEL_ROUTING_POLICY.md", "target": ".ai/foundation/MODEL_ROUTING_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/VALIDATION_POLICY.md", "target": ".ai/foundation/VALIDATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
@@ -187,6 +208,9 @@
     "artifact-registry-github": [
       {"source": "foundation/capabilities/artifact-registry-github/registry_semantic.py", "target": ".ai/foundation/artifact_registry_github/registry_semantic.py", "kind": "registry-merge-client", "merge": "review_if_exists"},
       {"source": "foundation/capabilities/artifact-registry-github/artifact-registry-integrity.yml", "target": ".github/workflows/artifact-registry-integrity.yml", "kind": "github-workflow", "merge": "review_if_exists"}
+    ],
+    "rule-context-cache": [
+      {"source": "foundation/capabilities/rule-context-cache/rule_context_cache.py", "target": ".ai/foundation/rule_context_cache/rule_context_cache.py", "kind": "rule-context-cache-planner", "merge": "review_if_exists"}
     ]
   },
   "never_transfer": [

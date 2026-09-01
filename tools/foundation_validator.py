@@ -32,6 +32,7 @@ PROJECT_REQUIRED = [
     "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md",
     "Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
     "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md",
+    "Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md",
     "Documentation/Quality/KNOWN_LIMITATIONS.md",
     "foundation/manifest.json", "foundation/feature_catalog.json", "foundation/AI_TRANSFER.md", "foundation/AGENTS.template.md",
     "foundation/FOUNDATION_RULESET.template.md", "foundation/repo_map.template.yaml",
@@ -42,6 +43,7 @@ PROJECT_REQUIRED = [
     "foundation/schemas/artifact-registration-request.schema.json",
     "foundation/schemas/feature-catalog.schema.json",
     "foundation/schemas/upgrade-assessment.schema.json",
+    "foundation/schemas/rule-context-cache.schema.json",
     "tools/content_equivalence.py", "tools/install_foundation.py", "tools/foundation_validator.py",
 ]
 
@@ -154,6 +156,25 @@ CENTRAL_REGISTRY_CONTRACT = {
     "generated_views_supported": True,
     "legacy_profile": "foundation-artifact-registry/v1",
 }
+RULE_CONTEXT_CACHE_CONTRACT = {
+    "policy_source": "Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md",
+    "policy_target": ".ai/foundation/RULE_CONTEXT_CACHE_POLICY.md",
+    "schema_targets": [".ai/foundation/schemas/rule-context-cache.schema.json"],
+    "profile": "foundation-rule-context-cache/v1",
+    "native_instruction_discovery_per_run": True,
+    "repository_files_are_source_of_truth": True,
+    "statuses": ["CACHE_HIT", "PARTIAL_INVALIDATION", "CACHE_MISS"],
+    "head_only_hit_prohibited": True,
+    "dirty_worktree_inputs": ["staged", "unstaged", "untracked"],
+    "partial_invalidation": "changed_sources_plus_transitive_dependents",
+    "uncertainty_behavior": "CACHE_MISS",
+    "semantic_analysis_storage": "session_local_by_analysis_key",
+    "persistent_record_content": "fingerprints_and_dependency_metadata_only",
+    "persistent_record_authority": "none",
+    "persistent_record_version_control": "prohibited",
+    "atomic_write_and_lock_required": True,
+    "reference_implementation": "optional_capability",
+}
 MODEL_ROUTING_CONTRACT = {
     "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
     "target_policy_may_be_more_detailed": True,
@@ -206,6 +227,21 @@ CENTRAL_REGISTRY_MAP_MARKERS = [
     "object_level_three_way_merge_required: true",
     "git_merge_result_must_equal_semantic_merge: true",
     "cross_pr_preflight_recommended: true",
+]
+RULE_CONTEXT_CACHE_MAP_MARKERS = [
+    ".ai/foundation/RULE_CONTEXT_CACHE_POLICY.md",
+    ".ai/foundation/schemas/rule-context-cache.schema.json",
+    "native_instruction_discovery_per_run: required",
+    "source_of_truth: repository_files",
+    "statuses: CACHE_HIT_PARTIAL_INVALIDATION_CACHE_MISS",
+    "head_only_hit: prohibited",
+    "dirty_worktree_inputs: staged_unstaged_untracked",
+    "partial_invalidation: changed_sources_plus_transitive_dependents",
+    "uncertainty_behavior: CACHE_MISS",
+    "semantic_analysis_storage: session_local_by_analysis_key",
+    "persistent_record_version_control: prohibited",
+    "atomic_write_and_lock: required",
+    "optional_reference_capability: rule-context-cache",
 ]
 
 results: list[dict] = []
@@ -314,6 +350,14 @@ def validate_manifest(manifest: dict) -> None:
             if central_registry_contract.get(key) != expected:
                 add("ERROR", "CENTRAL_REGISTRY_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
 
+    rule_context_cache_contract = manifest.get("rule_context_cache_contract")
+    if not isinstance(rule_context_cache_contract, dict):
+        add("BLOCKING", "RULE_CONTEXT_CACHE_CONTRACT", "foundation/manifest.json", "rule_context_cache_contract is required")
+    else:
+        for key, expected in RULE_CONTEXT_CACHE_CONTRACT.items():
+            if rule_context_cache_contract.get(key) != expected:
+                add("ERROR", "RULE_CONTEXT_CACHE_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
+
     model_contract = manifest.get("model_routing_contract")
     if not isinstance(model_contract, dict):
         add("BLOCKING", "MODEL_ROUTING_CONTRACT", "foundation/manifest.json", "model_routing_contract is required")
@@ -369,6 +413,13 @@ def validate_manifest(manifest: dict) -> None:
     for schema_target in CENTRAL_REGISTRY_CONTRACT["schema_targets"]:
         if sum(row.get("target") == schema_target for row in rows) != 1:
             add("BLOCKING", "CENTRAL_REGISTRY_SCHEMA_MAPPING", schema_target, "central registry schema must be transferred exactly once")
+
+    cache_rows = [row for row in rows if row.get("source") == RULE_CONTEXT_CACHE_CONTRACT["policy_source"] and row.get("target") == RULE_CONTEXT_CACHE_CONTRACT["policy_target"]]
+    if len(cache_rows) != 1:
+        add("BLOCKING", "RULE_CONTEXT_CACHE_POLICY_MAPPING", "foundation/manifest.json", "rule-context cache policy must be transferred exactly once")
+    for schema_target in RULE_CONTEXT_CACHE_CONTRACT["schema_targets"]:
+        if sum(row.get("target") == schema_target for row in rows) != 1:
+            add("BLOCKING", "RULE_CONTEXT_CACHE_SCHEMA_MAPPING", schema_target, "rule-context cache schema must be transferred exactly once")
 
     for adapter in manifest.get("default_adapters", []):
         if adapter not in manifest.get("adapters", {}):
@@ -428,6 +479,7 @@ def validate_foundation(profile: str) -> None:
             "Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md",
             "Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md",
             "Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
+            "Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md",
             "Documentation/Architecture/DECISIONS.md",
         ]:
             if rel not in text:
@@ -441,6 +493,7 @@ def validate_foundation(profile: str) -> None:
         validate_markers(map_text, "foundation/repo_map.template.yaml", "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
+        validate_markers(map_text, "foundation/repo_map.template.yaml", "RULE_CONTEXT_CACHE_SCOPE_MAP", RULE_CONTEXT_CACHE_MAP_MARKERS)
 
     agents_template = ROOT / "foundation" / "AGENTS.template.md"
     if agents_template.is_file():
@@ -506,6 +559,7 @@ def validate_target(target: Path, adapter_selection: str, capability_selection: 
             validate_markers(text, display, "IDENTITY_SCOPE_MAP", IDENTITY_MAP_MARKERS)
             validate_markers(text, display, "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
             validate_markers(text, display, "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
+            validate_markers(text, display, "RULE_CONTEXT_CACHE_SCOPE_MAP", RULE_CONTEXT_CACHE_MAP_MARKERS)
         if display.startswith(".ai/foundation/") and source.is_file() and not files_equivalent(destination, source):
             add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule/provenance/capability file differs from current source after portable text-EOL normalization; this detects drift only and does not establish semantic correctness of the override")
 

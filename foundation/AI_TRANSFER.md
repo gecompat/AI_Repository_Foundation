@@ -191,6 +191,18 @@ For an existing repository:
 
 Preserve a target's machine-readable repo map. Add only a safe minimal reference to `.ai/foundation/repo_map.yaml` when the target schema supports it.
 
+## Rule-context analysis caching
+
+Read `RULE_CONTEXT_CACHE_POLICY.md` when a target uses or is considering reuse of analyzed repository governance/context between change waves.
+
+Caching is optional and never replaces native Codex instruction discovery. At every new run/session, rebuild the applicable global/project `AGENTS.override.md`/`AGENTS.md` chain. After a complete scoped analysis exists, a cache hit requires exact validated repository/worktree identity, repository-relative working directory, instruction order/content, effective fallback names and byte limit, actual working-tree content, Git `HEAD`/index/dirty state, source set, and dependency topology.
+
+- `CACHE_HIT`: reuse only a session analysis actually available under the exact analysis key.
+- `PARTIAL_INVALIDATION`: fully reread changed non-instruction sources plus every transitive semantic dependent; independent analyses may remain.
+- `CACHE_MISS`: fully rediscover/read/analyze when instructions, scope, topology, source identity, schema/generator, integrity, or certainty changes.
+
+The reference `rule-context-cache` capability is opt-in. It stores no rule text or semantic summaries: persistent records are local, non-versioned, non-authoritative fingerprint/dependency metadata written atomically under a lock. Foundation transfer does not select the target cache directory, persist host paths, or treat a cache record as evidence. A target may implement the same contract in another language.
+
 ## Required attribution
 
 Every Foundation rules transfer includes `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md` with the complete Foundation MIT notice.
@@ -221,15 +233,16 @@ Do not replace richer target policies with simplified Foundation vocabulary.
 3. If upgrading from an older version, compute and classify the complete semantic feature delta; surface recommendations/decisions/conflicts, including repository continuity when relevant.
 4. Read semantic integration policy plus feature-specific policies required by applicable candidates, including central-registry and repository-continuity policy when relevant.
 5. Inspect target governance, identifiers, Registration Authority/storage profile, adapters, repo maps, validation, CI availability dependencies, model routing, privacy/license constraints.
-6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities.
+6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities, including `rule-context-cache` only when local deterministic cache planning is wanted.
 7. Build deterministic file states (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) using portable UTF-8 LF/CRLF equivalence; do not manufacture `.gitattributes` work for an EOL-only difference.
 8. Preserve equivalent, stronger, selectable-override, and complementary target behavior; resolve true required conflicts and target-internal conflicts separately.
 9. Apply identifier adoption, Registration Authority, and optional v2 migration rules without silent migration/replacement.
 10. Never replace a differing existing file wholesale; preserve target README, root license, domain docs, project state/backlog/decisions, repo map, identifier history, allocator, project validation, and repository-administration choices unless separately authorized.
 11. If v2 central registry is selected, establish its canonical path, migration mapping, generated-view ownership, validation/merge gates, and surface the non-blocking GitHub repository-protection recommendation when GitHub is used; do not silently change target repository administration.
 12. If mandatory external CI can block repository continuity, assess `repository-continuity-break-glass`; surface the recommendation/decision boundary without choosing bypass actors or changing Rulesets automatically.
-13. Run/perform `FOUNDATION_INTEGRITY` with portable text-EOL comparison; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
-14. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry choices, GitHub administration and continuity recommendations/state when relevant, discovery fixes, unresolved conflicts, and validation evidence by scope.
+13. If rule-context caching is used, preserve native per-run instruction discovery, keep semantic analysis session-local, and configure only a project-authorized non-versioned cache destination; uncertainty is a full miss.
+14. Run/perform `FOUNDATION_INTEGRITY` with portable text-EOL comparison; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
+15. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry/cache choices, GitHub administration and continuity recommendations/state when relevant, discovery fixes, unresolved conflicts, and validation evidence by scope.
 
 ## Authorization
 
