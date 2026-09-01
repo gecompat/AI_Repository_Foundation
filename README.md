@@ -2,7 +2,7 @@
 
 A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and human-maintained technical and knowledge projects. Its goal is safe continuation without chat history, memory, personal prompts, or a specific vendor.
 
-## v1.4 integration, identity, and registration model
+## v1.8 integration, identity, registration, and rule-context model
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
 
@@ -52,6 +52,23 @@ python tools/install_foundation.py TARGET --capabilities artifact-registration-c
 ```
 
 This does not make Python the target runtime; the installer is only one Foundation transfer path.
+
+To install the optional deterministic Rule Context Cache planner:
+
+```text
+python tools/install_foundation.py TARGET --capabilities rule-context-cache --apply
+```
+
+The transferred policy and schema remain core; the executable planner is opt-in. It never replaces Codex's native per-run `AGENTS.md` discovery or repository rules. It hashes actual working-tree sources, accounts for scoped instructions, dirty Git state, discovery configuration, and transitive dependencies, and emits `CACHE_HIT`, `PARTIAL_INVALIDATION`, or fail-closed `CACHE_MISS`. Semantic analyses stay session-local; persistent cache records contain only local non-versioned fingerprint/dependency metadata.
+
+The reference planner supports a read-only preview and an explicit atomic record operation:
+
+```text
+python .ai/foundation/rule_context_cache/rule_context_cache.py check --repository TARGET --cwd TARGET --cache-dir CACHE --json
+python .ai/foundation/rule_context_cache/rule_context_cache.py record --repository TARGET --cwd TARGET --cache-dir CACHE --json
+```
+
+Use a project-authorized cache directory outside version control. Complete the first scoped rule read and analysis before `record`; a fingerprint hit permits reuse only when the corresponding exact analysis key is actually available. See `Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md` in this source repository or its installed `.ai/foundation/` counterpart.
 
 ## Transfer completeness invariant
 

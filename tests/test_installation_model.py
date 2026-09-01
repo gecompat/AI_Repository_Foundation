@@ -50,7 +50,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue(notice.is_file())
             self.assertIn((ROOT / "LICENSE").read_text(encoding="utf-8"), notice.read_text(encoding="utf-8"))
 
-    def test_core_semantic_identity_registration_registry_upgrade_eol_and_continuity_material_is_installed(self) -> None:
+    def test_core_semantic_identity_registration_registry_upgrade_eol_continuity_and_cache_material_is_installed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             self.assertEqual(self.install(target), 0)
@@ -62,6 +62,7 @@ class InstallationModelTests(unittest.TestCase):
                 "CENTRAL_ARTIFACT_REGISTRY_POLICY.md",
                 "UPGRADE_APPLICABILITY_POLICY.md",
                 "REPOSITORY_CONTINUITY_POLICY.md",
+                "RULE_CONTEXT_CACHE_POLICY.md",
                 "VALIDATION_POLICY.md",
                 "feature_catalog.json",
             ]
@@ -81,11 +82,17 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("VALIDATION_FAILURE", continuity)
             self.assertIn("INFRASTRUCTURE_UNAVAILABLE", continuity)
             self.assertIn("For pull requests only", continuity)
+            cache_policy = (root / "RULE_CONTEXT_CACHE_POLICY.md").read_text(encoding="utf-8")
+            self.assertIn("CACHE_HIT", cache_policy)
+            self.assertIn("PARTIAL_INVALIDATION", cache_policy)
+            self.assertIn("CACHE_MISS", cache_policy)
+            self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.7.0")
+            self.assertEqual(catalog["ruleset_version"], "1.8.0")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
+            self.assertIn("rule-context-cache", catalog["features"])
             for name in [
                 "artifact-record.schema.json",
                 "artifact-registry.schema.json",
@@ -93,6 +100,7 @@ class InstallationModelTests(unittest.TestCase):
                 "artifact-registration-request.schema.json",
                 "feature-catalog.schema.json",
                 "upgrade-assessment.schema.json",
+                "rule-context-cache.schema.json",
             ]:
                 schema = root / "schemas" / name
                 self.assertTrue(schema.is_file(), name)
@@ -105,6 +113,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertFalse((target / ".ai" / "foundation" / "reference_clients").exists())
             self.assertFalse((target / ".ai" / "foundation" / "artifact_registry_github").exists())
             self.assertFalse((target / ".github" / "workflows" / "artifact-registry-integrity.yml").exists())
+            self.assertFalse((target / ".ai" / "foundation" / "rule_context_cache").exists())
 
     def test_reference_clients_and_github_registry_capabilities_are_opt_in(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -118,6 +127,12 @@ class InstallationModelTests(unittest.TestCase):
             self.assertEqual(self.install(target, "--capabilities", "artifact-registry-github"), 0)
             self.assertTrue((target / ".ai" / "foundation" / "artifact_registry_github" / "registry_semantic.py").is_file())
             self.assertTrue((target / ".github" / "workflows" / "artifact-registry-integrity.yml").is_file())
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            self.assertEqual(self.install(target, "--capabilities", "rule-context-cache"), 0)
+            planner = target / ".ai" / "foundation" / "rule_context_cache" / "rule_context_cache.py"
+            self.assertTrue(planner.is_file())
+            self.assertIn("foundation-rule-context-cache/v1", planner.read_text(encoding="utf-8"))
 
     def test_github_registry_capability_surfaces_non_blocking_protection_recommendation(self) -> None:
         notices = install_foundation.capability_notices(["artifact-registry-github"])
@@ -197,6 +212,14 @@ class InstallationModelTests(unittest.TestCase):
         self.assertTrue(central["git_merge_result_must_equal_semantic_merge"])
         self.assertTrue(central["cross_pr_preflight_recommended"])
 
+        cache_contract = self.manifest["rule_context_cache_contract"]
+        self.assertTrue(cache_contract["native_instruction_discovery_per_run"])
+        self.assertTrue(cache_contract["repository_files_are_source_of_truth"])
+        self.assertEqual(cache_contract["statuses"], ["CACHE_HIT", "PARTIAL_INVALIDATION", "CACHE_MISS"])
+        self.assertEqual(cache_contract["uncertainty_behavior"], "CACHE_MISS")
+        self.assertEqual(cache_contract["semantic_analysis_storage"], "session_local_by_analysis_key")
+        self.assertEqual(cache_contract["persistent_record_authority"], "none")
+
         upgrade = self.manifest["upgrade_contract"]
         self.assertTrue(upgrade["complete_feature_delta_required"])
         self.assertTrue(upgrade["silent_skip_prohibited"])
@@ -236,6 +259,7 @@ class InstallationModelTests(unittest.TestCase):
         registration = (ROOT / "Documentation" / "Standards" / "ARTIFACT_REGISTRATION_POLICY.md").read_text(encoding="utf-8")
         central = (ROOT / "Documentation" / "Standards" / "CENTRAL_ARTIFACT_REGISTRY_POLICY.md").read_text(encoding="utf-8")
         continuity = (ROOT / "Documentation" / "Standards" / "REPOSITORY_CONTINUITY_POLICY.md").read_text(encoding="utf-8")
+        cache_policy = (ROOT / "Documentation" / "Standards" / "RULE_CONTEXT_CACHE_POLICY.md").read_text(encoding="utf-8")
         validation = (ROOT / ".ai" / "VALIDATION_POLICY.md").read_text(encoding="utf-8")
         upgrade = (ROOT / "Documentation" / "Standards" / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8")
         transfer = (ROOT / "foundation" / "AI_TRANSFER.md").read_text(encoding="utf-8")
@@ -246,6 +270,9 @@ class InstallationModelTests(unittest.TestCase):
         self.assertIn("object-level", central.lower())
         self.assertIn("INFRASTRUCTURE_UNAVAILABLE", continuity)
         self.assertIn("VALIDATION_FAILURE", continuity)
+        self.assertIn("native client instruction discovery", cache_policy)
+        self.assertIn("actual working-tree bytes", cache_policy)
+        self.assertIn("transitive semantic dependent", cache_policy)
         self.assertIn("CRLF", validation)
         self.assertIn("INFRASTRUCTURE_UNAVAILABLE", validation)
         self.assertIn("silently skipped", upgrade)
@@ -263,7 +290,7 @@ class InstallationModelTests(unittest.TestCase):
         apply = bootstrap.compatibility_args(["target"])
         self.assertIn("--apply", apply)
 
-    def test_manifest_sources_exist_targets_unique_and_version_is_v1_7(self) -> None:
+    def test_manifest_sources_exist_targets_unique_and_version_is_v1_8(self) -> None:
         rows = list(self.manifest["core"])
         for adapter_rows in self.manifest["adapters"].values():
             rows.extend(adapter_rows)
@@ -274,7 +301,7 @@ class InstallationModelTests(unittest.TestCase):
         for row in rows:
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.7.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.8.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

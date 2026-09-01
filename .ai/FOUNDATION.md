@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.7.0
+- version: 1.8.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -21,11 +21,13 @@ Status: AUTHORITATIVE
 - central_artifact_registry_policy: `Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md`
 - upgrade_applicability_policy: `Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md`
 - repository_continuity_policy: `Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md`
+- rule_context_cache_policy: `Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md`
 - registration_schemas: `foundation/schemas/`
 - transfer_model: explicit core whitelist plus semantic integration and explicitly selected optional capabilities
 - attribution_notice: `foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md` -> target `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`
 - validation_scope_contract: Foundation validator = `FOUNDATION_INTEGRITY`; target repository retains `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL`
 - portable_text_equivalence: UTF-8 CRLF/LF-only Git working-tree differences are equivalent for Foundation install/drift checks; true text/binary differences remain detectable
+- rule_context_cache_contract: native instruction discovery per run; session-local semantic analyses keyed by validated scope/source dependencies; optional local records contain fingerprints/dependency metadata only and fail closed on scope, instruction, topology, source-set, schema, generator, corruption, or uncertainty changes
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
@@ -37,7 +39,7 @@ Status: AUTHORITATIVE
 - target_github_merge_protection: recommended when relevant, never silently imposed by Foundation transfer
 - python_runtime_required: false
 - powershell_reference_client: supported first-class for the v1 compatibility profile
-- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`
+- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`
 - target_project_license: never replaced or modified by installation
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none
@@ -81,6 +83,14 @@ A target repository's `.gitattributes` is not modified merely to make Foundation
 Versioning follows Semantic Versioning. PATCH fixes defects without new governance requirements; MINOR adds backward-compatible rules/capabilities/adapters or improves installation/integration semantics; MAJOR changes authority or governance incompatibly.
 
 The Foundation repository and the transferable rule set have separate scopes. Project README, root LICENSE, changelog, project context, status, handover, backlog, roadmap, Foundation-internal decisions, identity registry, tests, and unlisted tools are Foundation-project artifacts and are never transferred merely because they exist. The manifest may explicitly whitelist optional capability files; those files are transferred only when the capability is selected. The dedicated attribution notice is the Foundation licensing/provenance artifact included with transferred material.
+
+## Rule-context analysis reuse
+
+Foundation 1.8 adds the `foundation-rule-context-cache/v1` contract. Native Codex instruction discovery still runs at every new run/session. Once the applicable additional rules have been fully analyzed, later waves may reuse session-local analyses only after a deterministic check of repository/worktree identity, repository-relative working directory, exact instruction precedence, discovery fallback/byte-limit settings, actual working-tree content, Git `HEAD`/index/dirty state, source identity, and transitive dependencies.
+
+The decision states are `CACHE_HIT`, `PARTIAL_INVALIDATION`, and `CACHE_MISS`. A non-instruction content/Git-state change invalidates that source and transitive dependents while preserving independent analyses. Any instruction, scope, source-set, rename/delete, dependency-topology, contract/schema/generator, corruption, incomplete discovery, byte-limit, or uncertainty change is a full miss. Portable UTF-8 LF/CRLF equivalence is shared with the existing Foundation content policy.
+
+The optional `rule-context-cache` capability supplies a dependency-free reference planner. Semantic analysis remains session-local under content/dependency-addressed keys. Persistent records are optional local non-versioned acceleration metadata: they contain no rule text, summaries, prompts, secrets, environment values, or absolute host paths; they have no authority/evidence status and are atomically written under a per-record lock.
 
 For existing repositories, semantic integration preserves target-owned governance. Foundation `REQUIRED` rules are minimum floors; stricter target rules are compatible. Existing target policy vocabularies do not need to be rewritten into Foundation terms when a semantic mapping is sufficient.
 

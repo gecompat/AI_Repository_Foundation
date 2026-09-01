@@ -163,3 +163,11 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Decision: Only `INFRASTRUCTURE_UNAVAILABLE` may use break-glass. Unbypassable core-safety rules remain active, while strict CI gates grant the authorized maintainer bypass only through pull requests; `VALIDATION_FAILURE` and `UNKNOWN` remain non-bypassable.
 - Consequences: The Foundation source uses layered GitHub Rulesets, preserves the PR audit path, requires incident evidence and deferred post-recovery validation, and does not transfer repository-admin mutations to target projects.
 - Full record: `decisions/DEC-0017-break-glass-repository-continuity.md`.
+
+## DEC-0018 — Rule-context caching uses session analysis plus content-addressed local records
+
+- Status: Accepted
+- Date: 2026-09-01
+- Decision: Keep semantic rule analyses session-local under deterministic analysis keys and persist only a non-authoritative, content-addressed local fingerprint/dependency record. Native instruction discovery still runs for every new Codex run; only an exact validated scope/content/topology match is a hit, rule-only changes invalidate transitive dependents, and instruction/scope/topology/uncertainty changes fail closed to a full miss.
+- Consequences: Foundation 1.8 adds a transferable cache policy/schema and an opt-in dependency-free planner with read-only checks, atomic locked writes, dirty-worktree awareness, portable EOL semantics, and privacy-minimized records.
+- Full record: `decisions/DEC-0018-rule-context-cache.md`.

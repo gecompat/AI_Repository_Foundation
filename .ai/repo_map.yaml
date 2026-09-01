@@ -14,6 +14,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0015-central-registry-semantic-merge.md
     - Documentation/Architecture/decisions/DEC-0016-foundation-required-github-protection.md
     - Documentation/Architecture/decisions/DEC-0017-break-glass-repository-continuity.md
+    - Documentation/Architecture/decisions/DEC-0018-rule-context-cache.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -27,6 +28,7 @@ authority:
     - Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md
     - Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
     - Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md
+    - Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md
     - Documentation/Quality/GITHUB_BRANCH_PROTECTION.md
     - Documentation/Quality/GITHUB_BREAK_GLASS.md
     - foundation/feature_catalog.json
@@ -106,6 +108,9 @@ transfer:
   central_artifact_registry_policy: Documentation/Standards/CENTRAL_ARTIFACT_REGISTRY_POLICY.md
   upgrade_applicability_policy: Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
   repository_continuity_policy: Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md
+  rule_context_cache_policy: Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md
+  rule_context_cache_schema: foundation/schemas/rule-context-cache.schema.json
+  optional_rule_context_cache_capability: foundation/capabilities/rule-context-cache/
   schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
   optional_github_registry_capability: foundation/capabilities/artifact-registry-github/

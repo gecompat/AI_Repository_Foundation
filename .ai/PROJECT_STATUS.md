@@ -1,8 +1,8 @@
 # Project Status
 
 Status: GENERATED/EVIDENCE
-Last updated: 2026-08-26
-Foundation version: 1.7.0
+Last updated: 2026-09-01
+Foundation version: 1.8.0
 
 ## Implemented baseline
 
@@ -68,6 +68,17 @@ Foundation version: 1.7.0
 - target projects receive the continuity recommendation but Foundation does not silently create Rulesets/bypass permissions;
 - WI-0017 is `done`; DEC-0017 remains `Accepted`.
 
+## v1.8.0 — WI-0018 / DEC-0018
+
+- native Codex discovery of the applicable `AGENTS.override.md`/`AGENTS.md` chain remains mandatory for every new run/session;
+- `foundation-rule-context-cache/v1` combines session-local semantic analyses with an optional local, non-versioned fingerprint/dependency record;
+- deterministic checks include repository/canonical-root/worktree identity, repository-relative working directory, exact instruction precedence, discovery fallback/size configuration, actual working-tree hashes, Git `HEAD`/index/dirty state, source identity, and transitive dependency topology;
+- `CACHE_HIT` reuses only an actually available exact analysis key, `PARTIAL_INVALIDATION` rereads changed non-instruction sources plus transitive dependents, and all instruction/scope/source-set/topology/schema/generator/corruption/uncertainty changes fail closed to `CACHE_MISS`;
+- portable UTF-8 LF/CRLF equivalence is preserved while lone CR, final-newline, encoding, binary, and actual content changes remain significant;
+- persistent records contain no rule text or semantic summaries, are atomically replaced under a bounded exclusive lock, and cannot be written into a repository unless the destination is untracked and already ignored;
+- the reusable policy and schema are core; the dependency-free `rule-context-cache` planner is an explicitly selected optional capability;
+- `DEC-0018` is `Accepted`; `WI-0018` is `done` based on the stable local completion gate recorded below.
+
 ## Validation evidence
 
 - v1.2.0 semantic integration: Foundation CI run `32646967820`, success.
@@ -80,7 +91,8 @@ Foundation version: 1.7.0
 - PR #14 prior head: registry-integrity succeeded; Foundation CI reached the EOL regression and found a project-owned fixture failure. This evidence is intentionally recorded as validation failure, not infrastructure unavailability.
 - v1.7.0 implementation head `fdd67225edaccb912a96f7e2fe1286d0749975c6`: Foundation CI `33002938158` and Foundation Artifact Registry `33002938204`, success.
 - local completion gate on 2026-08-26: transfer manifest guard, feature catalog guard, central registry validation, backlog projection, full Foundation validator, focused EOL/Ruleset tests, and all 72 unit tests succeeded; validator reported two non-blocking pre-existing warnings.
+- v1.8.0 local completion gate on 2026-09-01: transfer manifest guard, feature catalog changed-source review against `d49f978f33001fcc098998ff7c04ffb209b28033`, central registry validation, backlog projection check, full Foundation validator, `git diff --check`, Python compilation/JSON parsing, focused Rule Context Cache regressions, and all 94 tests succeeded on Windows; the validator retained only its two pre-existing self-scan warnings.
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, and WI-0017 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.
+WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, and WI-0018 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.

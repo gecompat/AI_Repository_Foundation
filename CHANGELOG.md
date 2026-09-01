@@ -2,6 +2,28 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.8.0] - 2026-09-01
+
+### Added
+
+- transferable `RULE_CONTEXT_CACHE_POLICY.md` and a versioned `foundation-rule-context-cache/v1` record schema;
+- an opt-in, dependency-free `rule-context-cache` planner with machine-readable `CACHE_HIT`, `PARTIAL_INVALIDATION`, and `CACHE_MISS` decisions plus human explain output;
+- deterministic repository/worktree/scope identity, exact instruction precedence, effective discovery configuration, working-tree/Git fingerprints, dependency topology, analysis keys, and cache-record self-integrity;
+- focused regression coverage for scoped instructions, dirty and untracked rules, rename/delete, repository/worktree isolation, corrupt/incomplete records, EOL/encoding/final-newline semantics, dependency changes, privacy, atomic writes, and bounded locking;
+- `DEC-0018`, recording the hybrid session-analysis plus local fingerprint-record architecture.
+
+### Changed
+
+- native Codex instruction discovery remains mandatory at every new run/session, while later change waves may reuse an actually available session analysis after deterministic validation;
+- changed non-instruction rules trigger targeted rereading and transitive dependent reanalysis; instruction, scope, source-set, topology, discovery, schema/generator, corruption, or uncertainty changes fail closed to a full rebuild;
+- rule-context checks hash the actual working tree and account for `HEAD`, index, staged, unstaged, and relevant untracked state rather than trusting `HEAD` alone;
+- UTF-8 LF/CRLF-only representation differences reuse the Foundation portable-content policy, while lone CR, final-newline, encoding, binary, and actual content differences remain significant;
+- persistent cache records are explicitly local, non-versioned, non-authoritative, non-evidence metadata containing no rule text, semantic summaries, secrets, environment values, or absolute host paths.
+
+### Migration
+
+Caching is optional. Existing targets may continue full rule reads. Targets choosing it keep native instruction discovery active, install or implement the v1 planner contract, select an authorized local cache directory, perform one complete analysis for each new scope/rule version, and record only after that analysis. Never persist semantic analyses or treat a fingerprint record as authority or validation evidence.
+
 ## [1.7.0] - 2026-08-26
 
 ### Added
