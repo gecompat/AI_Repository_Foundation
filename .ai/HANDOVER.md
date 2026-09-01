@@ -4,11 +4,13 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Branch `codex/rule-context-cache` is the Foundation 1.8.0 implementation for completed `WI-0018` and accepted `DEC-0018`. It adds a transferable Rule Context Cache contract/schema and an opt-in reference planner while preserving native Codex instruction discovery. The local completion gate on 2026-09-01 passed transfer/feature guards, registry/backlog checks, the full Foundation validator, diff hygiene, compilation/JSON parsing, focused regressions, and all 94 tests. Re-read exact branch, PR, CI, and `origin/main` heads before integration.
+PR #15 is the Foundation 1.8.0 integration record for completed `WI-0018` and accepted `DEC-0018`. It adds a transferable Rule Context Cache contract/schema and an opt-in reference planner while preserving native Codex instruction discovery. Feature head `4a958344dea5cc8a8b57d2468752c415562e8486` passed Foundation Artifact Registry run `33560909931` and Foundation CI run `33560910019`, then squash-merged as `9a0f949ee0cdba73c8309e9dbb75c077ca21ab06`. The exact merge commit passed post-merge Foundation CI run `33561041239`.
+
+The local completion gate on 2026-09-01 passed transfer/feature guards, registry/backlog checks, the full Foundation validator, diff hygiene, compilation/JSON parsing, focused regressions, and all 94 tests. Post-merge local read-back confirmed the canonical clone and `origin/main` at the same merge commit with transfer, feature, registry, backlog, and Foundation validation green.
 
 PR #14 / branch `codex/eol-portable-transfer-integrity` remains the Foundation 1.7.0 integration record for completed `WI-0016` (portable EOL transfer integrity) and `WI-0017` / accepted `DEC-0017` (repository continuity/break-glass). Its last pre-migration implementation head was `fdd67225edaccb912a96f7e2fe1286d0749975c6`.
 
-The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0018` is `done`; its GitHub CI/merge state remains external runtime evidence until the feature branch is integrated.
+The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0018` is `done`; `origin/main` is the integrated source authority. Re-read exact current heads and GitHub state before future integration or administration work.
 
 ## Rule Context Cache — WI-0018 / DEC-0018
 
