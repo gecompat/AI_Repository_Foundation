@@ -61,6 +61,18 @@ class UpgradeApplicabilityTests(unittest.TestCase):
         reasons = {item["feature_id"]: item["candidate_reasons"] for item in candidates}
         self.assertEqual(reasons["rule-context-cache"], ["introduced_in:1.8.0"])
 
+    def test_upgrade_from_1_8_surfaces_dynamic_model_routing(self) -> None:
+        candidates = upgrade_applicability.candidate_features(self.catalog, "1.8.0", "1.9.0")
+        reasons = {item["feature_id"]: item["candidate_reasons"] for item in candidates}
+        self.assertEqual(reasons["model-routing-interoperability"], ["material_change:1.9.0"])
+
+    def test_model_router_feature_is_opt_in_cost_aware_and_fail_closed(self) -> None:
+        feature = self.catalog["features"]["model-routing-interoperability"]
+        self.assertEqual(feature["recommendation"]["when_applicable"], "RECOMMENDED")
+        self.assertIn("time_dependent_pricing", feature["applicability"]["signals"])
+        self.assertTrue(any("local non-versioned runtime state" in question.lower() for question in feature["applicability"]["questions"]))
+        self.assertIn("cost-of-success", feature["recommendation"]["summary"])
+
     def test_identity_feature_explicitly_recommends_adopt_forward(self) -> None:
         feature = self.catalog["features"]["persistent-identity"]
         self.assertEqual(feature["recommendation"]["when_applicable"], "RECOMMENDED")

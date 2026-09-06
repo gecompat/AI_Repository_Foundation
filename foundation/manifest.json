@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.8.0",
+  "ruleset_version": "1.9.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
@@ -153,10 +153,28 @@
     "reserved_statuses_may_not_be_redefined": true
   },
   "model_routing_contract": {
+    "schema_targets": [
+      ".ai/foundation/schemas/model-routing-request.schema.json",
+      ".ai/foundation/schemas/model-routing-decision.schema.json",
+      ".ai/foundation/schemas/model-router-catalog.schema.json",
+      ".ai/foundation/schemas/model-routing-snapshot.schema.json",
+      ".ai/foundation/schemas/model-router-profiles.schema.json"
+    ],
     "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
     "target_policy_may_be_more_detailed": true,
     "semantic_mapping_required_when_overlapping": true,
-    "concrete_models_are_runtime_facts": true
+    "concrete_models_are_runtime_facts": true,
+    "profile": "foundation-model-router/v1",
+    "constraint_order": "privacy_authorization_capability_context_quality_freshness_budget_before_cost",
+    "objective": "minimum_expected_cost_of_success",
+    "price_epoch_and_expiry_required": true,
+    "session_affinity_is_conditional": true,
+    "new_model_default": "UNASSESSED",
+    "bounded_evaluation_required": true,
+    "runtime_state": "outside_version_control",
+    "credential_storage": "prohibited",
+    "graceful_degradation": ["MCP", "CLI", "LAUNCHER_OR_SNAPSHOT", "PORTABLE_TIER_ONLY"],
+    "reference_implementation": "optional_capability"
   },
   "attribution": {
     "required": true,
@@ -184,6 +202,11 @@
     {"source": "foundation/schemas/feature-catalog.schema.json", "target": ".ai/foundation/schemas/feature-catalog.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/upgrade-assessment.schema.json", "target": ".ai/foundation/schemas/upgrade-assessment.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/rule-context-cache.schema.json", "target": ".ai/foundation/schemas/rule-context-cache.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/model-routing-request.schema.json", "target": ".ai/foundation/schemas/model-routing-request.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/model-routing-decision.schema.json", "target": ".ai/foundation/schemas/model-routing-decision.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/model-router-catalog.schema.json", "target": ".ai/foundation/schemas/model-router-catalog.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/model-routing-snapshot.schema.json", "target": ".ai/foundation/schemas/model-routing-snapshot.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/model-router-profiles.schema.json", "target": ".ai/foundation/schemas/model-router-profiles.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": ".ai/WORKING_RULES.md", "target": ".ai/foundation/WORKING_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/MODEL_ROUTING_POLICY.md", "target": ".ai/foundation/MODEL_ROUTING_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/VALIDATION_POLICY.md", "target": ".ai/foundation/VALIDATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
@@ -211,6 +234,15 @@
     ],
     "rule-context-cache": [
       {"source": "foundation/capabilities/rule-context-cache/rule_context_cache.py", "target": ".ai/foundation/rule_context_cache/rule_context_cache.py", "kind": "rule-context-cache-planner", "merge": "review_if_exists"}
+    ],
+    "model-router": [
+      {"source": "foundation/capabilities/model-router/MODEL_ROUTER.md", "target": ".ai/foundation/model_router/MODEL_ROUTER.md", "kind": "model-router-documentation", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/model-router/model_router.py", "target": ".ai/foundation/model_router/model_router.py", "kind": "model-router-core-cli", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/model-router/ollama_cloud.py", "target": ".ai/foundation/model_router/ollama_cloud.py", "kind": "model-router-provider", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/model-router/mcp_stdio.py", "target": ".ai/foundation/model_router/mcp_stdio.py", "kind": "model-router-mcp", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/model-router/profiles.example.json", "target": ".ai/foundation/model_router/profiles.example.json", "kind": "model-router-example", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/model-router/mcp.visual-studio.json", "target": ".ai/foundation/model_router/mcp.visual-studio.json", "kind": "model-router-mcp-template", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/model-router/mcp.github-copilot.json", "target": ".ai/foundation/model_router/mcp.github-copilot.json", "kind": "model-router-mcp-template", "merge": "review_if_exists"}
     ]
   },
   "never_transfer": [

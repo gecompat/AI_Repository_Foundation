@@ -171,3 +171,11 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Decision: Keep semantic rule analyses session-local under deterministic analysis keys and persist only a non-authoritative, content-addressed local fingerprint/dependency record. Native instruction discovery still runs for every new Codex run; only an exact validated scope/content/topology match is a hit, rule-only changes invalidate transitive dependents, and instruction/scope/topology/uncertainty changes fail closed to a full miss.
 - Consequences: Foundation 1.8 adds a transferable cache policy/schema and an opt-in dependency-free planner with read-only checks, atomic locked writes, dirty-worktree awareness, portable EOL semantics, and privacy-minimized records.
 - Full record: `decisions/DEC-0018-rule-context-cache.md`.
+
+## DEC-0019 — Dynamic model routing optimizes fresh expected cost of success through transport-neutral contracts
+
+- Status: Accepted
+- Date: 2026-09-07
+- Decision: Use a provider-neutral decision core that filters safety/capability/quality/context/freshness constraints before minimizing expected cost of success; keep concrete models/prices in expiring runtime catalogs, introduce new models through bounded evaluation, store runtime evidence outside version control, and expose the same contract through MCP, CLI, launcher, and snapshot fallbacks.
+- Consequences: Foundation 1.9 adds an opt-in `model-router` capability and Ollama Cloud adapter while preserving portable tier semantics and allowing stronger target routers or other implementation languages.
+- Full record: `decisions/DEC-0019-dynamic-cost-aware-model-routing.md`.

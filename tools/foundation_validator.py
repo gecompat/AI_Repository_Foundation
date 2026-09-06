@@ -44,6 +44,11 @@ PROJECT_REQUIRED = [
     "foundation/schemas/feature-catalog.schema.json",
     "foundation/schemas/upgrade-assessment.schema.json",
     "foundation/schemas/rule-context-cache.schema.json",
+    "foundation/schemas/model-routing-request.schema.json",
+    "foundation/schemas/model-routing-decision.schema.json",
+    "foundation/schemas/model-router-catalog.schema.json",
+    "foundation/schemas/model-routing-snapshot.schema.json",
+    "foundation/schemas/model-router-profiles.schema.json",
     "tools/content_equivalence.py", "tools/install_foundation.py", "tools/foundation_validator.py",
 ]
 
@@ -176,10 +181,28 @@ RULE_CONTEXT_CACHE_CONTRACT = {
     "reference_implementation": "optional_capability",
 }
 MODEL_ROUTING_CONTRACT = {
+    "schema_targets": [
+        ".ai/foundation/schemas/model-routing-request.schema.json",
+        ".ai/foundation/schemas/model-routing-decision.schema.json",
+        ".ai/foundation/schemas/model-router-catalog.schema.json",
+        ".ai/foundation/schemas/model-routing-snapshot.schema.json",
+        ".ai/foundation/schemas/model-router-profiles.schema.json",
+    ],
     "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
     "target_policy_may_be_more_detailed": True,
     "semantic_mapping_required_when_overlapping": True,
     "concrete_models_are_runtime_facts": True,
+    "profile": "foundation-model-router/v1",
+    "constraint_order": "privacy_authorization_capability_context_quality_freshness_budget_before_cost",
+    "objective": "minimum_expected_cost_of_success",
+    "price_epoch_and_expiry_required": True,
+    "session_affinity_is_conditional": True,
+    "new_model_default": "UNASSESSED",
+    "bounded_evaluation_required": True,
+    "runtime_state": "outside_version_control",
+    "credential_storage": "prohibited",
+    "graceful_degradation": ["MCP", "CLI", "LAUNCHER_OR_SNAPSHOT", "PORTABLE_TIER_ONLY"],
+    "reference_implementation": "optional_capability",
 }
 VALIDATION_MAP_MARKERS = [
     "label: FOUNDATION_INTEGRITY",
@@ -242,6 +265,20 @@ RULE_CONTEXT_CACHE_MAP_MARKERS = [
     "persistent_record_version_control: prohibited",
     "atomic_write_and_lock: required",
     "optional_reference_capability: rule-context-cache",
+]
+MODEL_ROUTING_MAP_MARKERS = [
+    ".ai/foundation/schemas/model-routing-request.schema.json",
+    ".ai/foundation/schemas/model-routing-decision.schema.json",
+    ".ai/foundation/schemas/model-router-catalog.schema.json",
+    ".ai/foundation/schemas/model-routing-snapshot.schema.json",
+    ".ai/foundation/schemas/model-router-profiles.schema.json",
+    "profile: foundation-model-router/v1",
+    "objective: minimum_expected_cost_of_success",
+    "price_epoch_and_expiry: required",
+    "new_model_default: UNASSESSED",
+    "runtime_state: outside_version_control",
+    "credential_storage: prohibited",
+    "optional_reference_capability: model-router",
 ]
 
 results: list[dict] = []
@@ -421,6 +458,10 @@ def validate_manifest(manifest: dict) -> None:
         if sum(row.get("target") == schema_target for row in rows) != 1:
             add("BLOCKING", "RULE_CONTEXT_CACHE_SCHEMA_MAPPING", schema_target, "rule-context cache schema must be transferred exactly once")
 
+    for schema_target in MODEL_ROUTING_CONTRACT["schema_targets"]:
+        if sum(row.get("target") == schema_target for row in rows) != 1:
+            add("BLOCKING", "MODEL_ROUTING_SCHEMA_MAPPING", schema_target, "model-routing schema must be transferred exactly once")
+
     for adapter in manifest.get("default_adapters", []):
         if adapter not in manifest.get("adapters", {}):
             add("ERROR", "DEFAULT_ADAPTER", adapter, "default adapter is not defined")
@@ -494,6 +535,7 @@ def validate_foundation(profile: str) -> None:
         validate_markers(map_text, "foundation/repo_map.template.yaml", "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "RULE_CONTEXT_CACHE_SCOPE_MAP", RULE_CONTEXT_CACHE_MAP_MARKERS)
+        validate_markers(map_text, "foundation/repo_map.template.yaml", "MODEL_ROUTING_SCOPE_MAP", MODEL_ROUTING_MAP_MARKERS)
 
     agents_template = ROOT / "foundation" / "AGENTS.template.md"
     if agents_template.is_file():
@@ -560,6 +602,7 @@ def validate_target(target: Path, adapter_selection: str, capability_selection: 
             validate_markers(text, display, "REGISTRATION_SCOPE_MAP", REGISTRATION_MAP_MARKERS)
             validate_markers(text, display, "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
             validate_markers(text, display, "RULE_CONTEXT_CACHE_SCOPE_MAP", RULE_CONTEXT_CACHE_MAP_MARKERS)
+            validate_markers(text, display, "MODEL_ROUTING_SCOPE_MAP", MODEL_ROUTING_MAP_MARKERS)
         if display.startswith(".ai/foundation/") and source.is_file() and not files_equivalent(destination, source):
             add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule/provenance/capability file differs from current source after portable text-EOL normalization; this detects drift only and does not establish semantic correctness of the override")
 

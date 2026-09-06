@@ -2,7 +2,7 @@
 
 A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and human-maintained technical and knowledge projects. Its goal is safe continuation without chat history, memory, personal prompts, or a specific vendor.
 
-## v1.8 integration, identity, registration, and rule-context model
+## v1.9 integration, identity, registration, rule-context, and dynamic model-routing model
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
 
@@ -69,6 +69,16 @@ python .ai/foundation/rule_context_cache/rule_context_cache.py record --reposito
 ```
 
 Use a project-authorized cache directory outside version control. Complete the first scoped rule read and analysis before `record`; a fingerprint hit permits reuse only when the corresponding exact analysis key is actually available. See `Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md` in this source repository or its installed `.ai/foundation/` counterpart.
+
+To install the optional dynamic model router:
+
+```text
+python tools/install_foundation.py TARGET --capabilities model-router --apply
+```
+
+Its provider-neutral core chooses among currently eligible models by expected cost of success after privacy, authorization, capability, context, quality, price-freshness, and budget filtering. The Ollama Cloud adapter discovers the live model catalog and public prices at runtime; no current model names or prices are embedded in Foundation policy. New models remain `UNASSESSED` until an explicitly allowed, spend-bounded evaluation produces enough evidence.
+
+The capability exposes the same decision contract through a CLI and local stdio MCP server, with a shell-free launcher and expiring snapshot as lower integration layers. It includes separate MCP examples for Visual Studio and GitHub Copilot because their current configuration shapes differ. Runtime catalogs, outcome aggregates, hashed session affinity, evaluation reservations, launchers, snapshots, and provider credentials stay outside the repository. See `foundation/capabilities/model-router/MODEL_ROUTER.md` for setup and commands.
 
 ## Transfer completeness invariant
 
@@ -169,6 +179,12 @@ Validate an installation that explicitly selected the reference clients:
 
 ```text
 python tools/foundation_validator.py --target TARGET --capabilities artifact-registration-clients
+```
+
+Validate an installation that explicitly selected the model router:
+
+```text
+python tools/foundation_validator.py --target TARGET --capabilities model-router
 ```
 
 The target validation command checks **Foundation integration only** (`FOUNDATION_INTEGRITY`). It does not replace project-specific semantic/static validation (`PROJECT_SEMANTIC`) or executable/empirical validation (`RUNTIME_EMPIRICAL`). Target projects may retain richer validation statuses as long as Foundation reserved meanings are not redefined. Historical identifier mappings, Registration Authority correctness, actual concurrency, and migration correctness remain target validation responsibilities.

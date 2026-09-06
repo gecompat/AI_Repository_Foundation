@@ -99,6 +99,20 @@ def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
                 ),
             }
         )
+    if "model-router" in capabilities:
+        notices.append(
+            {
+                "code": "MODEL_ROUTER_RUNTIME_CONFIGURATION_REQUIRED",
+                "severity": "NOTICE",
+                "message": (
+                    "The model-router capability is installed without credentials, live catalog data, or client configuration. "
+                    "Keep its runtime store outside the repository, supply provider credentials only through the execution "
+                    "environment, sync a fresh catalog, and merge only the relevant Visual Studio or GitHub Copilot MCP template "
+                    "into that client's configuration. The two clients use different top-level MCP shapes. Remote routing remains "
+                    "disabled unless each request explicitly authorizes it."
+                ),
+            }
+        )
     return notices
 
 

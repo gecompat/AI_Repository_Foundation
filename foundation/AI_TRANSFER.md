@@ -203,6 +203,23 @@ Caching is optional and never replaces native Codex instruction discovery. At ev
 
 The reference `rule-context-cache` capability is opt-in. It stores no rule text or semantic summaries: persistent records are local, non-versioned, non-authoritative fingerprint/dependency metadata written atomically under a lock. Foundation transfer does not select the target cache directory, persist host paths, or treat a cache record as evidence. A target may implement the same contract in another language.
 
+## Dynamic model routing
+
+Read `MODEL_ROUTING_POLICY.md` when a target routes work among concrete models or providers. Preserve a richer compatible target policy and map overlapping categories to `LOCAL`, `ECONOMICAL`, `BALANCED`, and `FRONTIER`; do not hard-code current providers, models, prices, quotas, or capabilities into Foundation policy.
+
+The optional `model-router` capability implements `foundation-model-router/v1`. Select it only when the target wants the local Python reference implementation and has authorized its runtime/provider boundaries. It supplies a provider-neutral router core, Ollama Cloud discovery adapter, CLI, local stdio MCP server, shell-free launcher, and expiring snapshots. Its required request, decision, catalog, snapshot, and profile schemas are core so another implementation can use the same contract.
+
+After installation:
+
+1. keep `AI_MODEL_ROUTER_HOME` outside the repository, or use the platform-default external state directory;
+2. provide `OLLAMA_API_KEY` through the execution environment only—never store it in the catalog, profile, snapshot, repository, or generated launcher;
+3. configure project-specific quality priors, capability declarations, budgets, and evaluation bounds without treating discovery as proof of quality;
+4. sync the live catalog and retain only an unexpired last-known-good catalog if refresh fails;
+5. use local MCP, CLI, shell-free launcher, or unexpired snapshot in that order, preserving explicit remote authorization and fail-closed behavior at every layer;
+6. merge the relevant MCP example manually: Visual Studio uses the supplied `servers` template, while GitHub Copilot uses the supplied `mcpServers` template. Do not copy either example over an existing client configuration wholesale.
+
+Runtime catalogs, aggregate outcomes, session hashes, evaluation reservations, launchers, and snapshots stay outside version control. The capability does not invoke a model itself and does not make client-specific routing policy authoritative.
+
 ## Required attribution
 
 Every Foundation rules transfer includes `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md` with the complete Foundation MIT notice.
@@ -233,7 +250,7 @@ Do not replace richer target policies with simplified Foundation vocabulary.
 3. If upgrading from an older version, compute and classify the complete semantic feature delta; surface recommendations/decisions/conflicts, including repository continuity when relevant.
 4. Read semantic integration policy plus feature-specific policies required by applicable candidates, including central-registry and repository-continuity policy when relevant.
 5. Inspect target governance, identifiers, Registration Authority/storage profile, adapters, repo maps, validation, CI availability dependencies, model routing, privacy/license constraints.
-6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities, including `rule-context-cache` only when local deterministic cache planning is wanted.
+6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities, including `rule-context-cache` only when local deterministic cache planning is wanted and `model-router` only when its remote/runtime boundaries are authorized.
 7. Build deterministic file states (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) using portable UTF-8 LF/CRLF equivalence; do not manufacture `.gitattributes` work for an EOL-only difference.
 8. Preserve equivalent, stronger, selectable-override, and complementary target behavior; resolve true required conflicts and target-internal conflicts separately.
 9. Apply identifier adoption, Registration Authority, and optional v2 migration rules without silent migration/replacement.

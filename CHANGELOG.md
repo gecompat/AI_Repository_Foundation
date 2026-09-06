@@ -2,6 +2,27 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.9.0] - 2026-09-07
+
+### Added
+
+- provider-neutral `foundation-model-router/v1` request, decision, catalog, snapshot, and provider-profile schemas;
+- an opt-in, dependency-free `model-router` capability with deterministic Cost-of-Success routing, fallback planning, aggregate outcome learning, conditional cache/session affinity, bounded evaluation reservations, shell-free launch, expiring snapshots, and an outside-repository atomic runtime store;
+- an Ollama Cloud provider adapter that discovers current models and official time-dependent prices at runtime, hashes normalized pricing into epochs, preserves an unexpired last-known-good catalog on refresh failure, and reads authentication only from the execution environment;
+- a newline-delimited JSON-RPC stdio MCP adapter plus separate current configuration examples for Visual Studio and GitHub Copilot;
+- `DEC-0019`, recording the dynamic routing authority, freshness, evaluation, storage, and graceful-degradation design.
+
+### Changed
+
+- model routing now applies privacy, authorization, capability, context, quality, price-freshness, and budget filters before minimizing expected cost of success rather than headline token price;
+- routing decisions expire at relevant price boundaries for all eligible candidates and record auditable exclusion reasons, fallback reach probabilities, validation strategy, pricing epoch, and estimated spend/success;
+- newly discovered models default to `UNASSESSED` and require project profiles or spend-bounded empirical graduation before ordinary routing;
+- Foundation transfer metadata, feature applicability, installer notices, validation markers, ruleset documentation, and client guidance include the new core contracts and optional capability without hard-coded model names or prices.
+
+### Migration
+
+Existing target routing remains authoritative when compatible. Targets may adopt only the core schemas/policy, install the optional reference implementation, or preserve a stronger router. Installing the capability does not configure credentials or clients: runtime state must remain outside version control, remote use must be explicitly authorized per request, live catalog sync is required, and the relevant client-specific MCP example must be merged rather than copied over existing configuration.
+
 ## [1.8.0] - 2026-09-01
 
 ### Added
