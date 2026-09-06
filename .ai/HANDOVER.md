@@ -4,11 +4,13 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.9.0 is implemented on `feature/dynamic-cost-aware-model-router` under completed `WI-0019` and accepted `DEC-0019`. The candidate adds provider-neutral dynamic routing schemas/policy plus an opt-in model-router capability with Ollama Cloud runtime discovery, Cost-of-Success selection, bounded evaluation, outside-repository state, CLI, local stdio MCP, launcher, and snapshot degradation paths. Concrete model names and prices remain runtime data.
+Foundation 1.9.0 is integrated in `origin/main` as `49c73f3cc2ba4031b83ab343038a16ba2e03bbb4` under completed `WI-0019` and accepted `DEC-0019`. It provides provider-neutral dynamic routing schemas/policy plus an opt-in model-router capability with Ollama Cloud runtime discovery, Cost-of-Success selection, bounded evaluation, outside-repository state, CLI, local stdio MCP, launcher, and snapshot degradation paths. Concrete model names and prices remain runtime data.
 
 The 2026-09-07 candidate local gate is green: transfer/feature guards, registry/backlog checks, full Foundation validator, diff hygiene, Python compilation, all Foundation JSON parsing, and all 125 tests passed on Windows. The validator has only its two pre-existing non-blocking self-scan warnings. The live public Ollama price-page compatibility check parsed 19 base rows, 2 peak rows, and the documented weekday 12:00–18:00 UTC window. Authenticated inventory and real task quality are deliberately not claimed without target credentials/workloads.
 
-PR #17 implementation head `446fb1b2512f3ed6909db3b8e0418740e36d153a` passed Foundation CI run `34065719115` and Foundation Artifact Registry run `34065719116`. The evidence-only completion update must pass both required checks before squash merge to `main`.
+PR #17 final head `7abcc9d5bcf0d3acc6ea5de1a46277de74d4a7cb` passed Foundation CI run `34065848433` and Foundation Artifact Registry run `34065848555`, then squash-merged to `main` as `49c73f3cc2ba4031b83ab343038a16ba2e03bbb4`.
+
+The 2026-09-07 post-merge audit found two bounded follow-ups while confirming the rest of the requested model-routing scope. `WI-0020` covers full-chain Cost-of-Success optimization and output-aware context bounds. `WI-0021` covers explicit evaluation task/sample/stopping plans plus complete paired-arm reservation settlement and auditable outcome linkage. Both are proposed follow-ups to the implemented `WI-0019` baseline rather than a reversal of its completed status.
 
 PR #15 is the Foundation 1.8.0 integration record for completed `WI-0018` and accepted `DEC-0018`. It adds a transferable Rule Context Cache contract/schema and an opt-in reference planner while preserving native Codex instruction discovery. Feature head `4a958344dea5cc8a8b57d2468752c415562e8486` passed Foundation Artifact Registry run `33560909931` and Foundation CI run `33560910019`, then squash-merged as `9a0f949ee0cdba73c8309e9dbb75c077ca21ab06`. The exact merge commit passed post-merge Foundation CI run `33561041239`.
 
@@ -16,7 +18,7 @@ The local completion gate on 2026-09-01 passed transfer/feature guards, registry
 
 PR #14 / branch `codex/eol-portable-transfer-integrity` remains the Foundation 1.7.0 integration record for completed `WI-0016` (portable EOL transfer integrity) and `WI-0017` / accepted `DEC-0017` (repository continuity/break-glass). Its last pre-migration implementation head was `fdd67225edaccb912a96f7e2fe1286d0749975c6`.
 
-The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0018` is `done`; `origin/main` is the integrated source authority. Re-read exact current heads and GitHub state before future integration or administration work.
+The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0018` and `WI-0019` are `done`; `WI-0020` and `WI-0021` are proposed; `origin/main` is the integrated source authority. Re-read exact current heads and GitHub state before future integration or administration work.
 
 ## Rule Context Cache — WI-0018 / DEC-0018
 
@@ -76,6 +78,8 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
+- `WI-0020`: complete-chain Cost-of-Success routing and full context-budget enforcement.
+- `WI-0021`: complete bounded evaluation planning and paired outcome settlement.
 - `WI-0001`: fresh-agent continuation validation.
 - `WI-0002`: manifest hashes/cross-version installed provenance.
 - `WI-0003`: evaluate packaged release artifact.
