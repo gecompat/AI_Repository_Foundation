@@ -89,7 +89,7 @@ Foundation version: 1.9.0 candidate
 - runtime catalogs, aggregate outcomes, hashed session references, reservations, launchers, and snapshots stay outside version control under atomic locking; credentials are not persisted;
 - the opt-in capability includes the provider-neutral core/CLI, Ollama Cloud provider adapter, local stdio MCP adapter, shell-free launcher, expiring snapshots, and separate Visual Studio/GitHub Copilot MCP examples;
 - graceful degradation is MCP → CLI → launcher/unexpired snapshot → portable Foundation tier without an invented concrete model or price;
-- `DEC-0019` is `Accepted`; `WI-0019` remains `in_progress` pending the complete local/PR validation and integration gate.
+- `DEC-0019` is `Accepted`; `WI-0019` is `done` based on the local completion gate and required PR checks recorded below.
 
 ## Validation evidence
 
@@ -105,6 +105,7 @@ Foundation version: 1.9.0 candidate
 - local completion gate on 2026-08-26: transfer manifest guard, feature catalog guard, central registry validation, backlog projection, full Foundation validator, focused EOL/Ruleset tests, and all 72 unit tests succeeded; validator reported two non-blocking pre-existing warnings.
 - v1.8.0 local completion gate on 2026-09-01: transfer manifest guard, feature catalog changed-source review against `d49f978f33001fcc098998ff7c04ffb209b28033`, central registry validation, backlog projection check, full Foundation validator, `git diff --check`, Python compilation/JSON parsing, focused Rule Context Cache regressions, and all 94 tests succeeded on Windows; the validator retained only its two pre-existing self-scan warnings.
 - v1.9.0 candidate local gate on 2026-09-07: transfer manifest guard, feature catalog changed-source review against `7ddc29988b23570f462e46ebf527f8dfdd05fd75`, central registry validation, backlog projection check, full Foundation validator, `git diff --check`, Python compilation, every Foundation JSON document parsed, and all 125 tests succeeded on Windows; the validator retained only its two pre-existing self-scan warnings. The public Ollama pricing page parsed successfully with 19 base rows, 2 peak rows, and the documented weekday 12:00–18:00 UTC window; authenticated inventory sync and real model-task quality remain target-owned runtime validation.
+- PR #17 implementation head `446fb1b2512f3ed6909db3b8e0418740e36d153a`: Foundation CI run `34065719115` and Foundation Artifact Registry run `34065719116`, success.
 - PR #15 head `4a958344dea5cc8a8b57d2468752c415562e8486` passed Foundation Artifact Registry run `33560909931` and Foundation CI run `33560910019`, was squash-merged as `9a0f949ee0cdba73c8309e9dbb75c077ca21ab06`, and the exact merge commit passed post-merge Foundation CI run `33561041239`.
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.

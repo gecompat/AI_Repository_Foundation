@@ -4,9 +4,11 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.9.0 is being implemented on `feature/dynamic-cost-aware-model-router` under `WI-0019` and accepted `DEC-0019`. The candidate adds provider-neutral dynamic routing schemas/policy plus an opt-in model-router capability with Ollama Cloud runtime discovery, Cost-of-Success selection, bounded evaluation, outside-repository state, CLI, local stdio MCP, launcher, and snapshot degradation paths. Concrete model names and prices remain runtime data. `WI-0019` remains in progress until full local validation, PR checks, and authorized integration complete.
+Foundation 1.9.0 is implemented on `feature/dynamic-cost-aware-model-router` under completed `WI-0019` and accepted `DEC-0019`. The candidate adds provider-neutral dynamic routing schemas/policy plus an opt-in model-router capability with Ollama Cloud runtime discovery, Cost-of-Success selection, bounded evaluation, outside-repository state, CLI, local stdio MCP, launcher, and snapshot degradation paths. Concrete model names and prices remain runtime data.
 
 The 2026-09-07 candidate local gate is green: transfer/feature guards, registry/backlog checks, full Foundation validator, diff hygiene, Python compilation, all Foundation JSON parsing, and all 125 tests passed on Windows. The validator has only its two pre-existing non-blocking self-scan warnings. The live public Ollama price-page compatibility check parsed 19 base rows, 2 peak rows, and the documented weekday 12:00–18:00 UTC window. Authenticated inventory and real task quality are deliberately not claimed without target credentials/workloads.
+
+PR #17 implementation head `446fb1b2512f3ed6909db3b8e0418740e36d153a` passed Foundation CI run `34065719115` and Foundation Artifact Registry run `34065719116`. The evidence-only completion update must pass both required checks before squash merge to `main`.
 
 PR #15 is the Foundation 1.8.0 integration record for completed `WI-0018` and accepted `DEC-0018`. It adds a transferable Rule Context Cache contract/schema and an opt-in reference planner while preserving native Codex instruction discovery. Feature head `4a958344dea5cc8a8b57d2468752c415562e8486` passed Foundation Artifact Registry run `33560909931` and Foundation CI run `33560910019`, then squash-merged as `9a0f949ee0cdba73c8309e9dbb75c077ca21ab06`. The exact merge commit passed post-merge Foundation CI run `33561041239`.
 
