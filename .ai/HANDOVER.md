@@ -4,6 +4,10 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
+Foundation 1.9.0 is being implemented on `feature/dynamic-cost-aware-model-router` under `WI-0019` and accepted `DEC-0019`. The candidate adds provider-neutral dynamic routing schemas/policy plus an opt-in model-router capability with Ollama Cloud runtime discovery, Cost-of-Success selection, bounded evaluation, outside-repository state, CLI, local stdio MCP, launcher, and snapshot degradation paths. Concrete model names and prices remain runtime data. `WI-0019` remains in progress until full local validation, PR checks, and authorized integration complete.
+
+The 2026-09-07 candidate local gate is green: transfer/feature guards, registry/backlog checks, full Foundation validator, diff hygiene, Python compilation, all Foundation JSON parsing, and all 125 tests passed on Windows. The validator has only its two pre-existing non-blocking self-scan warnings. The live public Ollama price-page compatibility check parsed 19 base rows, 2 peak rows, and the documented weekday 12:00–18:00 UTC window. Authenticated inventory and real task quality are deliberately not claimed without target credentials/workloads.
+
 PR #15 is the Foundation 1.8.0 integration record for completed `WI-0018` and accepted `DEC-0018`. It adds a transferable Rule Context Cache contract/schema and an opt-in reference planner while preserving native Codex instruction discovery. Feature head `4a958344dea5cc8a8b57d2468752c415562e8486` passed Foundation Artifact Registry run `33560909931` and Foundation CI run `33560910019`, then squash-merged as `9a0f949ee0cdba73c8309e9dbb75c077ca21ab06`. The exact merge commit passed post-merge Foundation CI run `33561041239`.
 
 The local completion gate on 2026-09-01 passed transfer/feature guards, registry/backlog checks, the full Foundation validator, diff hygiene, compilation/JSON parsing, focused regressions, and all 94 tests. Post-merge local read-back confirmed the canonical clone and `origin/main` at the same merge commit with transfer, feature, registry, backlog, and Foundation validation green.
@@ -55,9 +59,11 @@ On 2026-08-26, `tools/github/configure_rulesets.py` created and read back both R
 
 ## Target-project behavior
 
-Foundation 1.8.0 preserves the 1.7 repository-continuity semantics but does not transfer repository-administration changes. Targets are told that making external CI mandatory can create an availability dependency; projects needing continuity should consider separating unbypassable core safety from PR-only bypassable CI gates. Foundation does not silently select bypass actors, create Rulesets, weaken existing protection, or treat missing break-glass configuration as a `FOUNDATION_INTEGRITY` defect.
+Foundation 1.9.0 preserves the 1.7 repository-continuity semantics but does not transfer repository-administration changes. Targets are told that making external CI mandatory can create an availability dependency; projects needing continuity should consider separating unbypassable core safety from PR-only bypassable CI gates. Foundation does not silently select bypass actors, create Rulesets, weaken existing protection, or treat missing break-glass configuration as a `FOUNDATION_INTEGRITY` defect.
 
 Rule-context policy/schema are core transfer material; the executable planner remains opt-in. Target adoption preserves stronger project governance and native instruction discovery, selects an authorized local non-versioned cache location, performs a complete first analysis per scope/rule version, and never treats the record as authority or evidence.
+
+Model-routing policy and schemas are core transfer material; the executable `model-router` remains opt-in. Target adoption preserves stronger compatible routing, explicitly authorizes remote data handling, keeps runtime state outside version control, supplies credentials only through the environment, syncs fresh provider data, and merges the appropriate client-specific MCP template. Visual Studio and GitHub Copilot templates are intentionally different.
 
 ## Continuation
 

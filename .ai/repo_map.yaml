@@ -15,6 +15,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0016-foundation-required-github-protection.md
     - Documentation/Architecture/decisions/DEC-0017-break-glass-repository-continuity.md
     - Documentation/Architecture/decisions/DEC-0018-rule-context-cache.md
+    - Documentation/Architecture/decisions/DEC-0019-dynamic-cost-aware-model-routing.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -111,6 +112,14 @@ transfer:
   rule_context_cache_policy: Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md
   rule_context_cache_schema: foundation/schemas/rule-context-cache.schema.json
   optional_rule_context_cache_capability: foundation/capabilities/rule-context-cache/
+  model_routing_policy: .ai/MODEL_ROUTING_POLICY.md
+  model_routing_schemas:
+    - foundation/schemas/model-routing-request.schema.json
+    - foundation/schemas/model-routing-decision.schema.json
+    - foundation/schemas/model-router-catalog.schema.json
+    - foundation/schemas/model-routing-snapshot.schema.json
+    - foundation/schemas/model-router-profiles.schema.json
+  optional_model_router_capability: foundation/capabilities/model-router/
   schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
   optional_github_registry_capability: foundation/capabilities/artifact-registry-github/
@@ -127,3 +136,4 @@ installation:
   command: python tools/install_foundation.py TARGET
   optional_registration_clients: python tools/install_foundation.py TARGET --capabilities artifact-registration-clients
   optional_github_registry: python tools/install_foundation.py TARGET --capabilities artifact-registry-github
+  optional_model_router: python tools/install_foundation.py TARGET --capabilities model-router

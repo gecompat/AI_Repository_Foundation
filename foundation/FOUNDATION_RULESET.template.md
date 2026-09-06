@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.8.0
+Ruleset version: 1.9.0
 
 This directory contains reusable governance rules, machine-readable schemas, the semantic feature catalog, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -27,6 +27,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - registration schemas: `schemas/artifact-record.schema.json`, `schemas/artifact-registry.schema.json`, `schemas/artifact-registry-v2.schema.json`, `schemas/artifact-registration-request.schema.json`
 - upgrade schemas: `schemas/feature-catalog.schema.json`, `schemas/upgrade-assessment.schema.json`
 - rule-context cache record schema: `schemas/rule-context-cache.schema.json`
+- model-routing schemas: `schemas/model-routing-request.schema.json`, `schemas/model-routing-decision.schema.json`, `schemas/model-router-catalog.schema.json`, `schemas/model-routing-snapshot.schema.json`, `schemas/model-router-profiles.schema.json`
 - authorization and working behavior: `WORKING_RULES.md`
 - model/resource selection and target-policy mapping: `MODEL_ROUTING_POLICY.md`
 - validation, status vocabulary, portable LF/CRLF drift semantics, infrastructure availability, and manual test plans: `VALIDATION_POLICY.md`
@@ -87,6 +88,12 @@ For UTF-8 Foundation text, LF and CRLF-only working-tree representations are equ
 A required check that ran and found a substantive defect is `VALIDATION_FAILURE` and must not be bypassed under break-glass policy. A check that cannot produce a trustworthy result because its external execution infrastructure is unavailable may be classified `INFRASTRUCTURE_UNAVAILABLE`; a project-defined break-glass path may then preserve repository continuity while keeping missing validation pending for post-recovery execution. `UNKNOWN` is non-bypassable until classified.
 
 A local override or drift warning identifies a difference; it is not semantic approval of that difference. A green Foundation validator must never be used as evidence that the entire target project is validated.
+
+## Model-routing boundary
+
+The portable routing tiers do not name a provider or current model. If dynamic routing is selected, filter privacy, authorization, capability, context, quality, price freshness, and budget before minimizing expected cost of success. Decisions carry a pricing epoch and expiry, session affinity remains conditional, and new models remain `UNASSESSED` until bounded project-authorized evaluation provides enough evidence.
+
+The optional `model-router` capability implements `foundation-model-router/v1` with a provider-neutral core, runtime Ollama Cloud discovery, CLI, local stdio MCP, shell-free launcher, and expiring snapshots. Runtime state stays outside version control, credentials are never stored, and lower integration layers preserve the same fail-closed decision contract.
 
 ## Repository continuity boundary
 

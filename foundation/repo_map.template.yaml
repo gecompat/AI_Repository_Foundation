@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.8.0
+foundation_ruleset_version: 1.9.0
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -30,6 +30,11 @@ authority:
     - .ai/foundation/schemas/feature-catalog.schema.json
     - .ai/foundation/schemas/upgrade-assessment.schema.json
     - .ai/foundation/schemas/rule-context-cache.schema.json
+    - .ai/foundation/schemas/model-routing-request.schema.json
+    - .ai/foundation/schemas/model-routing-decision.schema.json
+    - .ai/foundation/schemas/model-router-catalog.schema.json
+    - .ai/foundation/schemas/model-routing-snapshot.schema.json
+    - .ai/foundation/schemas/model-router-profiles.schema.json
 provenance:
   foundation_notice: .ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md
   target_root_license_behavior: independent_and_untouched
@@ -159,10 +164,26 @@ validation_contract:
     selection: impact_based
     foundation_integrity_does_not_replace_project_validation: true
 model_routing_contract:
+  request_schema: .ai/foundation/schemas/model-routing-request.schema.json
+  decision_schema: .ai/foundation/schemas/model-routing-decision.schema.json
+  catalog_schema: .ai/foundation/schemas/model-router-catalog.schema.json
+  snapshot_schema: .ai/foundation/schemas/model-routing-snapshot.schema.json
+  profiles_schema: .ai/foundation/schemas/model-router-profiles.schema.json
   foundation_tiers: LOCAL_ECONOMICAL_BALANCED_FRONTIER
   target_policy_may_be_more_detailed: true
   semantic_mapping_when_overlapping: required
   concrete_models_are_runtime_facts: true
+  profile: foundation-model-router/v1
+  constraint_order: privacy_authorization_capability_context_quality_freshness_budget_before_cost
+  objective: minimum_expected_cost_of_success
+  price_epoch_and_expiry: required
+  session_affinity: conditional
+  new_model_default: UNASSESSED
+  bounded_evaluation: required
+  runtime_state: outside_version_control
+  credential_storage: prohibited
+  graceful_degradation: MCP_CLI_LAUNCHER_OR_SNAPSHOT_PORTABLE_TIER_ONLY
+  optional_reference_capability: model-router
 override_contract:
   required: minimum_floor_project_may_be_stricter
   default: project_may_override_intentionally

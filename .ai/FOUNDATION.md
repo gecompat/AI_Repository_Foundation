@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.8.0
+- version: 1.9.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -28,6 +28,7 @@ Status: AUTHORITATIVE
 - validation_scope_contract: Foundation validator = `FOUNDATION_INTEGRITY`; target repository retains `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL`
 - portable_text_equivalence: UTF-8 CRLF/LF-only Git working-tree differences are equivalent for Foundation install/drift checks; true text/binary differences remain detectable
 - rule_context_cache_contract: native instruction discovery per run; session-local semantic analyses keyed by validated scope/source dependencies; optional local records contain fingerprints/dependency metadata only and fail closed on scope, instruction, topology, source-set, schema, generator, corruption, or uncertainty changes
+- model_routing_contract: provider-neutral `foundation-model-router/v1`; constraints before economics; minimum expected cost of success; price-epoch expiry; conditional affinity; bounded new-model evaluation; runtime state outside version control
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
@@ -39,7 +40,7 @@ Status: AUTHORITATIVE
 - target_github_merge_protection: recommended when relevant, never silently imposed by Foundation transfer
 - python_runtime_required: false
 - powershell_reference_client: supported first-class for the v1 compatibility profile
-- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`
+- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`
 - target_project_license: never replaced or modified by installation
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none
@@ -91,6 +92,14 @@ Foundation 1.8 adds the `foundation-rule-context-cache/v1` contract. Native Code
 The decision states are `CACHE_HIT`, `PARTIAL_INVALIDATION`, and `CACHE_MISS`. A non-instruction content/Git-state change invalidates that source and transitive dependents while preserving independent analyses. Any instruction, scope, source-set, rename/delete, dependency-topology, contract/schema/generator, corruption, incomplete discovery, byte-limit, or uncertainty change is a full miss. Portable UTF-8 LF/CRLF equivalence is shared with the existing Foundation content policy.
 
 The optional `rule-context-cache` capability supplies a dependency-free reference planner. Semantic analysis remains session-local under content/dependency-addressed keys. Persistent records are optional local non-versioned acceleration metadata: they contain no rule text, summaries, prompts, secrets, environment values, or absolute host paths; they have no authority/evidence status and are atomically written under a per-record lock.
+
+## Dynamic cost-aware model routing
+
+Foundation 1.9 expands the portable routing tiers with the provider-neutral `foundation-model-router/v1` request, decision, catalog, snapshot, and profile contracts. Privacy, authorization, capabilities, context, quality, price freshness, and budget are hard filters before economics. Eligible routes minimize expected cost of success, including predicted success, attempt/fallback spend, failure cost, latency value, and conditional session/cache affinity.
+
+Concrete model identifiers, providers, capabilities, availability, and prices remain expiring runtime facts. Decisions carry a pricing epoch and expire at relevant rate boundaries. Newly discovered models remain `UNASSESSED` until an explicitly allowed, bounded evaluation reaches the project evidence threshold; discovery is never treated as quality evidence.
+
+The optional `model-router` capability provides a dependency-free Python core and CLI, an Ollama Cloud discovery/pricing adapter, a local newline-delimited JSON-RPC stdio MCP server, a shell-free launcher, and expiring snapshots. Runtime catalogs, aggregate outcomes, hashed session references, evaluation reservations, launchers, and snapshots stay outside Git under atomic locking. Credentials are read from the execution environment and never stored. Visual Studio and GitHub Copilot receive separate MCP examples because their configuration shapes differ; Codex and all other clients can always use the CLI/launcher/snapshot fallback.
 
 For existing repositories, semantic integration preserves target-owned governance. Foundation `REQUIRED` rules are minimum floors; stricter target rules are compatible. Existing target policy vocabularies do not need to be rewritten into Foundation terms when a semantic mapping is sufficient.
 

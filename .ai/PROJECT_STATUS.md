@@ -1,8 +1,8 @@
 # Project Status
 
 Status: GENERATED/EVIDENCE
-Last updated: 2026-09-01
-Foundation version: 1.8.0
+Last updated: 2026-09-07
+Foundation version: 1.9.0 candidate
 
 ## Implemented baseline
 
@@ -79,6 +79,18 @@ Foundation version: 1.8.0
 - the reusable policy and schema are core; the dependency-free `rule-context-cache` planner is an explicitly selected optional capability;
 - `DEC-0018` is `Accepted`; `WI-0018` is `done` based on the stable local completion gate recorded below.
 
+## v1.9.0 — WI-0019 / DEC-0019
+
+- provider-neutral `foundation-model-router/v1` contracts cover request, decision, catalog, snapshot, and provider profiles;
+- deterministic routing filters privacy/remote authorization, capabilities, context, tier, quality, price freshness, failed attempts, and spend bounds before minimizing expected cost of success;
+- Cost-of-Success includes estimated attempt and fallback spend, predicted success, failure-recovery value, latency value, conditional session/cache affinity, and fallback reach probability;
+- concrete provider/model facts and time-dependent rates are discovered into expiring runtime catalogs; decisions carry a pricing epoch and expire at any eligible candidate's next relevant rate boundary;
+- newly discovered models remain `UNASSESSED`; explicitly authorized evaluation plans are capped by candidates, trials, daily spend, and atomic reservations, while the router itself never invokes a model;
+- runtime catalogs, aggregate outcomes, hashed session references, reservations, launchers, and snapshots stay outside version control under atomic locking; credentials are not persisted;
+- the opt-in capability includes the provider-neutral core/CLI, Ollama Cloud provider adapter, local stdio MCP adapter, shell-free launcher, expiring snapshots, and separate Visual Studio/GitHub Copilot MCP examples;
+- graceful degradation is MCP → CLI → launcher/unexpired snapshot → portable Foundation tier without an invented concrete model or price;
+- `DEC-0019` is `Accepted`; `WI-0019` remains `in_progress` pending the complete local/PR validation and integration gate.
+
 ## Validation evidence
 
 - v1.2.0 semantic integration: Foundation CI run `32646967820`, success.
@@ -92,6 +104,7 @@ Foundation version: 1.8.0
 - v1.7.0 implementation head `fdd67225edaccb912a96f7e2fe1286d0749975c6`: Foundation CI `33002938158` and Foundation Artifact Registry `33002938204`, success.
 - local completion gate on 2026-08-26: transfer manifest guard, feature catalog guard, central registry validation, backlog projection, full Foundation validator, focused EOL/Ruleset tests, and all 72 unit tests succeeded; validator reported two non-blocking pre-existing warnings.
 - v1.8.0 local completion gate on 2026-09-01: transfer manifest guard, feature catalog changed-source review against `d49f978f33001fcc098998ff7c04ffb209b28033`, central registry validation, backlog projection check, full Foundation validator, `git diff --check`, Python compilation/JSON parsing, focused Rule Context Cache regressions, and all 94 tests succeeded on Windows; the validator retained only its two pre-existing self-scan warnings.
+- v1.9.0 candidate local gate on 2026-09-07: transfer manifest guard, feature catalog changed-source review against `7ddc29988b23570f462e46ebf527f8dfdd05fd75`, central registry validation, backlog projection check, full Foundation validator, `git diff --check`, Python compilation, every Foundation JSON document parsed, and all 125 tests succeeded on Windows; the validator retained only its two pre-existing self-scan warnings. The public Ollama pricing page parsed successfully with 19 base rows, 2 peak rows, and the documented weekday 12:00–18:00 UTC window; authenticated inventory sync and real model-task quality remain target-owned runtime validation.
 - PR #15 head `4a958344dea5cc8a8b57d2468752c415562e8486` passed Foundation Artifact Registry run `33560909931` and Foundation CI run `33560910019`, was squash-merged as `9a0f949ee0cdba73c8309e9dbb75c077ca21ab06`, and the exact merge commit passed post-merge Foundation CI run `33561041239`.
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.

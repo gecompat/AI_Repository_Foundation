@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.8.0",
+  "ruleset_version": "1.9.0",
   "assessment_classifications": ["NOT_APPLICABLE", "ALREADY_EQUIVALENT", "PROJECT_STRONGER", "APPLY_DEFAULT", "RECOMMENDED", "DECISION_REQUIRED", "CONFLICT"],
   "features": {
     "foundation-baseline": {
@@ -60,12 +60,12 @@
       "recommendation": {"when_applicable": "APPLY_DEFAULT", "summary": "Integrate semantically rather than normalizing mature project governance to Foundation wording.", "decision_required_when": ["a true FOUNDATION_REQUIRED_CONFLICT cannot be resolved mechanically"]}
     },
     "model-routing-interoperability": {
-      "title": "Portable model/resource routing semantics",
+      "title": "Portable dynamic, cost-aware model/resource routing",
       "introduced_in": "1.2.0",
-      "change_history": [],
-      "transfer_sources": [".ai/MODEL_ROUTING_POLICY.md"],
-      "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["ai_model_routing", "cost_policy", "local_model_policy", "multiple_model_tiers"], "questions": ["Does the target already have a richer routing taxonomy that should be preserved and mapped?"]},
-      "recommendation": {"when_applicable": "RECOMMENDED", "summary": "Map richer target routing to portable Foundation tiers without discarding project detail.", "decision_required_when": []}
+      "change_history": [{"version": "1.9.0", "impact": "MATERIAL", "summary": "Adds provider-neutral request/decision/catalog contracts, cost-of-success selection, price-epoch invalidation, bounded new-model evaluation, external runtime state, graceful degradation, and an opt-in Ollama Cloud reference implementation with CLI and local stdio MCP adapters."}],
+      "transfer_sources": ["foundation/AGENTS.template.md", "foundation/FOUNDATION_RULESET.template.md", "foundation/feature_catalog.json", ".ai/MODEL_ROUTING_POLICY.md", "foundation/repo_map.template.yaml", "foundation/schemas/model-routing-request.schema.json", "foundation/schemas/model-routing-decision.schema.json", "foundation/schemas/model-router-catalog.schema.json", "foundation/schemas/model-routing-snapshot.schema.json", "foundation/schemas/model-router-profiles.schema.json", "foundation/capabilities/model-router/MODEL_ROUTER.md", "foundation/capabilities/model-router/model_router.py", "foundation/capabilities/model-router/ollama_cloud.py", "foundation/capabilities/model-router/mcp_stdio.py", "foundation/capabilities/model-router/profiles.example.json", "foundation/capabilities/model-router/mcp.visual-studio.json", "foundation/capabilities/model-router/mcp.github-copilot.json"],
+      "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["ai_model_routing", "cost_policy", "local_model_policy", "multiple_model_tiers", "multiple_remote_models", "time_dependent_pricing", "model_catalog_churn", "mcp_or_cli_clients"], "questions": ["Does the target already have a richer routing taxonomy that should be preserved and mapped?", "May task data be sent to the selected remote provider?", "Which project-specific quality priors, budgets, and failure costs are authoritative?", "Is local non-versioned runtime state permitted?", "Should the optional reference implementation be installed and connected to any client?"]},
+      "recommendation": {"when_applicable": "RECOMMENDED", "summary": "Use the provider-neutral contracts and cost-of-success semantics while preserving richer target policy; select the optional router only when live remote routing and local runtime state are authorized.", "decision_required_when": ["enabling remote model access", "selecting provider credentials and local runtime-state handling", "replacing an existing project routing authority"]}
     },
     "persistent-identity": {
       "title": "Persistent artifact identity and stable human references",

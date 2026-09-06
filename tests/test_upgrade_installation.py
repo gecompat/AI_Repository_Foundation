@@ -16,7 +16,7 @@ import upgrade_applicability  # noqa: E402
 
 
 class UpgradeInstallationTests(unittest.TestCase):
-    def test_installed_repo_map_exposes_upgrade_registry_continuity_and_cache_contracts(self) -> None:
+    def test_installed_repo_map_exposes_upgrade_registry_continuity_cache_and_routing_contracts(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             with redirect_stdout(StringIO()):
@@ -33,12 +33,16 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("utf8_crlf_lf_equivalent: true", repo_map)
             self.assertIn("statuses: CACHE_HIT_PARTIAL_INVALIDATION_CACHE_MISS", repo_map)
             self.assertIn("head_only_hit: prohibited", repo_map)
+            self.assertIn("model_routing_contract:", repo_map)
+            self.assertIn("profile: foundation-model-router/v1", repo_map)
+            self.assertIn("objective: minimum_expected_cost_of_success", repo_map)
+            self.assertIn("runtime_state: outside_version_control", repo_map)
 
     def test_feature_catalog_and_manifest_versions_match(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.8.0")
+        self.assertEqual(manifest["ruleset_version"], "1.9.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -57,6 +61,15 @@ class UpgradeInstallationTests(unittest.TestCase):
         cache = by_id["rule-context-cache"]
         self.assertIn("introduced_in:1.8.0", cache["candidate_reasons"])
         self.assertIn("multi_wave_ai_work", cache["applicability"]["signals"])
+
+    def test_1_8_to_1_9_delta_surfaces_dynamic_model_routing(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.8.0", "1.9.0")
+        by_id = {item["feature_id"]: item for item in candidates}
+        routing = by_id["model-routing-interoperability"]
+        self.assertEqual(routing["candidate_reasons"], ["material_change:1.9.0"])
+        self.assertIn("time_dependent_pricing", routing["applicability"]["signals"])
+        self.assertIn("cost-of-success", routing["recommendation"]["summary"])
 
 
 if __name__ == "__main__":

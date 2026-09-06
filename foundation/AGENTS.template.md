@@ -17,5 +17,7 @@ Tool-specific adapters must lead back to this repository entry point and may not
 
 Foundation validation covers Foundation integration integrity only. Preserve and use the target repository's existing semantic validators, static contracts, tests, reviews, and manual validation when their contracts are affected. A green Foundation validator is not evidence that the entire project is validated.
 
+When the optional `model-router` capability is present and the task requires a concrete model choice, follow `.ai/foundation/MODEL_ROUTING_POLICY.md` and use the router's local MCP, CLI, launcher, or unexpired snapshot interface in that order. Do not infer remote authorization or invent a model/price when the router returns no eligible route.
+
 Chat history, memory, prior scratchpads, and vendor-specific project prompts are not durable project truth.
 <!-- AI_REPOSITORY_FOUNDATION:END -->
