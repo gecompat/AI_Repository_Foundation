@@ -4,11 +4,13 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.14.0 is a local candidate on `feature/ai-client-integration`. It adds optional semantic client integration, actual-model dispatch receipts, an expiring privacy-safe manual-selection fallback, local/stdout capability-gap handling, and explicitly authorized quarantined adapter synthesis while keeping every client/runtime optional. `WI-0027` is complete by the local gate; `WI-0028`–`WI-0029` remain for failure/dual-runtime acceptance and final source self-hosting.
+Foundation 1.14.0 was squash-merged by PR #24 as `a52a5c3c0e5c100c06b039318b1e3eecf3263314`; its post-merge Foundation CI run `34145275461` passed. PR #25 now contains completed `WI-0028`: a cross-platform contract/failure matrix and bounded Windows dual-runtime evidence. `WI-0029` remains the final source self-hosting closure.
 
 The manual fallback is deliberate: a router recommendation cannot force every chat host to switch models. `MANUAL_DISPATCH_REQUIRED` emits a content-free record plus an external prompt file containing tier/capability/acceptance/validation instructions. A concrete model is named only from fresh privacy-eligible evidence. The selected/actual model still requires matching host execution or response metadata; an accepted parameter, model list, user-visible subagent label, or recommendation alone remains `REQUESTED_NOT_ATTESTED`.
 
-The v1.14 local gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, JSON/compile/diff hygiene, focused client/install/upgrade/self-hosting tests, and all 222 tests on Windows. The validator retains only its two pre-existing non-blocking self-scan warnings. No client configuration, runtime, network service, model, credential, or repository external to this branch was mutated during deterministic acceptance.
+The v1.14 implementation head `a0e0d439c53bc9277aca3a36ca862a3c563e7642` passed Foundation Artifact Registry run `34145206655` and Foundation CI run `34145206653`. Its local gate passed all 222 tests on Windows. No client configuration, runtime, network service, model, credential, or repository external to that branch was mutated during deterministic acceptance.
+
+The `WI-0028` focused 91-test contract/degradation gate and complete 229-test suite pass locally on Windows, together with transfer/feature, registry/backlog, and full Foundation validation gates. PR #25 head `b7878347cb1fe7866ae99bdb55729974d8fa8ca3` passed Foundation CI run `34147019605` on macOS, Windows, and the required Linux `validate` gate; registry-integrity run `34147019778` passed. Separate live acceptance used only loopback and already-installed artifacts: Ollama-local completed one bounded request without leaving a model loaded, and LM Studio completed one bounded OpenAI-compatible request before the test stopped and verified the server it had started. No credential file, download, paid/remote request, or response content was used or retained.
 
 The provisioner accepts only exact credential-free file/HTTPS sources and reference install commands declaring network denial. It cannot itself enforce an operating-system network sandbox, so only audited offline installers are admissible; stronger implementations may add sandboxing. Failed source refreshes are also throttled for 24 hours, preventing an unavailable endpoint from creating a retry loop. No live download, paid call, or productive runtime interruption was used for the deterministic tests.
 
@@ -104,8 +106,6 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
-- `WI-0027`: client integration, gap reporting, and governed local adapter synthesis.
-- `WI-0028`: cross-platform degradation and Windows dual-runtime acceptance.
 - `WI-0029`: Foundation source-project self-hosting.
 - `WI-0001`: fresh-agent continuation validation.
 - `WI-0002`: manifest hashes/cross-version installed provenance.
