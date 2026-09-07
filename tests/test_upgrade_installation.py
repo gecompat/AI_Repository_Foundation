@@ -16,7 +16,7 @@ import upgrade_applicability  # noqa: E402
 
 
 class UpgradeInstallationTests(unittest.TestCase):
-    def test_installed_repo_map_exposes_upgrade_registry_continuity_cache_and_routing_contracts(self) -> None:
+    def test_installed_repo_map_exposes_upgrade_registry_continuity_cache_routing_and_ai_work_contracts(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             with redirect_stdout(StringIO()):
@@ -37,12 +37,17 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("profile: foundation-model-router/v1", repo_map)
             self.assertIn("objective: minimum_expected_cost_of_success", repo_map)
             self.assertIn("runtime_state: outside_version_control", repo_map)
+            self.assertIn("ai_work_contract:", repo_map)
+            self.assertIn("profile: foundation-ai-work/v1", repo_map)
+            self.assertIn("capability_failures: isolated", repo_map)
+            self.assertIn("authority_expansion: prohibited", repo_map)
+            self.assertIn("python_required: false", repo_map)
 
     def test_feature_catalog_and_manifest_versions_match(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.9.0")
+        self.assertEqual(manifest["ruleset_version"], "1.10.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -70,6 +75,15 @@ class UpgradeInstallationTests(unittest.TestCase):
         self.assertEqual(routing["candidate_reasons"], ["material_change:1.9.0"])
         self.assertIn("time_dependent_pricing", routing["applicability"]["signals"])
         self.assertIn("cost-of-success", routing["recommendation"]["summary"])
+
+    def test_1_9_to_1_10_delta_surfaces_system_independent_ai_work(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.9.0", "1.10.0")
+        by_id = {item["feature_id"]: item for item in candidates}
+        work = by_id["ai-work-orchestration"]
+        self.assertEqual(work["candidate_reasons"], ["introduced_in:1.10.0"])
+        self.assertIn("runtime_failure_isolation", work["applicability"]["signals"])
+        self.assertIn("runtime-neutral", work["recommendation"]["summary"])
 
 
 if __name__ == "__main__":

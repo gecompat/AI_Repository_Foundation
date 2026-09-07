@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.9.0",
+  "ruleset_version": "1.10.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
@@ -152,6 +152,28 @@
     "target_status_extensions_allowed": true,
     "reserved_statuses_may_not_be_redefined": true
   },
+  "ai_work_contract": {
+    "profile": "foundation-ai-work/v1",
+    "policy_source": "Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md",
+    "schema_targets": [
+      ".ai/foundation/schemas/ai-work-request.schema.json",
+      ".ai/foundation/schemas/capability-descriptor.schema.json",
+      ".ai/foundation/schemas/execution-plan.schema.json",
+      ".ai/foundation/schemas/execution-report.schema.json",
+      ".ai/foundation/schemas/validation-evidence.schema.json",
+      ".ai/foundation/schemas/gap-report.schema.json",
+      ".ai/foundation/schemas/provision-plan.schema.json"
+    ],
+    "payload_transport": "content_handles_outside_control_plane",
+    "payload_persistence_default": "prohibited",
+    "constraint_order": "privacy_authorization_capability_quality_health_validation_time_money_resources_before_ranking",
+    "statuses": ["EXECUTABLE", "MANUAL_REQUIRED", "UNAVAILABLE", "BLOCKED"],
+    "capability_failures": "isolated",
+    "authority_expansion": "prohibited",
+    "runtime_state": "outside_version_control",
+    "python_required": false,
+    "reference_planner": "optional_capability"
+  },
   "model_routing_contract": {
     "schema_targets": [
       ".ai/foundation/schemas/model-routing-request.schema.json",
@@ -194,6 +216,7 @@
     {"source": "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md", "target": ".ai/foundation/UPGRADE_APPLICABILITY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md", "target": ".ai/foundation/REPOSITORY_CONTINUITY_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md", "target": ".ai/foundation/RULE_CONTEXT_CACHE_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
+    {"source": "Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md", "target": ".ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": "foundation/feature_catalog.json", "target": ".ai/foundation/feature_catalog.json", "kind": "feature-catalog", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-record.schema.json", "target": ".ai/foundation/schemas/artifact-record.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/artifact-registry.schema.json", "target": ".ai/foundation/schemas/artifact-registry.schema.json", "kind": "schema", "merge": "review_if_exists"},
@@ -207,6 +230,13 @@
     {"source": "foundation/schemas/model-router-catalog.schema.json", "target": ".ai/foundation/schemas/model-router-catalog.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/model-routing-snapshot.schema.json", "target": ".ai/foundation/schemas/model-routing-snapshot.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/model-router-profiles.schema.json", "target": ".ai/foundation/schemas/model-router-profiles.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/ai-work-request.schema.json", "target": ".ai/foundation/schemas/ai-work-request.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/capability-descriptor.schema.json", "target": ".ai/foundation/schemas/capability-descriptor.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/execution-plan.schema.json", "target": ".ai/foundation/schemas/execution-plan.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/execution-report.schema.json", "target": ".ai/foundation/schemas/execution-report.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/validation-evidence.schema.json", "target": ".ai/foundation/schemas/validation-evidence.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/gap-report.schema.json", "target": ".ai/foundation/schemas/gap-report.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/provision-plan.schema.json", "target": ".ai/foundation/schemas/provision-plan.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": ".ai/WORKING_RULES.md", "target": ".ai/foundation/WORKING_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/MODEL_ROUTING_POLICY.md", "target": ".ai/foundation/MODEL_ROUTING_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/VALIDATION_POLICY.md", "target": ".ai/foundation/VALIDATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
@@ -234,6 +264,12 @@
     ],
     "rule-context-cache": [
       {"source": "foundation/capabilities/rule-context-cache/rule_context_cache.py", "target": ".ai/foundation/rule_context_cache/rule_context_cache.py", "kind": "rule-context-cache-planner", "merge": "review_if_exists"}
+    ],
+    "ai-work": [
+      {"source": "foundation/capabilities/ai-work/AI_WORK.md", "target": ".ai/foundation/ai_work/AI_WORK.md", "kind": "ai-work-documentation", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/ai-work/ai_work.py", "target": ".ai/foundation/ai_work/ai_work.py", "kind": "ai-work-planner", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/ai-work/work-request.example.json", "target": ".ai/foundation/ai_work/work-request.example.json", "kind": "ai-work-example", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/ai-work/capabilities.example.json", "target": ".ai/foundation/ai_work/capabilities.example.json", "kind": "ai-work-example", "merge": "review_if_exists"}
     ],
     "model-router": [
       {"source": "foundation/capabilities/model-router/MODEL_ROUTER.md", "target": ".ai/foundation/model_router/MODEL_ROUTER.md", "kind": "model-router-documentation", "merge": "review_if_exists"},

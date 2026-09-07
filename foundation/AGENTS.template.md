@@ -19,5 +19,7 @@ Foundation validation covers Foundation integration integrity only. Preserve and
 
 When the optional `model-router` capability is present and the task requires a concrete model choice, follow `.ai/foundation/MODEL_ROUTING_POLICY.md` and use the router's local MCP, CLI, launcher, or unexpired snapshot interface in that order. Do not infer remote authorization or invent a model/price when the router returns no eligible route.
 
+For AI-assisted development, research, documentation, data, media, or project-defined work that may use interchangeable tools or services, follow `.ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md`. Treat every runtime as optional, keep payloads separate from the control plane, apply privacy/authority/health/validation/resource constraints before ranking, and report manual, unavailable, or blocked work truthfully. The optional `ai-work` planner may assist but is never required and never grants execution authority.
+
 Chat history, memory, prior scratchpads, and vendor-specific project prompts are not durable project truth.
 <!-- AI_REPOSITORY_FOUNDATION:END -->

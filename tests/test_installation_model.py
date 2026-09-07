@@ -50,7 +50,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue(notice.is_file())
             self.assertIn((ROOT / "LICENSE").read_text(encoding="utf-8"), notice.read_text(encoding="utf-8"))
 
-    def test_core_semantic_identity_registration_registry_upgrade_eol_cache_and_routing_material_is_installed(self) -> None:
+    def test_core_semantic_identity_registration_registry_upgrade_eol_cache_routing_and_ai_work_material_is_installed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             self.assertEqual(self.install(target), 0)
@@ -63,6 +63,7 @@ class InstallationModelTests(unittest.TestCase):
                 "UPGRADE_APPLICABILITY_POLICY.md",
                 "REPOSITORY_CONTINUITY_POLICY.md",
                 "RULE_CONTEXT_CACHE_POLICY.md",
+                "AI_WORK_ORCHESTRATION_POLICY.md",
                 "VALIDATION_POLICY.md",
                 "feature_catalog.json",
             ]
@@ -89,10 +90,11 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.9.0")
+            self.assertEqual(catalog["ruleset_version"], "1.10.0")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
             self.assertIn("rule-context-cache", catalog["features"])
+            self.assertIn("ai-work-orchestration", catalog["features"])
             for name in [
                 "artifact-record.schema.json",
                 "artifact-registry.schema.json",
@@ -106,6 +108,13 @@ class InstallationModelTests(unittest.TestCase):
                 "model-router-catalog.schema.json",
                 "model-routing-snapshot.schema.json",
                 "model-router-profiles.schema.json",
+                "ai-work-request.schema.json",
+                "capability-descriptor.schema.json",
+                "execution-plan.schema.json",
+                "execution-report.schema.json",
+                "validation-evidence.schema.json",
+                "gap-report.schema.json",
+                "provision-plan.schema.json",
             ]:
                 schema = root / "schemas" / name
                 self.assertTrue(schema.is_file(), name)
@@ -120,6 +129,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertFalse((target / ".github" / "workflows" / "artifact-registry-integrity.yml").exists())
             self.assertFalse((target / ".ai" / "foundation" / "rule_context_cache").exists())
             self.assertFalse((target / ".ai" / "foundation" / "model_router").exists())
+            self.assertFalse((target / ".ai" / "foundation" / "ai_work").exists())
 
     def test_reference_clients_and_github_registry_capabilities_are_opt_in(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -149,6 +159,15 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((router / "mcp.visual-studio.json").is_file())
             self.assertTrue((router / "mcp.github-copilot.json").is_file())
             self.assertIn("foundation-model-router/v1", (router / "model_router.py").read_text(encoding="utf-8"))
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            self.assertEqual(self.install(target, "--capabilities", "ai-work"), 0)
+            planner = target / ".ai" / "foundation" / "ai_work"
+            self.assertTrue((planner / "AI_WORK.md").is_file())
+            self.assertTrue((planner / "ai_work.py").is_file())
+            self.assertTrue((planner / "work-request.example.json").is_file())
+            self.assertTrue((planner / "capabilities.example.json").is_file())
+            self.assertIn("foundation-ai-work/v1", (planner / "ai_work.py").read_text(encoding="utf-8"))
 
     def test_model_router_capability_surfaces_runtime_configuration_notice(self) -> None:
         notices = install_foundation.capability_notices(["model-router"])
@@ -157,6 +176,13 @@ class InstallationModelTests(unittest.TestCase):
         self.assertIn("outside the repository", notices[0]["message"])
         self.assertIn("different top-level MCP shapes", notices[0]["message"])
         self.assertIn("explicitly authorizes", notices[0]["message"])
+
+    def test_ai_work_capability_is_explicitly_decision_only(self) -> None:
+        notices = install_foundation.capability_notices(["ai-work"])
+        self.assertEqual(len(notices), 1)
+        self.assertEqual(notices[0]["code"], "AI_WORK_PLANNER_IS_DECISION_ONLY")
+        self.assertIn("grants no authority", notices[0]["message"])
+        self.assertIn("outside version control", notices[0]["message"])
 
     def test_github_registry_capability_surfaces_non_blocking_protection_recommendation(self) -> None:
         notices = install_foundation.capability_notices(["artifact-registry-github"])
@@ -244,6 +270,13 @@ class InstallationModelTests(unittest.TestCase):
         self.assertEqual(cache_contract["semantic_analysis_storage"], "session_local_by_analysis_key")
         self.assertEqual(cache_contract["persistent_record_authority"], "none")
 
+        work = self.manifest["ai_work_contract"]
+        self.assertEqual(work["profile"], "foundation-ai-work/v1")
+        self.assertFalse(work["python_required"])
+        self.assertEqual(work["capability_failures"], "isolated")
+        self.assertEqual(work["authority_expansion"], "prohibited")
+        self.assertEqual(work["runtime_state"], "outside_version_control")
+
         upgrade = self.manifest["upgrade_contract"]
         self.assertTrue(upgrade["complete_feature_delta_required"])
         self.assertTrue(upgrade["silent_skip_prohibited"])
@@ -314,7 +347,7 @@ class InstallationModelTests(unittest.TestCase):
         apply = bootstrap.compatibility_args(["target"])
         self.assertIn("--apply", apply)
 
-    def test_manifest_sources_exist_targets_unique_and_version_is_v1_9(self) -> None:
+    def test_manifest_sources_exist_targets_unique_and_version_is_v1_10(self) -> None:
         rows = list(self.manifest["core"])
         for adapter_rows in self.manifest["adapters"].values():
             rows.extend(adapter_rows)
@@ -325,7 +358,7 @@ class InstallationModelTests(unittest.TestCase):
         for row in rows:
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.9.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.10.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

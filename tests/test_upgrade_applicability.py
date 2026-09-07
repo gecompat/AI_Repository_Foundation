@@ -100,6 +100,13 @@ class UpgradeApplicabilityTests(unittest.TestCase):
         self.assertIn("dirty_worktrees", feature["applicability"]["signals"])
         self.assertIn("session-local analysis", feature["recommendation"]["summary"])
 
+    def test_ai_work_feature_is_runtime_neutral_and_authority_safe(self) -> None:
+        feature = self.catalog["features"]["ai-work-orchestration"]
+        self.assertEqual(feature["introduced_in"], "1.10.0")
+        self.assertEqual(feature["recommendation"]["when_applicable"], "RECOMMENDED")
+        self.assertIn("multiple_ai_or_tool_runtimes", feature["applicability"]["signals"])
+        self.assertIn("never infer authority", feature["recommendation"]["summary"])
+
     def test_uncovered_transfer_source_is_blocking(self) -> None:
         catalog = copy.deepcopy(self.catalog)
         for feature in catalog["features"].values():

@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-07
-Foundation version: 1.9.0
+Foundation version: 1.10.0 candidate
 
 ## Implemented baseline
 
@@ -105,8 +105,19 @@ Foundation version: 1.9.0
 - `WI-0029` applies the completed contracts to this Foundation source repository without committing host paths, credentials, model catalogs, payloads, or runtime traces;
 - every implementation stage must preserve router-v1 compatibility and leave Foundation governance usable when Python, MCP, network, providers, models, and optional executors are absent.
 
+## v1.10.0 candidate — WI-0022 and WI-0029 partial
+
+- transferable `foundation-ai-work/v1` policy and schemas define content-free `WorkRequest`, `CapabilityDescriptor`, `ExecutionPlan`, `ExecutionReport`, `ValidationEvidence`, `GapReport`, and `ProvisionPlan` contracts;
+- privacy, actual authority, data boundary, capability, health/freshness, validation, deadline, monetary, and measured resource constraints precede ranking; missing or uncertain hard-limit facts fail closed;
+- the opt-in dependency-free `ai-work` planner invokes nothing, persists nothing, prefers an adequate deterministic capability, isolates unhealthy descriptors, and reports `EXECUTABLE`, `MANUAL_REQUIRED`, `UNAVAILABLE`, or `BLOCKED`;
+- `.ai/AI_WORK_PROFILE.md` and `.ai/ai-work/profile.json` apply the contract to this source project with no required provider, external runtime inventory, shell-free mappings to the existing Foundation gate, and explicit no-runtime degradation;
+- the profile grants no remote transfer, spend, publication, repository administration, push, or PR authority; `WI-0029` remains in progress until the later adapters/executor and dual-runtime evidence exist.
+
 ## Validation evidence
 
+- PR #20 contract implementation head `f770e01c95314ccee60fa9b0d556bdd8d4cf2faf`: Foundation Artifact Registry run `34124924485` and Foundation CI run `34124924493`, success.
+- v1.10.0 contract candidate local gate on 2026-09-07: transfer and semantic feature guards against `3b260c612b318aeeaac08feac724e3c73e770b9c`, central registry/backlog checks, full Foundation validator, JSON parsing, Python compilation, diff hygiene, focused contract/install/upgrade/self-hosting tests, and all 146 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
+- PR #19 squash-merged as `3b260c612b318aeeaac08feac724e3c73e770b9c`; the exact merge commit passed post-merge Foundation CI run `34121914451`.
 - AI work program registration: PR #19 head `5a0cb7a49e59bd6e5876f2a48391b0e921c7be05` passed Foundation Artifact Registry run `34121700368` and Foundation CI run `34121700457`.
 - v1.2.0 semantic integration: Foundation CI run `32646967820`, success.
 - v1.3.0 persistent identity: Foundation CI run `32708542537`, success.

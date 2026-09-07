@@ -113,6 +113,19 @@ def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
                 ),
             }
         )
+    if "ai-work" in capabilities:
+        notices.append(
+            {
+                "code": "AI_WORK_PLANNER_IS_DECISION_ONLY",
+                "severity": "NOTICE",
+                "message": (
+                    "The ai-work capability installs an optional decision-only planner. It does not configure or invoke models, "
+                    "tools, providers, MCP, networks, executors, provisioners, clients, or credentials and grants no authority. "
+                    "Keep payloads and runtime evidence outside version control; unavailable components must remain truthful "
+                    "MANUAL_REQUIRED, UNAVAILABLE, or BLOCKED outcomes."
+                ),
+            }
+        )
     return notices
 
 
