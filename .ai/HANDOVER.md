@@ -4,7 +4,7 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.15 is a local candidate for `WI-0002` under `DEC-0021`. Manifest rows now carry portable content hashes; clean installs write content-minimized receipts; completed direct semantic transfers must explicitly record every reasoned override; target validation separates current baseline, intentional override, previous version, and unknown drift. Transfer, feature, registry, backlog, full Foundation, diff-hygiene, focused tests, and all 239 tests pass locally on Windows. `WI-0001` and `WI-0002` remain open until the fresh-agent disposable transfer/continuation procedure and required PR checks are recorded.
+Foundation 1.15 is a local candidate for `WI-0002` under `DEC-0021`. Manifest rows now carry portable content hashes; clean installs write content-minimized receipts; completed direct semantic transfers must explicitly record every reasoned override; target validation separates current baseline, intentional override, previous version, and unknown drift. Transfer, feature, registry, backlog, full Foundation, diff-hygiene, focused tests, and all 240 tests pass locally on Windows. The fresh-agent disposable transfer/continuation procedure also passed: a new agent preserved project-owned content, installed 57 exact baselines plus one reasoned `AGENTS.md` override, obtained a zero-warning/error installed-target validation, and continued correctly from repository state alone. `WI-0001` and `WI-0002` await only required PR-head checks.
 
 Foundation 1.14.0 was squash-merged by PR #24 as `a52a5c3c0e5c100c06b039318b1e3eecf3263314`; its post-merge Foundation CI run `34145275461` passed. PR #25 was squash-merged as `a50b843a58b17368ed600350d6ae0eb9dc031f81`; post-merge Foundation CI run `34147315393` passed the macOS, Windows, and Linux gates. PR #26 was squash-merged as `39cd94fe56ebfbd4218f971644cda5d0e12fc246`; post-merge Foundation CI run `34148447309` passed the same three-platform gate. This closes the registered `WI-0020`–`WI-0029` AI-work program with a real source-profile planner/adapter/executor path that does not expand authority.
 
@@ -110,8 +110,8 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
-- `WI-0001`: fresh-agent continuation validation.
-- `WI-0002`: manifest hashes/cross-version installed provenance.
+- `WI-0001`: required PR-head checks for the now-validated transfer/continuation scope.
+- `WI-0002`: required PR-head checks for manifest hashes/cross-version installed provenance.
 - `WI-0003`: evaluate packaged release artifact.
 
 ## Open constraints

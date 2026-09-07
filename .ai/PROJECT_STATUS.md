@@ -22,7 +22,9 @@ Foundation version: 1.15.0 candidate
 - clean installs create an atomic, idempotent `foundation-installation-provenance/v1` receipt; a completed semantic transfer must explicitly name and explain every differing selected file before the receipt is written;
 - target validation distinguishes `UNCHANGED_CURRENT_BASELINE`, `INTENTIONAL_OVERRIDE`, `PREVIOUS_FOUNDATION_VERSION`, and `UNKNOWN_DRIFT` while retaining the legacy broad warning for compatibility;
 - the receipt stores only source/target identifiers, hashes, version/ref metadata, selections, integration state, and reasons; it grants no authority and proves neither semantic correctness nor project validation;
-- focused provenance/installation/transfer/upgrade tests and the complete 239-test suite pass locally on Windows; fresh-agent continuation and required PR checks remain pending before `WI-0001`/`WI-0002` completion.
+- focused provenance/installation/transfer/upgrade tests and the complete 240-test suite pass locally on Windows;
+- a new Codex CLI agent with no prior conversation context planned and applied a core-only transfer to a disposable synthetic repository, preserved all project-owned rules and protected files, recorded 57 current baselines plus one intentional `AGENTS.md` override, passed the installed-target validator with zero warnings/errors, and correctly explained continuation from repository state alone;
+- required PR checks remain pending before `WI-0001`/`WI-0002` completion.
 
 ## Foundation source self-hosting — WI-0029
 
@@ -208,6 +210,6 @@ Foundation version: 1.15.0 candidate
 - PR #17 final head `7abcc9d5bcf0d3acc6ea5de1a46277de74d4a7cb`: Foundation CI run `34065848433` and Foundation Artifact Registry run `34065848555`, success; squash-merged to `main` as `49c73f3cc2ba4031b83ab343038a16ba2e03bbb4`.
 - PR #15 head `4a958344dea5cc8a8b57d2468752c415562e8486` passed Foundation Artifact Registry run `33560909931` and Foundation CI run `33560910019`, was squash-merged as `9a0f949ee0cdba73c8309e9dbb75c077ca21ab06`, and the exact merge commit passed post-merge Foundation CI run `33561041239`.
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
-- Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
+- Fresh-agent post-transfer continuation without prior conversation context is `validated` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`; the disposable target's separate project-manual-validation status correctly remained pending.
 
-WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0029 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.
+WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0029 are complete. WI-0001 and WI-0002 await only the required PR-head checks.
