@@ -8,6 +8,8 @@ Foundation 1.10.0 is a local candidate on `feature/ai-work-contracts`. It adds t
 
 The 2026-09-07 v1.10 contract gate is green: transfer/feature guards against `3b260c612b318aeeaac08feac724e3c73e770b9c`, registry/backlog checks, full Foundation validator, JSON/compile/diff hygiene, focused contract/install/upgrade/self-hosting tests, and all 146 tests passed on Windows. The validator has only its two pre-existing non-blocking self-scan warnings.
 
+PR #20 implementation head `f770e01c95314ccee60fa9b0d556bdd8d4cf2faf` passed Foundation Artifact Registry run `34124924485` and Foundation CI run `34124924493`.
+
 PR #19 was squash-merged as `3b260c612b318aeeaac08feac724e3c73e770b9c`; that exact merge commit passed post-merge Foundation CI run `34121914451`.
 
 The 2026-09-07 candidate local gate is green: transfer/feature guards, registry/backlog checks, full Foundation validator, diff hygiene, Python compilation, all Foundation JSON parsing, and all 125 tests passed on Windows. The validator has only its two pre-existing non-blocking self-scan warnings. The live public Ollama price-page compatibility check parsed 19 base rows, 2 peak rows, and the documented weekday 12:00–18:00 UTC window. Authenticated inventory and real task quality are deliberately not claimed without target credentials/workloads.

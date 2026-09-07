@@ -115,6 +115,7 @@ Foundation version: 1.10.0 candidate
 
 ## Validation evidence
 
+- PR #20 contract implementation head `f770e01c95314ccee60fa9b0d556bdd8d4cf2faf`: Foundation Artifact Registry run `34124924485` and Foundation CI run `34124924493`, success.
 - v1.10.0 contract candidate local gate on 2026-09-07: transfer and semantic feature guards against `3b260c612b318aeeaac08feac724e3c73e770b9c`, central registry/backlog checks, full Foundation validator, JSON parsing, Python compilation, diff hygiene, focused contract/install/upgrade/self-hosting tests, and all 146 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
 - PR #19 squash-merged as `3b260c612b318aeeaac08feac724e3c73e770b9c`; the exact merge commit passed post-merge Foundation CI run `34121914451`.
 - AI work program registration: PR #19 head `5a0cb7a49e59bd6e5876f2a48391b0e921c7be05` passed Foundation Artifact Registry run `34121700368` and Foundation CI run `34121700457`.
