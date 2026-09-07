@@ -1,0 +1,62 @@
+{
+  "cases": [
+    {
+      "name": "deterministic-local-tier",
+      "request": {
+        "allow_remote": false,
+        "at": "2026-09-07T10:00:00Z",
+        "context_tokens": 1000,
+        "expected_output_tokens": 100,
+        "required_capabilities": [],
+        "task_class": "documentation.render",
+        "tier": "LOCAL"
+      },
+      "expected": {
+        "contract": "foundation-model-router/v1",
+        "fallback_count": 0,
+        "model": null,
+        "reason_codes": ["DETERMINISTIC_LOCAL_PROCESSING_REQUIRED"],
+        "status": "LOCAL_ONLY"
+      }
+    },
+    {
+      "name": "balanced-v1-route",
+      "request": {
+        "allow_remote": true,
+        "at": "2026-09-07T10:00:00Z",
+        "context_tokens": 100000,
+        "expected_output_tokens": 1000,
+        "required_capabilities": ["tools"],
+        "task_class": "coding.repository",
+        "tier": "BALANCED"
+      },
+      "expected": {
+        "contract": "foundation-model-router/v1",
+        "fallback_count": 0,
+        "model": "cheap",
+        "provider": "cloud-a",
+        "status": "ROUTED"
+      }
+    },
+    {
+      "name": "remote-denied",
+      "request": {
+        "allow_remote": false,
+        "at": "2026-09-07T10:00:00Z",
+        "context_tokens": 1000,
+        "expected_output_tokens": 100,
+        "required_capabilities": ["tools"],
+        "task_class": "coding.repository",
+        "tier": "BALANCED"
+      },
+      "expected": {
+        "contract": "foundation-model-router/v1",
+        "fallback_count": 0,
+        "model": null,
+        "reason_codes": ["MISSING_PRICE", "REMOTE_NOT_AUTHORIZED"],
+        "status": "NO_ROUTE"
+      }
+    }
+  ],
+  "contract": "foundation-model-router/v1"
+}

@@ -2,7 +2,7 @@
 
 Status: OPTIONAL REFERENCE CAPABILITY
 
-This capability implements `foundation-model-router/v1` without third-party Python packages. The router core is provider-neutral. MCP, CLI, process-launch, runtime-snapshot, and Ollama Cloud discovery are adapters over the same request and decision contract.
+This capability keeps `foundation-model-router/v1` compatible and adds the `foundation-model-router/v2` facade without third-party Python packages. The router core is provider-neutral. MCP, CLI, process-launch, runtime-snapshot, provider-fragment aggregation, and Ollama Cloud discovery are adapters over the decision contracts.
 
 It decides; it does not invoke a model. Model invocation remains owned by the selected client/provider integration. This keeps credentials out of router state and makes the same decision usable by Codex, Visual Studio with GitHub Copilot, the GitHub Copilot app/CLI, scripts, and clients without MCP.
 
@@ -59,7 +59,7 @@ Profiles may be project-owned configuration when their content is appropriate fo
 ai-model-router route --tier BALANCED --task-class coding.repository --context-tokens 45000 --output-tokens 3000 --required-capability tools --allow-remote
 ```
 
-The result includes the primary route, higher-confidence fallbacks, effective token rates, predicted success, expected chain spend, cost-of-success, reasoning effort, context/output budgets, cache strategy, validation strategy, `pricing_epoch`, and `valid_until`.
+The result includes the primary route, useful fallbacks, effective token rates, predicted success, expected chain spend, cost-of-success, reasoning effort, context/output budgets, cache strategy, validation strategy, `pricing_epoch`, and `valid_until`. Input context plus expected output must fit the context window. The reference implementation exhaustively compares every ordered chain within `max_fallbacks`; it returns `CHAIN_SEARCH_BOUND_EXCEEDED` if the declared search would exceed 250,000 sequences. A fallback must improve the preceding chain's cost-of-success by at least the greater of USD `0.000000000001` and `0.1%`.
 
 The ranking objective is expected cost of a successful outcome, not the cheapest token. Empirical successes/failures update a Bayesian success estimate. Failure-recovery cost, latency value, session/cache affinity, switching cost, output volume, time-dependent prices, and fallback reach probability can all change the ranking.
 
@@ -73,13 +73,23 @@ Session identifiers are stored only as SHA-256 lookup keys. Outcomes contain agg
 
 ## Bounded evaluation of new models
 
-`plan-evaluation` selects the cheapest compatible unassessed candidates and, when an incumbent exists, pairs each trial with that incumbent. The command never calls a model. `--reserve` atomically reserves the estimated amount against the smaller of the requested and configured daily evaluation budgets. A plan without `--reserve` is preview-only; only a matching, unexpired reservation can be recorded as graduation evidence.
+`plan-evaluation` selects the cheapest compatible unassessed candidates and, when an incumbent exists, pairs each trial with that incumbent. The plan explicitly records the task set, sample count, spend ceiling, and stopping rules. The command never calls a model. `--reserve` atomically reserves separate linked candidate and incumbent arms against the smaller of the requested and configured daily evaluation budgets. A plan without `--reserve` is preview-only. Actual spend is settled to its own arm; only a completed pair increments candidate evaluation evidence.
 
 ```text
-ai-model-router plan-evaluation --tier ECONOMICAL --task-class extraction --context-tokens 4000 --output-tokens 300 --allow-remote --allow-unknown-context --budget-usd 0.10 --max-candidates 2 --reserve
+ai-model-router plan-evaluation --tier ECONOMICAL --task-class extraction --context-tokens 4000 --output-tokens 300 --allow-remote --allow-unknown-context --budget-usd 0.10 --max-candidates 2 --evaluation-task extraction --planned-sample-count 3 --reserve
 ```
 
 Pass each returned `evaluation_id` and `pricing_epoch` to `record-outcome`. The reservation must match the provider/model. After the configured minimum reserved observations, empirical evidence can graduate the model for normal routing. A project may still explicitly disable it.
+
+## Router v2 and provider fragments
+
+`router_v2.py` accepts an array of provider-owned `foundation-model-router/v2` fragments. Each has its own boundary, health TTL, catalog expiry, provenance, and price epoch. A malformed, unhealthy, or expired provider is excluded independently; an unexpired provider-specific last-known-good fragment may be reused from the external runtime store. Other healthy providers continue normally.
+
+```text
+python .ai/foundation/model_router/router_v2.py --request REQUEST_V2.json --fragments FRAGMENTS.json --state-dir PATH_OUTSIDE_REPOSITORY
+```
+
+V2 applies data-class/remote-transfer permission, boundary, quality provenance, context, money, latency, and RAM/VRAM/CPU/GPU/disk/network/evidenced-energy constraints before routing. Measured or configured per-attempt resource costs with a source may join monetary cost; otherwise normalized resource pressure only breaks an economic tie. Host-executed models remain model tiers, never `LOCAL`.
 
 ## MCP pull routing
 

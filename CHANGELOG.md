@@ -2,6 +2,26 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.11.0] - 2026-09-07
+
+### Added
+
+- compatible `foundation-model-router/v2` request/decision/provider-fragment contracts with explicit execution boundaries, data classes, health/quality/resource provenance, hard latency/resource limits, and per-provider last-known-good state;
+- language-neutral `foundation-ai-adapter-jsonl/v1` plus optional Ollama-local/cloud, OpenAI-compatible HTTP, and shell-free command/stdio Python reference adapters;
+- `foundation-resource-cost-evidence/v1` for locally reusable, expiring and hashed provider/energy/hardware/resource price evidence with a maximum automated source-refresh frequency of once per 24 hours;
+- golden router-v1 compatibility, adapter protocol/security, provider-isolation, resource-provenance, cost/pressure, latency, and stale-evidence regressions.
+
+### Changed
+
+- fallback routing now exhaustively optimizes the complete bounded attempt chain, reserves expected output in context limits, applies a documented material-benefit floor, and fails truthfully when the complete search exceeds its safety bound;
+- bounded model evaluation now declares task sets, sample counts, stopping rules and spend ceilings, reserves candidate/incumbent arms separately, reconciles actual arm spend, and counts only completely settled pairs as graduation evidence;
+- measured/configured per-attempt resource money enters total expected cost, while resource pressure remains a non-monetary tie-breaker when no defensible conversion exists;
+- provider catalog failures and expiry are isolated; Ollama cloud tags are always remote, and loopback/product identity never proves a trusted host boundary.
+
+### Migration
+
+Router-v1 requests and decisions remain valid. New orchestrators may select router v2 and the separate `ai-runtime-adapters` capability. Keep fragments, endpoint configuration, resource-cost evidence, payload handles, credentials, and adapter state outside Git. Refresh one cost source no more than once per day, normally less often according to its validity, and never treat AI-assisted research as verified monetary evidence without source validation and project configuration.
+
 ## [1.10.0] - 2026-09-07
 
 ### Added

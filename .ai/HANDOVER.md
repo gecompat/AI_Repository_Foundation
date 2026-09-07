@@ -4,7 +4,13 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.10.0 is a local candidate on `feature/ai-work-contracts`. It adds the runtime-neutral `foundation-ai-work/v1` control plane, seven public schemas, an optional decision-only planner, and an initial provider-free Foundation source-project profile. `WI-0022` is complete by the local gate; `WI-0029` is in progress because later adapter/executor and runtime acceptance evidence are still required.
+Foundation 1.11.0 is a local candidate on `feature/ai-runtime-adapters`. It preserves router v1, adds router v2 provider-fragment/boundary/resource semantics, closes complete-chain and paired-evaluation follow-ups, and adds the optional neutral runtime-adapter protocol/references. `WI-0004`, `WI-0020`, `WI-0021`, `WI-0023`, and `WI-0025` are complete by the local gate. `WI-0024`, `WI-0026`–`WI-0029` remain for executor, provisioning/evidence refresh, client dispatch/manual handoff, failure/dual-runtime acceptance, and final source self-hosting.
+
+The 2026-09-07 v1.11 local gate passed transfer/feature guards against `origin/main`, registry validation/backlog projection, full Foundation validation, JSON/compile/diff hygiene, focused install/router/adapter/upgrade tests, and all 176 tests on Windows after the single test-fixture placement correction. The validator retains only its two pre-existing non-blocking self-scan warnings. Resource-cost evidence is locally reusable and limits automated refresh per source to once per 24 hours; AI-assisted research remains optional and untrusted until source verification/project configuration.
+
+PR #21 implementation head `cea0d14e525ccb837cfd6d66cbefe0e9355230ed` passed Foundation Artifact Registry run `34130851451` and Foundation CI run `34130851510`.
+
+PR #20 was squash-merged as `3cf4239dca60ed766ac47d135f57f7802e719348`; that exact merge commit passed post-merge Foundation CI run `34125163370`.
 
 The 2026-09-07 v1.10 contract gate is green: transfer/feature guards against `3b260c612b318aeeaac08feac724e3c73e770b9c`, registry/backlog checks, full Foundation validator, JSON/compile/diff hygiene, focused contract/install/upgrade/self-hosting tests, and all 146 tests passed on Windows. The validator has only its two pre-existing non-blocking self-scan warnings.
 
@@ -28,7 +34,7 @@ The local completion gate on 2026-09-01 passed transfer/feature guards, registry
 
 PR #14 / branch `codex/eol-portable-transfer-integrity` remains the Foundation 1.7.0 integration record for completed `WI-0016` (portable EOL transfer integrity) and `WI-0017` / accepted `DEC-0017` (repository continuity/break-glass). Its last pre-migration implementation head was `fdd67225edaccb912a96f7e2fe1286d0749975c6`.
 
-The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0018` and `WI-0019` are `done`; `WI-0020` and `WI-0021` are proposed; `origin/main` is the integrated source authority. Re-read exact current heads and GitHub state before future integration or administration work.
+The Foundation source repository uses `.ai/identity/registry.json` as canonical v2 planning state. `.ai/BACKLOG.md` is generated from that registry. `WI-0004`, `WI-0020`, `WI-0021`, `WI-0022`, `WI-0023`, and `WI-0025` are `done`; `origin/main` remains the integrated source authority until the current PR merges. Re-read exact current heads and GitHub state before future integration or administration work.
 
 ## Rule Context Cache — WI-0018 / DEC-0018
 

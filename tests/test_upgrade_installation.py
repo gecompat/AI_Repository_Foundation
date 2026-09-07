@@ -34,8 +34,9 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("statuses: CACHE_HIT_PARTIAL_INVALIDATION_CACHE_MISS", repo_map)
             self.assertIn("head_only_hit: prohibited", repo_map)
             self.assertIn("model_routing_contract:", repo_map)
-            self.assertIn("profile: foundation-model-router/v1", repo_map)
-            self.assertIn("objective: minimum_expected_cost_of_success", repo_map)
+            self.assertIn("profile: foundation-model-router/v2", repo_map)
+            self.assertIn("compatible_profiles: foundation-model-router/v1_foundation-model-router/v2", repo_map)
+            self.assertIn("objective: minimum_complete_chain_expected_cost_of_success", repo_map)
             self.assertIn("runtime_state: outside_version_control", repo_map)
             self.assertIn("ai_work_contract:", repo_map)
             self.assertIn("profile: foundation-ai-work/v1", repo_map)
@@ -47,7 +48,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.10.0")
+        self.assertEqual(manifest["ruleset_version"], "1.11.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -84,6 +85,19 @@ class UpgradeInstallationTests(unittest.TestCase):
         self.assertEqual(work["candidate_reasons"], ["introduced_in:1.10.0"])
         self.assertIn("runtime_failure_isolation", work["applicability"]["signals"])
         self.assertIn("runtime-neutral", work["recommendation"]["summary"])
+
+    def test_1_10_to_1_11_delta_surfaces_router_v2_and_runtime_adapters(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.10.0", "1.11.0")
+        by_id = {item["feature_id"]: item for item in candidates}
+        self.assertEqual(
+            by_id["model-routing-interoperability"]["candidate_reasons"],
+            ["material_change:1.11.0"],
+        )
+        self.assertEqual(
+            by_id["ai-runtime-adapters"]["candidate_reasons"],
+            ["introduced_in:1.11.0"],
+        )
 
 
 if __name__ == "__main__":

@@ -40,6 +40,14 @@ An `ExecutionPlan` is a directed acyclic graph of steps, alternatives, fallbacks
 
 When a deterministic capability sufficiently and verifiably fulfills the task, select it ahead of a model. “Local first” is not a fixed rule: data sovereignty, total expected cost, quality, availability, validation, and measured resource pressure decide together.
 
+## Resource-cost evidence refresh
+
+Resource prices and conversions are expiring runtime evidence, not durable model preferences. A local evidence cache may conform to `foundation-resource-cost-evidence/v1` so routing can proceed without an AI or network call. Prefer machine-readable primary provider prices, local measurements, project-configured tariffs, and documented amortization inputs. AI-assisted research may discover or interpret sources only when deterministic retrieval is insufficient; its result is untrusted until the source and conversion are independently verified.
+
+Automated refresh MUST NOT contact the same source more than once in 24 hours. Source-specific validity normally makes refresh less frequent; event-driven/manual refresh beyond that bound requires separate explicit authority. Every value records its subject, unit, original currency, source locator/kind, provenance, observation and expiry, content hash, last attempt, next permitted attempt, and suggested refresh. Currency/resource conversion records their method and source. Network, credentials, spend, and data-transfer permissions remain explicit.
+
+Only unexpired measured or configured per-attempt USD values with traceable evidence enter the monetary routing objective. Research evidence becomes usable only through an explicit verified project configuration. If refresh fails, an unexpired last-known-good value may remain available. After expiry, the router omits the monetary conversion and uses evidenced resource consumption only as a hard constraint and explainable tie-breaker; it never invents a price.
+
 ## Validation and human approval
 
 Validation evidence states its method, producer, independence, scope, provenance, freshness, and result: `PASSED`, `FAILED`, `INCONCLUSIVE`, or `UNAVAILABLE`. Missing evidence is not passing evidence. Model self-review or agreement between non-independent attempts is not deterministic proof.

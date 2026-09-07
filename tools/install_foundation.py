@@ -126,6 +126,19 @@ def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
                 ),
             }
         )
+    if "ai-runtime-adapters" in capabilities:
+        notices.append(
+            {
+                "code": "AI_RUNTIME_ADAPTER_CONFIGURATION_REQUIRED",
+                "severity": "NOTICE",
+                "message": (
+                    "The ai-runtime-adapters capability installs protocol and reference code only. It does not trust a loopback "
+                    "endpoint, enable network access, allow remote models, disclose credentials, choose file roots, or invoke a "
+                    "runtime. Keep endpoint/host configuration, payloads, resource-cost evidence, and adapter state outside version "
+                    "control; allowlist only required environment names and data classes."
+                ),
+            }
+        )
     return notices
 
 

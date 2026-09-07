@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-07
-Foundation version: 1.10.0 candidate
+Foundation version: 1.11.0 candidate
 
 ## Implemented baseline
 
@@ -113,8 +113,18 @@ Foundation version: 1.10.0 candidate
 - `.ai/AI_WORK_PROFILE.md` and `.ai/ai-work/profile.json` apply the contract to this source project with no required provider, external runtime inventory, shell-free mappings to the existing Foundation gate, and explicit no-runtime degradation;
 - the profile grants no remote transfer, spend, publication, repository administration, push, or PR authority; `WI-0029` remains in progress until the later adapters/executor and dual-runtime evidence exist.
 
+## v1.11.0 candidate — WI-0020, WI-0021, WI-0023, and WI-0025
+
+- router v1 remains supported and is covered by golden cases; complete bounded fallback chains, output-aware context eligibility, and explicit paired evaluation settlement close the known v1 follow-ups;
+- router v2 adds execution/data boundaries, hard resource/latency filters, quality/resource provenance, and per-provider current/last-known-good fragment isolation;
+- the optional neutral JSONL adapter capability provides separated Ollama-local/cloud, OpenAI-compatible HTTP, and shell-free command/stdio references without making Python, a runtime, a provider, MCP, or network access mandatory;
+- resource money requires unexpired measured/configured evidence with a source; otherwise resource pressure is only a tie-breaker. The portable evidence contract permits local reuse and limits automated refresh of a source to once per 24 hours or less often according to its TTL.
+
 ## Validation evidence
 
+- PR #21 implementation head `cea0d14e525ccb837cfd6d66cbefe0e9355230ed`: Foundation Artifact Registry run `34130851451` and Foundation CI run `34130851510`, success.
+- v1.11.0 local completion gate on 2026-09-07: transfer and semantic feature guards against `origin/main`, central registry validation/backlog projection, full Foundation validator, JSON/compile/diff hygiene, focused adapter/router/install/upgrade tests, and all 176 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
+- PR #20 squash-merged as `3cf4239dca60ed766ac47d135f57f7802e719348`; the exact merge commit passed post-merge Foundation CI run `34125163370`.
 - PR #20 contract implementation head `f770e01c95314ccee60fa9b0d556bdd8d4cf2faf`: Foundation Artifact Registry run `34124924485` and Foundation CI run `34124924493`, success.
 - v1.10.0 contract candidate local gate on 2026-09-07: transfer and semantic feature guards against `3b260c612b318aeeaac08feac724e3c73e770b9c`, central registry/backlog checks, full Foundation validator, JSON parsing, Python compilation, diff hygiene, focused contract/install/upgrade/self-hosting tests, and all 146 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
 - PR #19 squash-merged as `3b260c612b318aeeaac08feac724e3c73e770b9c`; the exact merge commit passed post-merge Foundation CI run `34121914451`.
@@ -137,4 +147,4 @@ Foundation version: 1.10.0 candidate
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, and WI-0018 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.
+WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, WI-0020, WI-0021, WI-0022, WI-0023, and WI-0025 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion; WI-0024 and WI-0026–WI-0029 continue the AI-work implementation program.

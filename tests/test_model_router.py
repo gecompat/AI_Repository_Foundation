@@ -122,6 +122,24 @@ class RouterFixture(unittest.TestCase):
 
 
 class CoreRoutingTests(RouterFixture):
+    def test_v1_golden_contract_cases_remain_compatible(self) -> None:
+        fixture = json.loads(
+            (ROOT / "tests" / "fixtures" / "model_router_v1_golden.json").read_text(encoding="utf-8")
+        )
+        self.assertEqual(fixture["contract"], model_router.CONTRACT)
+        for case in fixture["cases"]:
+            with self.subTest(case=case["name"]):
+                decision = self.router.route(case["request"])
+                expected = case["expected"]
+                self.assertEqual(decision["contract"], expected["contract"])
+                self.assertEqual(decision["status"], expected["status"])
+                self.assertEqual(len(decision["fallbacks"]), expected["fallback_count"])
+                self.assertEqual(decision["route"]["model"] if decision["route"] else None, expected["model"])
+                if "provider" in expected:
+                    self.assertEqual(decision["route"]["provider"], expected["provider"])
+                if "reason_codes" in expected:
+                    self.assertEqual(decision["reason_codes"], expected["reason_codes"])
+
     def test_local_tier_never_selects_a_model(self) -> None:
         decision = self.router.route(request(tier="LOCAL", allow_remote=False))
         self.assertEqual(decision["status"], "LOCAL_ONLY")
@@ -144,10 +162,17 @@ class CoreRoutingTests(RouterFixture):
     def test_cost_of_success_prefers_cheap_model_then_reliable_model_when_failure_is_costly(self) -> None:
         cheap = self.router.route(request(failure_cost_usd=0))
         self.assertEqual(cheap["route"]["model"], "cheap")
-        self.assertEqual(cheap["fallbacks"][0]["model"], "reliable")
+        self.assertEqual(cheap["fallbacks"], [])
 
         reliable = self.router.route(request(failure_cost_usd=1.0))
-        self.assertEqual(reliable["route"]["model"], "reliable")
+        self.assertEqual(reliable["route"]["model"], "cheap")
+        self.assertEqual(reliable["fallbacks"][0]["model"], "reliable")
+        self.assertTrue(reliable["chain_search"]["complete"])
+
+    def test_output_tokens_are_reserved_inside_context_window(self) -> None:
+        decision = self.router.route(request(context_tokens=199_500, expected_output_tokens=1_000))
+        self.assertEqual(decision["status"], "NO_ROUTE")
+        self.assertIn("CONTEXT_WINDOW_EXCEEDED", decision["reason_codes"])
 
     def test_peak_window_changes_route_epoch_and_expiry(self) -> None:
         off_peak = self.router.route(request(at="2026-09-07T10:00:00Z"))
@@ -263,9 +288,54 @@ class CoreRoutingTests(RouterFixture):
                 evaluation_id=trial["evaluation_id"],
                 recorded_at=datetime(2026, 9, 7, 10, 1, tzinfo=timezone.utc),
             )
+            incumbent_arm = trial["arms"][1]
+            self.store.record_outcome(
+                provider=incumbent_arm["provider"],
+                model=incumbent_arm["model"],
+                task_class="coding.repository",
+                success=True,
+                actual_cost_usd=Decimal("0.002"),
+                pricing_epoch=incumbent_arm["pricing_epoch"],
+                evaluation_id=incumbent_arm["evaluation_id"],
+                recorded_at=datetime(2026, 9, 7, 10, 2, tzinfo=timezone.utc),
+            )
         decision = self.router.route(request(tier="ECONOMICAL"))
         self.assertEqual(decision["route"]["model"], "new")
         self.assertEqual(decision["route"]["assessment"], "ASSESSED")
+
+    def test_evaluation_plan_and_pair_settlement_are_explicit_and_complete(self) -> None:
+        plan = self.router.plan_evaluation(
+            request(tier="ECONOMICAL"),
+            budget_usd=Decimal("0.2"),
+            max_candidates=1,
+            reserve=True,
+            task_set=["coding.repository", "coding.review"],
+            planned_sample_count=1,
+            stopping_rules={"minimum_valid_pairs": 1, "stop_on_budget_exhausted": True},
+        )
+        self.assertEqual(plan["task_set"], ["coding.repository", "coding.review"])
+        self.assertEqual(plan["planned_sample_count"], 1)
+        self.assertEqual(plan["spend_ceiling_usd"], plan["budget_usd"])
+        trial = plan["trials"][0]
+        self.assertEqual({arm["arm"] for arm in trial["arms"]}, {"candidate", "incumbent"})
+        candidate_arm, incumbent_arm = trial["arms"]
+        self.store.record_outcome(
+            provider=candidate_arm["provider"], model=candidate_arm["model"], task_class="coding.repository",
+            success=True, actual_cost_usd=Decimal("0.001"), pricing_epoch=candidate_arm["pricing_epoch"],
+            evaluation_id=candidate_arm["evaluation_id"], recorded_at=datetime(2026, 9, 7, 10, 1, tzinfo=timezone.utc),
+        )
+        state = self.store.load()
+        new_row = state["outcomes"][model_router.canonical_json(["cloud-a", "new", "coding.repository"])]
+        self.assertEqual(new_row.get("evaluation_observations", 0), 0)
+        self.store.record_outcome(
+            provider=incumbent_arm["provider"], model=incumbent_arm["model"], task_class="coding.repository",
+            success=True, actual_cost_usd=Decimal("0.002"), pricing_epoch=incumbent_arm["pricing_epoch"],
+            evaluation_id=incumbent_arm["evaluation_id"], recorded_at=datetime(2026, 9, 7, 10, 2, tzinfo=timezone.utc),
+        )
+        state = self.store.load()
+        self.assertEqual(state["evaluation"]["pairs"][trial["evaluation_pair_id"]]["status"], "COMPLETED")
+        self.assertEqual(state["outcomes"][model_router.canonical_json(["cloud-a", "new", "coding.repository"])]["evaluation_observations"], 1)
+        self.assertEqual(state["evaluation"]["spend_by_utc_date"]["2026-09-07"], 0.003)
 
     def test_unassessed_model_never_bypasses_bounded_evaluation(self) -> None:
         unknown_only = catalog()

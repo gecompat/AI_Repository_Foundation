@@ -6,6 +6,7 @@ from __future__ import annotations
 import argparse
 import contextlib
 import hashlib
+import itertools
 import json
 import os
 import shutil
@@ -40,6 +41,8 @@ VALIDATION_STRATEGIES = {
     "BALANCED": "affected_regression_and_deterministic_validation",
     "FRONTIER": "independent_review_and_full_validation",
 }
+CHAIN_MATERIAL_BENEFIT_RATIO = Decimal("0.001")
+CHAIN_MATERIAL_BENEFIT_ABSOLUTE_USD = Decimal("0.000000000001")
 REQUEST_FIELDS = {
     "tier",
     "task_class",
@@ -225,7 +228,7 @@ class RuntimeStore:
             "contract": CONTRACT,
             "outcomes": {},
             "sessions": {},
-            "evaluation": {"spend_by_utc_date": {}, "reservations": {}},
+            "evaluation": {"spend_by_utc_date": {}, "reservations": {}, "pairs": {}},
         }
 
     def load(self) -> dict[str, Any]:
@@ -334,9 +337,41 @@ class RuntimeStore:
                 spend = evaluation.setdefault("spend_by_utc_date", {})
                 spend[utc_date] = number(Decimal(str(spend.get(utc_date, 0))) + actual_cost_usd)
                 row["last_evaluation_id"] = evaluation_id
-                row["evaluation_observations"] = int(row.get("evaluation_observations", 0)) + 1
                 if reservation is not None:
                     row["last_evaluation_reserved_usd"] = reservation.get("reserved_usd")
+                    pair_id = reservation.get("pair_id")
+                    arm = reservation.get("arm")
+                    if pair_id and arm:
+                        pair = evaluation.setdefault("pairs", {}).get(pair_id)
+                        if not isinstance(pair, dict) or pair.get("status") != "ACTIVE":
+                            raise RouterError("evaluation pair is not active")
+                        arm_state = pair.setdefault("arms", {}).get(arm)
+                        if not isinstance(arm_state, dict) or arm_state.get("settled"):
+                            raise RouterError("evaluation arm is not active")
+                        arm_state.update(
+                            {
+                                "settled": True,
+                                "actual_cost_usd": number(actual_cost_usd),
+                                "success": success,
+                                "settled_at": isoformat(now),
+                            }
+                        )
+                        if all(bool(item.get("settled")) for item in pair["arms"].values()):
+                            candidate = pair["candidate"]
+                            candidate_key = canonical_json(
+                                [candidate["provider"], candidate["model"], candidate["task_class"]]
+                            )
+                            candidate_row = outcomes.get(candidate_key)
+                            if not isinstance(candidate_row, dict):
+                                raise RouterError("completed evaluation pair has no candidate outcome")
+                            candidate_row["evaluation_observations"] = int(
+                                candidate_row.get("evaluation_observations", 0)
+                            ) + 1
+                            candidate_row["last_evaluation_pair_id"] = pair_id
+                            pair["status"] = "COMPLETED"
+                            pair["completed_at"] = isoformat(now)
+                    else:
+                        row["evaluation_observations"] = int(row.get("evaluation_observations", 0)) + 1
             return dict(row)
 
         return self.mutate(update)
@@ -351,6 +386,19 @@ class RuntimeStore:
         def update(state: dict[str, Any]) -> list[dict[str, Any]]:
             evaluation = state.setdefault("evaluation", {})
             reservations = evaluation.setdefault("reservations", {})
+            pairs = evaluation.setdefault("pairs", {})
+            for evaluation_id, reservation in list(reservations.items()):
+                try:
+                    expired = parse_datetime(reservation["expires_at"], "evaluation.expires_at") <= now
+                except (KeyError, RouterError):
+                    expired = True
+                if not expired:
+                    continue
+                reservations.pop(evaluation_id, None)
+                pair = pairs.get(reservation.get("pair_id"))
+                if isinstance(pair, dict) and pair.get("status") == "ACTIVE":
+                    pair["status"] = "EXPIRED"
+                    pair["expired_at"] = isoformat(now)
             date_key = now.date().isoformat()
             actual = Decimal(str(evaluation.setdefault("spend_by_utc_date", {}).get(date_key, 0)))
             reserved = sum(
@@ -362,20 +410,77 @@ class RuntimeStore:
             for trial in trials:
                 amount = Decimal(str(trial["estimated_cost_usd"]))
                 if actual + reserved + amount > daily_budget_usd:
-                    break
-                evaluation_id = "eval-" + uuid.uuid4().hex
-                stored = {
-                    "utc_date": date_key,
-                    "provider": trial["provider"],
-                    "model": trial["model"],
-                    "reserved_usd": number(amount),
-                    "pricing_epoch": trial["pricing_epoch"],
+                    continue
+                pair_id = "pair-" + uuid.uuid4().hex
+                arm_specs = [
+                    (
+                        "candidate",
+                        trial["provider"],
+                        trial["model"],
+                        Decimal(str(trial["trial_cost_usd"])),
+                        trial["pricing_epoch"],
+                    )
+                ]
+                if trial.get("incumbent"):
+                    incumbent = trial["incumbent"]
+                    arm_specs.append(
+                        (
+                            "incumbent",
+                            incumbent["provider"],
+                            incumbent["model"],
+                            Decimal(str(trial["incumbent_cost_usd"])),
+                            incumbent["pricing_epoch"],
+                        )
+                    )
+                pair_arms: dict[str, Any] = {}
+                returned_arms: list[dict[str, Any]] = []
+                for arm, provider, model, arm_cost, pricing_epoch in arm_specs:
+                    evaluation_id = "eval-" + uuid.uuid4().hex
+                    stored = {
+                        "utc_date": date_key,
+                        "provider": provider,
+                        "model": model,
+                        "reserved_usd": number(arm_cost),
+                        "pricing_epoch": pricing_epoch,
+                        "pair_id": pair_id,
+                        "arm": arm,
+                        "created_at": isoformat(now),
+                        "expires_at": isoformat(now + timedelta(hours=24)),
+                    }
+                    reservations[evaluation_id] = stored
+                    pair_arms[arm] = {"evaluation_id": evaluation_id, "settled": False}
+                    returned_arms.append(
+                        {
+                            "arm": arm,
+                            "evaluation_id": evaluation_id,
+                            "provider": provider,
+                            "model": model,
+                            "reserved_usd": number(arm_cost),
+                            "pricing_epoch": pricing_epoch,
+                        }
+                    )
+                pairs[pair_id] = {
+                    "status": "ACTIVE",
                     "created_at": isoformat(now),
                     "expires_at": isoformat(now + timedelta(hours=24)),
+                    "candidate": {
+                        "provider": trial["provider"],
+                        "model": trial["model"],
+                        "task_class": trial["task_class"],
+                    },
+                    "arms": pair_arms,
                 }
-                reservations[evaluation_id] = stored
                 reserved += amount
-                accepted.append({**trial, "evaluation_id": evaluation_id, "reserved": True})
+                accepted.append(
+                    {
+                        **trial,
+                        "evaluation_pair_id": pair_id,
+                        "evaluation_id": pair_arms["candidate"]["evaluation_id"],
+                        "incumbent_evaluation_id": pair_arms.get("incumbent", {}).get("evaluation_id"),
+                        "arms": returned_arms,
+                        "reserved": True,
+                    }
+                )
             return accepted
 
         return self.mutate(update)
@@ -476,6 +581,13 @@ def validate_catalog(catalog: dict[str, Any]) -> None:
                 f"{provider_name}/{model_key}.latency_seconds_prior",
                 minimum=Decimal(0),
             )
+            for field in ("fixed_attempt_cost_usd", "resource_pressure"):
+                if field in model:
+                    decimal_value(
+                        model[field],
+                        f"{provider_name}/{model_key}.{field}",
+                        minimum=Decimal(0),
+                    )
             pricing = model.get("pricing")
             if pricing is not None:
                 if (
@@ -730,6 +842,9 @@ class Candidate:
     model: str
     predicted_success: Decimal
     estimated_cost: Decimal
+    usage_cost: Decimal
+    resource_cost: Decimal
+    resource_pressure: Decimal
     switching_cost: Decimal
     latency_seconds: Decimal
     score: Decimal
@@ -749,11 +864,54 @@ class Candidate:
             "observations": self.observations,
             "predicted_success": number(self.predicted_success),
             "estimated_cost_usd": number(self.estimated_cost),
+            "usage_cost_usd": number(self.usage_cost),
+            "resource_cost_usd": number(self.resource_cost),
+            "resource_pressure": number(self.resource_pressure),
             "switching_cost_usd": number(self.switching_cost),
             "standalone_cost_of_success_usd": number(self.score),
             "pricing_epoch": self.pricing_epoch,
             "reasoning_effort": self.reasoning_effort,
         }
+
+
+def math_permutations(count: int, length: int) -> int:
+    result = 1
+    for value in range(count - length + 1, count + 1):
+        result *= value
+    return result
+
+
+def chain_economics(
+    chain: tuple[Candidate, ...] | list[Candidate],
+    *,
+    failure_cost: Decimal,
+    latency_value: Decimal,
+) -> dict[str, Decimal]:
+    expected_spend = Decimal(0)
+    expected_resource_cost = Decimal(0)
+    expected_resource_pressure = Decimal(0)
+    expected_switching_cost = Decimal(0)
+    expected_latency = Decimal(0)
+    reach = Decimal(1)
+    for candidate in chain:
+        expected_spend += reach * candidate.estimated_cost
+        expected_resource_cost += reach * candidate.resource_cost
+        expected_resource_pressure += reach * candidate.resource_pressure
+        expected_switching_cost += reach * candidate.switching_cost
+        expected_latency += reach * candidate.latency_seconds
+        reach *= Decimal(1) - candidate.predicted_success
+    chain_success = Decimal(1) - reach
+    expected_total = expected_spend + expected_switching_cost + reach * failure_cost
+    cost_of_success = expected_total / max(chain_success, Decimal("0.01")) + expected_latency * latency_value
+    return {
+        "expected_spend": expected_spend,
+        "expected_resource_cost": expected_resource_cost,
+        "expected_resource_pressure": expected_resource_pressure,
+        "expected_switching_cost": expected_switching_cost,
+        "expected_latency": expected_latency,
+        "chain_success": chain_success,
+        "cost_of_success": cost_of_success,
+    }
 
 
 class ModelRouter:
@@ -848,7 +1006,7 @@ class ModelRouter:
                 if context_window is None and request["context_tokens"] and not request["allow_unknown_context"]:
                     reject(provider_name, model_id, "CONTEXT_WINDOW_UNKNOWN")
                     continue
-                if isinstance(context_window, int) and request["context_tokens"] > context_window:
+                if isinstance(context_window, int) and request["context_tokens"] + request["expected_output_tokens"] > context_window:
                     reject(provider_name, model_id, "CONTEXT_WINDOW_EXCEEDED")
                     continue
                 supported_tiers = model.get("supported_tiers", list(TIERS[1:]))
@@ -887,11 +1045,22 @@ class ModelRouter:
                 if session_match:
                     cached_tokens = max(cached_tokens, min(request["context_tokens"], int(session.get("context_tokens", 0))))
                 uncached_tokens = request["context_tokens"] - cached_tokens
-                cost = (
+                usage_cost = (
                     Decimal(uncached_tokens) * rates["input"]
                     + Decimal(cached_tokens) * rates["cached_input"]
                     + Decimal(request["expected_output_tokens"]) * rates["output"]
                 ) / Decimal(1_000_000)
+                resource_cost = decimal_value(
+                    model.get("fixed_attempt_cost_usd", 0),
+                    f"{provider_name}/{model_id}.fixed_attempt_cost_usd",
+                    minimum=Decimal(0),
+                )
+                resource_pressure = decimal_value(
+                    model.get("resource_pressure", 0),
+                    f"{provider_name}/{model_id}.resource_pressure",
+                    minimum=Decimal(0),
+                )
+                cost = usage_cost + resource_cost
                 if max_cost is not None and cost > max_cost:
                     reject(provider_name, model_id, "COST_BUDGET_EXCEEDED")
                     continue
@@ -912,6 +1081,9 @@ class ModelRouter:
                         model=model_id,
                         predicted_success=probability,
                         estimated_cost=cost,
+                        usage_cost=usage_cost,
+                        resource_cost=resource_cost,
+                        resource_pressure=resource_pressure,
                         switching_cost=switch_penalty,
                         latency_seconds=latency_seconds,
                         score=score,
@@ -924,7 +1096,9 @@ class ModelRouter:
                         observations=observations,
                     )
                 )
-        candidates.sort(key=lambda row: (row.score, -row.predicted_success, row.provider, row.model))
+        candidates.sort(
+            key=lambda row: (row.score, row.resource_pressure, -row.predicted_success, row.provider, row.model)
+        )
         return candidates, rejected, reevaluation_boundaries
 
     def route(self, raw_request: dict[str, Any]) -> dict[str, Any]:
@@ -983,34 +1157,81 @@ class ModelRouter:
                 "rejected_candidates": rejected,
             }
 
-        primary = candidates[0]
-        fallback_pool = [row for row in candidates[1:] if row.predicted_success > primary.predicted_success]
-        fallback_pool.sort(key=lambda row: (-row.predicted_success, row.score, row.provider, row.model))
-        chain = [primary]
         max_cost = Decimal(str(request["max_cost_usd"])) if request.get("max_cost_usd") is not None else None
-        expected_spend = primary.estimated_cost
-        reach = Decimal(1) - primary.predicted_success
-        for candidate in fallback_pool[: request["max_fallbacks"]]:
-            addition = reach * candidate.estimated_cost
-            if max_cost is not None and expected_spend + addition > max_cost:
-                continue
-            chain.append(candidate)
-            expected_spend += addition
-            reach *= Decimal(1) - candidate.predicted_success
-
         defaults = self.catalog.get("router_defaults", {})
         failure_cost = Decimal(str(request.get("failure_cost_usd", defaults.get("failure_cost_usd", 0))))
         latency_value = Decimal(str(request.get("latency_value_usd_per_second", defaults.get("latency_value_usd_per_second", 0))))
-        expected_latency = Decimal(0)
-        expected_switching_cost = Decimal(0)
-        reach = Decimal(1)
-        for candidate in chain:
-            expected_latency += reach * candidate.latency_seconds
-            expected_switching_cost += reach * candidate.switching_cost
-            reach *= Decimal(1) - candidate.predicted_success
-        chain_success = Decimal(1) - reach
-        expected_total = expected_spend + expected_switching_cost + reach * failure_cost
-        cost_of_success = expected_total / max(chain_success, Decimal("0.01")) + expected_latency * latency_value
+        maximum_length = min(len(candidates), request["max_fallbacks"] + 1)
+        search_size = sum(math_permutations(len(candidates), length) for length in range(1, maximum_length + 1))
+        if search_size > 250_000:
+            return {
+                **decision_base,
+                "status": "NO_ROUTE",
+                "valid_until": isoformat(min(reevaluation_boundaries)),
+                "pricing_epoch": None,
+                "route": None,
+                "fallbacks": [],
+                "execution": {
+                    "reasoning_effort": None,
+                    "context_budget_tokens": request["context_tokens"],
+                    "output_budget_tokens": request["expected_output_tokens"],
+                    "cache_strategy": "unavailable",
+                    "validation_strategy": VALIDATION_STRATEGIES[request["tier"]],
+                },
+                "reason_codes": ["CHAIN_SEARCH_BOUND_EXCEEDED"],
+                "rejected_candidates": rejected,
+            }
+        evaluated: list[tuple[Decimal, Decimal, int, tuple[str, ...], list[Candidate], dict[str, Decimal]]] = []
+        for length in range(1, maximum_length + 1):
+            for sequence in itertools.permutations(candidates, length):
+                economics = chain_economics(sequence, failure_cost=failure_cost, latency_value=latency_value)
+                if max_cost is not None and economics["expected_spend"] > max_cost:
+                    continue
+                if length > 1:
+                    prefix = chain_economics(sequence[:-1], failure_cost=failure_cost, latency_value=latency_value)
+                    material = max(
+                        CHAIN_MATERIAL_BENEFIT_ABSOLUTE_USD,
+                        prefix["cost_of_success"] * CHAIN_MATERIAL_BENEFIT_RATIO,
+                    )
+                    if prefix["cost_of_success"] - economics["cost_of_success"] < material:
+                        continue
+                identity = tuple(f"{row.provider}/{row.model}" for row in sequence)
+                evaluated.append(
+                    (
+                        economics["cost_of_success"],
+                        economics["expected_resource_pressure"],
+                        length,
+                        identity,
+                        list(sequence),
+                        economics,
+                    )
+                )
+        if not evaluated:
+            return {
+                **decision_base,
+                "status": "NO_ROUTE",
+                "valid_until": isoformat(min(reevaluation_boundaries)),
+                "pricing_epoch": None,
+                "route": None,
+                "fallbacks": [],
+                "execution": {
+                    "reasoning_effort": None,
+                    "context_budget_tokens": request["context_tokens"],
+                    "output_budget_tokens": request["expected_output_tokens"],
+                    "cache_strategy": "unavailable",
+                    "validation_strategy": VALIDATION_STRATEGIES[request["tier"]],
+                },
+                "reason_codes": ["CHAIN_COST_BUDGET_EXCEEDED"],
+                "rejected_candidates": rejected,
+            }
+        evaluated.sort(key=lambda item: (item[0], item[1], item[2], item[3]))
+        _objective, _pressure, _length, _identity, chain, economics = evaluated[0]
+        primary = chain[0]
+        expected_spend = economics["expected_spend"]
+        expected_latency = economics["expected_latency"]
+        expected_switching_cost = economics["expected_switching_cost"]
+        chain_success = economics["chain_success"]
+        cost_of_success = economics["cost_of_success"]
         # Any eligible candidate's rate transition can change the winner, even
         # when that candidate is not currently in the selected fallback chain.
         valid_until = min(reevaluation_boundaries)
@@ -1031,6 +1252,8 @@ class ModelRouter:
             "fallbacks": [row.summary() for row in chain[1:]],
             "economics": {
                 "expected_chain_spend_usd": number(expected_spend),
+                "expected_resource_cost_usd": number(economics["expected_resource_cost"]),
+                "expected_resource_pressure": number(economics["expected_resource_pressure"]),
                 "expected_switching_cost_usd": number(expected_switching_cost),
                 "chain_success_probability": number(chain_success),
                 "failure_cost_usd": number(failure_cost),
@@ -1045,6 +1268,7 @@ class ModelRouter:
                 "validation_strategy": VALIDATION_STRATEGIES[request["tier"]],
             },
             "reason_codes": ["MINIMUM_EXPECTED_COST_OF_SUCCESS", "FRESH_PRICE_EPOCH"],
+            "chain_search": {"complete": True, "evaluated_chains": len(evaluated), "maximum_attempts": maximum_length},
             "candidates_considered": [row.summary() for row in candidates[:10]],
             "rejected_candidates": rejected,
         }
@@ -1056,6 +1280,9 @@ class ModelRouter:
         budget_usd: Decimal,
         max_candidates: int,
         reserve: bool,
+        task_set: list[str] | None = None,
+        planned_sample_count: int = 1,
+        stopping_rules: dict[str, Any] | None = None,
     ) -> dict[str, Any]:
         budget_usd = decimal_value(budget_usd, "evaluation budget", minimum=Decimal(0))
         if isinstance(max_candidates, bool) or not isinstance(max_candidates, int) or max_candidates < 1:
@@ -1063,6 +1290,19 @@ class ModelRouter:
         if not isinstance(reserve, bool):
             raise RouterError("reserve must be boolean")
         request = validate_request({**raw_request, "allow_evaluation": False})
+        task_set = list(task_set) if task_set is not None else [request["task_class"]]
+        if not task_set or any(not isinstance(item, str) or not item for item in task_set) or len(set(task_set)) != len(task_set):
+            raise RouterError("task_set must contain unique non-empty task classes")
+        if isinstance(planned_sample_count, bool) or not isinstance(planned_sample_count, int) or planned_sample_count < 1:
+            raise RouterError("planned_sample_count must be a positive integer")
+        if stopping_rules is None:
+            stopping_rules = {
+                "minimum_valid_pairs": planned_sample_count,
+                "stop_on_budget_exhausted": True,
+                "stop_on_contract_failure": True,
+            }
+        if not isinstance(stopping_rules, dict) or not stopping_rules:
+            raise RouterError("stopping_rules must be a non-empty object")
         if request["tier"] == "LOCAL":
             raise RouterError("LOCAL work does not require model evaluation")
         now = self._request_time(request)
@@ -1081,26 +1321,38 @@ class ModelRouter:
         limit = min(budget_usd, daily_limit)
         remaining = limit
         trials: list[dict[str, Any]] = []
-        for candidate in sorted(unknown, key=lambda row: (row.estimated_cost, row.provider, row.model)):
+        for candidate in sorted(unknown, key=lambda row: (row.estimated_cost, row.provider, row.model))[:max_candidates]:
             paired_cost = candidate.estimated_cost + incumbent_cost
-            if paired_cost > remaining:
-                continue
-            trials.append(
-                {
-                    "provider": candidate.provider,
-                    "model": candidate.model,
-                    "estimated_cost_usd": number(paired_cost),
-                    "trial_cost_usd": number(candidate.estimated_cost),
-                    "incumbent_cost_usd": number(incumbent_cost),
-                    "pricing_epoch": candidate.pricing_epoch,
-                    "valid_until": isoformat(candidate.valid_until),
-                    "method": "paired_trial_against_incumbent" if incumbent_cost else "bounded_single_trial",
-                    "reserved": False,
-                }
-            )
-            remaining -= paired_cost
-            if len(trials) >= max_candidates:
-                break
+            for sample_index in range(planned_sample_count):
+                if paired_cost > remaining:
+                    break
+                trials.append(
+                    {
+                        "trial_id": digest(
+                            {
+                                "provider": candidate.provider,
+                                "model": candidate.model,
+                                "sample_index": sample_index,
+                                "tasks": task_set,
+                                "at": isoformat(now),
+                            }
+                        ),
+                        "provider": candidate.provider,
+                        "model": candidate.model,
+                        "task_class": request["task_class"],
+                        "task_set": task_set,
+                        "sample_index": sample_index,
+                        "estimated_cost_usd": number(paired_cost),
+                        "trial_cost_usd": number(candidate.estimated_cost),
+                        "incumbent_cost_usd": number(incumbent_cost),
+                        "incumbent": incumbent.get("route"),
+                        "pricing_epoch": candidate.pricing_epoch,
+                        "valid_until": isoformat(candidate.valid_until),
+                        "method": "paired_trial_against_incumbent" if incumbent_cost else "bounded_single_trial",
+                        "reserved": False,
+                    }
+                )
+                remaining -= paired_cost
         if reserve and trials:
             trials = self.store.reserve_evaluations(trials, daily_budget_usd=limit, now=now)
         return {
@@ -1109,7 +1361,11 @@ class ModelRouter:
             "status": "EVALUATION_PLANNED" if trials else "NO_EVALUATION",
             "generated_at": isoformat(now),
             "budget_usd": number(limit),
+            "spend_ceiling_usd": number(limit),
             "reserved": reserve,
+            "task_set": task_set,
+            "planned_sample_count": planned_sample_count,
+            "stopping_rules": stopping_rules,
             "incumbent": incumbent.get("route"),
             "trials": trials,
             "rejected_candidates": rejected,
@@ -1284,6 +1540,9 @@ def parser() -> argparse.ArgumentParser:
     add_request_options(evaluation)
     evaluation.add_argument("--budget-usd", type=float, required=True)
     evaluation.add_argument("--max-candidates", type=int, default=1)
+    evaluation.add_argument("--evaluation-task", action="append")
+    evaluation.add_argument("--planned-sample-count", type=int, default=1)
+    evaluation.add_argument("--stopping-rules", help="JSON object containing explicit stopping rules")
     evaluation.add_argument("--reserve", action="store_true")
 
     snapshot = sub.add_parser("snapshot", help="emit an expiring runtime routing snapshot for tool-less clients")
@@ -1375,6 +1634,9 @@ def main(argv: list[str] | None = None) -> int:
                 budget_usd=decimal_value(args.budget_usd, "evaluation budget", minimum=Decimal(0)),
                 max_candidates=args.max_candidates,
                 reserve=args.reserve,
+                task_set=args.evaluation_task,
+                planned_sample_count=args.planned_sample_count,
+                stopping_rules=load_request_argument(args.stopping_rules) if args.stopping_rules else None,
             )
             print_json(plan)
             return 0

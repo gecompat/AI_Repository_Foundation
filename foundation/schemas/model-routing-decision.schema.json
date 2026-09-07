@@ -5,6 +5,8 @@
       "properties": {
         "assessment": {"enum": ["ASSESSED", "UNASSESSED"], "type": "string"},
         "estimated_cost_usd": {"minimum": 0, "type": "number"},
+        "resource_cost_usd": {"minimum": 0, "type": "number"},
+        "resource_pressure": {"minimum": 0, "type": "number"},
         "model": {"minLength": 1, "type": "string"},
         "observations": {"minimum": 0, "type": "integer"},
         "predicted_success": {"maximum": 1, "minimum": 0, "type": "number"},
@@ -12,7 +14,8 @@
         "provider": {"minLength": 1, "type": "string"},
         "reasoning_effort": {"type": ["string", "null"]},
         "standalone_cost_of_success_usd": {"minimum": 0, "type": "number"},
-        "switching_cost_usd": {"minimum": 0, "type": "number"}
+        "switching_cost_usd": {"minimum": 0, "type": "number"},
+        "usage_cost_usd": {"minimum": 0, "type": "number"}
       },
       "required": ["provider", "model", "assessment", "predicted_success", "estimated_cost_usd", "pricing_epoch"],
       "type": "object"

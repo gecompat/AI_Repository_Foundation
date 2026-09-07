@@ -75,6 +75,9 @@ def tools() -> list[dict[str, Any]]:
                     "request": ROUTING_REQUEST_SCHEMA,
                     "budget_usd": {"type": "number", "minimum": 0},
                     "max_candidates": {"type": "integer", "minimum": 1, "default": 1},
+                    "task_set": {"type": "array", "items": {"type": "string", "minLength": 1}, "uniqueItems": True},
+                    "planned_sample_count": {"type": "integer", "minimum": 1, "default": 1},
+                    "stopping_rules": {"type": "object", "minProperties": 1},
                     "reserve": {"type": "boolean", "default": False},
                 },
                 "required": ["request", "budget_usd"],
@@ -136,7 +139,7 @@ def call_tool(name: str, arguments: dict[str, Any], router: ModelRouter, store: 
         if name == "model_router_snapshot":
             return tool_result(router.snapshot(validate_request(arguments)))
         if name == "model_router_plan_evaluation":
-            unknown = sorted(set(arguments) - {"request", "budget_usd", "max_candidates", "reserve"})
+            unknown = sorted(set(arguments) - {"request", "budget_usd", "max_candidates", "reserve", "task_set", "planned_sample_count", "stopping_rules"})
             if unknown:
                 raise RouterError(f"unknown evaluation argument(s): {', '.join(unknown)}")
             request = arguments.get("request")
@@ -155,6 +158,9 @@ def call_tool(name: str, arguments: dict[str, Any], router: ModelRouter, store: 
                     budget_usd=budget,
                     max_candidates=max_candidates,
                     reserve=reserve,
+                    task_set=arguments.get("task_set"),
+                    planned_sample_count=arguments.get("planned_sample_count", 1),
+                    stopping_rules=arguments.get("stopping_rules"),
                 )
             )
         if name == "model_router_record_outcome":

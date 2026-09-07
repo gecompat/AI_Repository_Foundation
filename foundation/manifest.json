@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.10.0",
+  "ruleset_version": "1.11.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
@@ -172,7 +172,10 @@
     "authority_expansion": "prohibited",
     "runtime_state": "outside_version_control",
     "python_required": false,
-    "reference_planner": "optional_capability"
+    "reference_planner": "optional_capability",
+    "adapter_protocol": "foundation-ai-adapter-jsonl/v1",
+    "adapter_protocol_schema_target": ".ai/foundation/schemas/ai-adapter-protocol.schema.json",
+    "resource_cost_evidence_schema_target": ".ai/foundation/schemas/resource-cost-evidence.schema.json"
   },
   "model_routing_contract": {
     "schema_targets": [
@@ -180,15 +183,22 @@
       ".ai/foundation/schemas/model-routing-decision.schema.json",
       ".ai/foundation/schemas/model-router-catalog.schema.json",
       ".ai/foundation/schemas/model-routing-snapshot.schema.json",
-      ".ai/foundation/schemas/model-router-profiles.schema.json"
+      ".ai/foundation/schemas/model-router-profiles.schema.json",
+      ".ai/foundation/schemas/model-routing-request-v2.schema.json",
+      ".ai/foundation/schemas/model-routing-decision-v2.schema.json",
+      ".ai/foundation/schemas/model-router-catalog-fragment-v2.schema.json"
     ],
     "foundation_tiers": ["LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"],
     "target_policy_may_be_more_detailed": true,
     "semantic_mapping_required_when_overlapping": true,
     "concrete_models_are_runtime_facts": true,
-    "profile": "foundation-model-router/v1",
+    "profile": "foundation-model-router/v2",
+    "compatible_profiles": ["foundation-model-router/v1", "foundation-model-router/v2"],
     "constraint_order": "privacy_authorization_capability_context_quality_freshness_budget_before_cost",
-    "objective": "minimum_expected_cost_of_success",
+    "objective": "minimum_complete_chain_expected_cost_of_success",
+    "resource_money_requires_evidence": true,
+    "resource_pressure_without_money": "tie_breaker_only",
+    "provider_catalog_refresh": "isolated_per_provider_with_unexpired_last_known_good",
     "price_epoch_and_expiry_required": true,
     "session_affinity_is_conditional": true,
     "new_model_default": "UNASSESSED",
@@ -237,6 +247,11 @@
     {"source": "foundation/schemas/validation-evidence.schema.json", "target": ".ai/foundation/schemas/validation-evidence.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/gap-report.schema.json", "target": ".ai/foundation/schemas/gap-report.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/provision-plan.schema.json", "target": ".ai/foundation/schemas/provision-plan.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/ai-adapter-protocol.schema.json", "target": ".ai/foundation/schemas/ai-adapter-protocol.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/resource-cost-evidence.schema.json", "target": ".ai/foundation/schemas/resource-cost-evidence.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/model-routing-request-v2.schema.json", "target": ".ai/foundation/schemas/model-routing-request-v2.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/model-routing-decision-v2.schema.json", "target": ".ai/foundation/schemas/model-routing-decision-v2.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/model-router-catalog-fragment-v2.schema.json", "target": ".ai/foundation/schemas/model-router-catalog-fragment-v2.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": ".ai/WORKING_RULES.md", "target": ".ai/foundation/WORKING_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/MODEL_ROUTING_POLICY.md", "target": ".ai/foundation/MODEL_ROUTING_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/VALIDATION_POLICY.md", "target": ".ai/foundation/VALIDATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
@@ -278,7 +293,13 @@
       {"source": "foundation/capabilities/model-router/mcp_stdio.py", "target": ".ai/foundation/model_router/mcp_stdio.py", "kind": "model-router-mcp", "merge": "review_if_exists"},
       {"source": "foundation/capabilities/model-router/profiles.example.json", "target": ".ai/foundation/model_router/profiles.example.json", "kind": "model-router-example", "merge": "review_if_exists"},
       {"source": "foundation/capabilities/model-router/mcp.visual-studio.json", "target": ".ai/foundation/model_router/mcp.visual-studio.json", "kind": "model-router-mcp-template", "merge": "review_if_exists"},
-      {"source": "foundation/capabilities/model-router/mcp.github-copilot.json", "target": ".ai/foundation/model_router/mcp.github-copilot.json", "kind": "model-router-mcp-template", "merge": "review_if_exists"}
+      {"source": "foundation/capabilities/model-router/mcp.github-copilot.json", "target": ".ai/foundation/model_router/mcp.github-copilot.json", "kind": "model-router-mcp-template", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/model-router/router_v2.py", "target": ".ai/foundation/model_router/router_v2.py", "kind": "model-router-v2-core-cli", "merge": "review_if_exists"}
+    ],
+    "ai-runtime-adapters": [
+      {"source": "foundation/capabilities/ai-runtime-adapters/AI_RUNTIME_ADAPTERS.md", "target": ".ai/foundation/ai_runtime_adapters/AI_RUNTIME_ADAPTERS.md", "kind": "ai-runtime-adapter-documentation", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/ai-runtime-adapters/adapter_protocol.py", "target": ".ai/foundation/ai_runtime_adapters/adapter_protocol.py", "kind": "ai-runtime-adapter-protocol", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/ai-runtime-adapters/reference_adapters.py", "target": ".ai/foundation/ai_runtime_adapters/reference_adapters.py", "kind": "ai-runtime-reference-adapters", "merge": "review_if_exists"}
     ]
   },
   "never_transfer": [

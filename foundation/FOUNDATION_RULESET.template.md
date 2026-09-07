@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.10.0
+Ruleset version: 1.11.0
 
 This directory contains reusable governance rules, machine-readable schemas, the semantic feature catalog, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -28,8 +28,8 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - registration schemas: `schemas/artifact-record.schema.json`, `schemas/artifact-registry.schema.json`, `schemas/artifact-registry-v2.schema.json`, `schemas/artifact-registration-request.schema.json`
 - upgrade schemas: `schemas/feature-catalog.schema.json`, `schemas/upgrade-assessment.schema.json`
 - rule-context cache record schema: `schemas/rule-context-cache.schema.json`
-- model-routing schemas: `schemas/model-routing-request.schema.json`, `schemas/model-routing-decision.schema.json`, `schemas/model-router-catalog.schema.json`, `schemas/model-routing-snapshot.schema.json`, `schemas/model-router-profiles.schema.json`
-- AI work schemas: `schemas/ai-work-request.schema.json`, `schemas/capability-descriptor.schema.json`, `schemas/execution-plan.schema.json`, `schemas/execution-report.schema.json`, `schemas/validation-evidence.schema.json`, `schemas/gap-report.schema.json`, `schemas/provision-plan.schema.json`
+- model-routing schemas: v1 request/decision/catalog/snapshot/profiles plus `schemas/model-routing-request-v2.schema.json`, `schemas/model-routing-decision-v2.schema.json`, and `schemas/model-router-catalog-fragment-v2.schema.json`
+- AI work schemas: `schemas/ai-work-request.schema.json`, `schemas/capability-descriptor.schema.json`, `schemas/execution-plan.schema.json`, `schemas/execution-report.schema.json`, `schemas/validation-evidence.schema.json`, `schemas/gap-report.schema.json`, `schemas/provision-plan.schema.json`, `schemas/ai-adapter-protocol.schema.json`, and `schemas/resource-cost-evidence.schema.json`
 - authorization and working behavior: `WORKING_RULES.md`
 - model/resource selection and target-policy mapping: `MODEL_ROUTING_POLICY.md`
 - validation, status vocabulary, portable LF/CRLF drift semantics, infrastructure availability, and manual test plans: `VALIDATION_POLICY.md`
@@ -95,7 +95,7 @@ A local override or drift warning identifies a difference; it is not semantic ap
 
 The portable routing tiers do not name a provider or current model. If dynamic routing is selected, filter privacy, authorization, capability, context, quality, price freshness, and budget before minimizing expected cost of success. Decisions carry a pricing epoch and expiry, session affinity remains conditional, and new models remain `UNASSESSED` until bounded project-authorized evaluation provides enough evidence.
 
-The optional `model-router` capability implements `foundation-model-router/v1` with a provider-neutral core, runtime Ollama Cloud discovery, CLI, local stdio MCP, shell-free launcher, and expiring snapshots. Runtime state stays outside version control, credentials are never stored, and lower integration layers preserve the same fail-closed decision contract.
+The optional `model-router` capability keeps `foundation-model-router/v1` compatible and adds a v2 facade with explicit execution boundaries, evidenced resources, and independently expiring provider fragments. Complete bounded attempt chains minimize expected cost of success. Documented measured/configured resource costs may enter that monetary objective; otherwise resource pressure is a tie-breaker only. The capability includes runtime Ollama Cloud discovery, CLI, local stdio MCP, shell-free launcher, and expiring snapshots. Runtime state stays outside version control, credentials are never stored, and lower integration layers preserve the same fail-closed decision contract.
 
 ## AI work orchestration boundary
 
@@ -103,7 +103,7 @@ The optional `model-router` capability implements `foundation-model-router/v1` w
 
 Apply privacy, authorization, capability, health/freshness, validation, time, money, and resource limits before ranking. One failing or expired component excludes only that component. Return `EXECUTABLE`, `MANUAL_REQUIRED`, `UNAVAILABLE`, or `BLOCKED` truthfully. Deterministic tools precede models when they sufficiently and verifiably perform the work. Human approval is grouped at irreversible, sensitive, unbudgeted, high-impact, privilege-expanding, or insufficient-evidence boundaries.
 
-The optional `ai-work` capability is a decision-only Python reference planner. Python, MCP, Ollama, models, providers, executors, and provisioners remain optional; rules and schemas stay valid without all of them. Runtime state, payloads, credentials, host paths, and live inventories stay outside version control.
+The optional `ai-work` capability is a decision-only Python reference planner. The separately selectable `ai-runtime-adapters` capability implements the content-free JSONL/stdio protocol for Ollama local/cloud, OpenAI-compatible HTTP, and shell-free command clients. Python, MCP, Ollama, models, providers, adapters, executors, and provisioners remain optional; rules and schemas stay valid without all of them. Runtime state, payloads, credentials, host paths, and live inventories stay outside version control.
 
 ## Repository continuity boundary
 
