@@ -15,7 +15,7 @@ Foundation version: 1.14.0
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
 
-## System-independence acceptance candidate — WI-0028
+## System-independence acceptance — WI-0028
 
 - a new component-failure matrix covers no optional runtime, missing process, dead/timeout endpoint, malformed response, expired catalog material, absent credentials, exhausted budget, and missing validator while preserving unrelated healthy capabilities;
 - the rights/privacy matrix covers read-only, local write, absent push/PR authority, explicitly authorized branch/PR work, prohibited publication, and confidential remote processing with and without exact data-class authority;
@@ -24,7 +24,8 @@ Foundation version: 1.14.0
 - Foundation CI retains its required Linux `validate` context and now gates it on the same runtime-neutral contract suite on Windows and macOS;
 - bounded Windows runtime evidence independently passed an already-present Ollama-local path and an already-present LM Studio OpenAI-compatible path, retained no response content, made no download/paid call, and stopped only the LM Studio service started by the check;
 - manual model selection remains the deliberate fallback when a host cannot dispatch automatically: the handoff recommends an evidenced tier/model and external prompt, but selection/execution remains unattested until trusted host metadata proves the actual model.
-- the local candidate gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, diff hygiene, the focused 91-test cross-platform contract selection, and all 229 tests on Windows; Windows/macOS GitHub-runner evidence remains pending until the candidate PR runs.
+- the local candidate gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, diff hygiene, the focused 91-test cross-platform contract selection, and all 229 tests on Windows;
+- PR #25 head `b7878347cb1fe7866ae99bdb55729974d8fa8ca3` passed Foundation CI run `34147019605`: macOS and Windows contract jobs plus the required Linux `validate` gate. Foundation Artifact Registry run `34147019778` also passed. `WI-0028` is done.
 
 ## v1.14.0 candidate — WI-0027
 
