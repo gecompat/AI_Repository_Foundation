@@ -90,7 +90,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.14.0")
+            self.assertEqual(catalog["ruleset_version"], "1.15.0")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
             self.assertIn("rule-context-cache", catalog["features"])
@@ -103,6 +103,7 @@ class InstallationModelTests(unittest.TestCase):
                 "artifact-registration-request.schema.json",
                 "feature-catalog.schema.json",
                 "upgrade-assessment.schema.json",
+                "installation-provenance.schema.json",
                 "rule-context-cache.schema.json",
                 "model-routing-request.schema.json",
                 "model-routing-decision.schema.json",
@@ -441,7 +442,7 @@ class InstallationModelTests(unittest.TestCase):
         apply = bootstrap.compatibility_args(["target"])
         self.assertIn("--apply", apply)
 
-    def test_manifest_sources_exist_targets_unique_and_version_is_v1_14(self) -> None:
+    def test_manifest_sources_exist_targets_unique_hashed_and_version_is_v1_15(self) -> None:
         rows = list(self.manifest["core"])
         for adapter_rows in self.manifest["adapters"].values():
             rows.extend(adapter_rows)
@@ -451,8 +452,9 @@ class InstallationModelTests(unittest.TestCase):
         self.assertEqual(len(targets), len(set(targets)))
         for row in rows:
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
+            self.assertRegex(row["source_sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.14.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.15.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

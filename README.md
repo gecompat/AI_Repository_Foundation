@@ -2,7 +2,7 @@
 
 A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and human-maintained technical and knowledge projects. Its goal is safe continuation without chat history, memory, personal prompts, or a specific vendor.
 
-## v1.11 integration, identity, AI-work, and dynamic capability-routing model
+## v1.15 integration, identity, provenance, AI-work, and dynamic capability-routing model
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
 
@@ -41,7 +41,9 @@ Apply when the plan contains only `CREATE` and `UNCHANGED` states:
 python tools/install_foundation.py TARGET --apply
 ```
 
-The installer classifies selected target files as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`. It never overwrites a differing file. For semantic merges into an existing repository, use the direct AI transfer protocol or resolve the reported merge explicitly.
+The installer verifies every selected source against the portable SHA-256 in the manifest and classifies target files as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`. It never overwrites a differing file. A clean apply writes `.ai/foundation/installation-provenance.json`. After semantic merges, use the direct AI transfer protocol and record every differing selected file explicitly with `--record-provenance --intentional-override "TARGET=REASON"`.
+
+The validator uses that receipt to distinguish an unchanged current baseline, an explicitly recorded intentional override, an intact previous Foundation version, and unknown drift. Provenance never substitutes for target semantic/runtime validation.
 
 Adapters default to GitHub Copilot, Claude Code, and Gemini as recommendations. Use `--adapters none` or an explicit comma-separated adapter list when desired.
 
@@ -89,12 +91,14 @@ Reusable Foundation work is not complete merely because implementation or docume
 - Every reusable schema under `foundation/schemas/` must be classified in manifest `core`.
 - New optional capability payloads belong under `foundation/capabilities/<capability>/` and must be classified in the matching manifest capability. Explicitly registered legacy capability roots remain validated until migrated.
 - Contract policy/schema references must resolve to manifest-listed transfer entries.
+- Every transfer row must carry a current portable source hash, and the installed-provenance schema/contract must remain core.
 - Version mirrors such as `.ai/FOUNDATION.md`, `.ai/PROJECT_STATUS.md`, `foundation/FOUNDATION_RULESET.template.md`, `foundation/repo_map.template.yaml`, and the current changelog release must match the manifest version.
 
 The source-side guard is:
 
 ```text
 python tools/transfer_manifest_guard.py
+python tools/refresh_manifest_hashes.py --check
 ```
 
 CI treats any unclassified managed source or version mismatch as blocking. Negative tests deliberately remove policy/schema/capability entries and alter the version to prove that these cases fail.

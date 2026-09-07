@@ -11,11 +11,20 @@ import sys
 from pathlib import Path
 from typing import Any
 
+from content_equivalence import portable_file_sha256
+
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "foundation" / "manifest.json"
 SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
 GENERATED_PATH_PARTS = {"__pycache__", ".pytest_cache", ".mypy_cache", ".ruff_cache"}
 GENERATED_SUFFIXES = {".pyc", ".pyo"}
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+PROVENANCE_CLASSIFICATIONS = [
+    "UNCHANGED_CURRENT_BASELINE",
+    "INTENTIONAL_OVERRIDE",
+    "PREVIOUS_FOUNDATION_VERSION",
+    "UNKNOWN_DRIFT",
+]
 
 
 def issue(code: str, path: str, message: str) -> dict[str, str]:
@@ -96,6 +105,49 @@ def validate_transfer_coverage(root: Path = ROOT, manifest: dict[str, Any] | Non
 
     problems = validate_version_mirrors(root, manifest, contract)
     core, capabilities = rows_by_section(manifest)
+    adapters = {
+        name: list(rows) if isinstance(rows, list) else []
+        for name, rows in manifest.get("adapters", {}).items()
+    }
+    provenance = manifest.get("installed_provenance_contract")
+    if not isinstance(provenance, dict):
+        problems.append(issue("TRANSFER_PROVENANCE_CONTRACT", "foundation/manifest.json", "installed_provenance_contract is required"))
+    else:
+        expected = {
+            "profile": "foundation-installation-provenance/v1",
+            "target": ".ai/foundation/installation-provenance.json",
+            "schema_target": ".ai/foundation/schemas/installation-provenance.schema.json",
+            "hash_algorithm": "sha256",
+            "content_normalization": "UTF8_CRLF_TO_LF_ELSE_EXACT",
+            "classifications": PROVENANCE_CLASSIFICATIONS,
+        }
+        for key, value in expected.items():
+            if provenance.get(key) != value:
+                problems.append(issue("TRANSFER_PROVENANCE_CONTRACT", "foundation/manifest.json", f"installed_provenance_contract.{key} must be {value!r}"))
+        if sum(1 for row in core if row.get("target") == provenance.get("schema_target")) != 1:
+            problems.append(issue("TRANSFER_PROVENANCE_SCHEMA_UNCLASSIFIED", str(provenance.get("schema_target")), "installed provenance schema must be transferred exactly once in core"))
+
+    repository = manifest.get("source_repository")
+    if not isinstance(repository, str) or not repository.startswith("https://"):
+        problems.append(issue("TRANSFER_SOURCE_REPOSITORY", "foundation/manifest.json", "source_repository must be a non-empty HTTPS locator"))
+
+    all_rows = list(core)
+    for rows in adapters.values():
+        all_rows.extend(rows)
+    for rows in capabilities.values():
+        all_rows.extend(rows)
+    for row in all_rows:
+        if not isinstance(row, dict) or not isinstance(row.get("source"), str):
+            problems.append(issue("TRANSFER_ROW_SCHEMA", "foundation/manifest.json", "every transfer row requires a source"))
+            continue
+        source = row["source"]
+        declared_hash = row.get("source_sha256")
+        if not isinstance(declared_hash, str) or not SHA256_RE.fullmatch(declared_hash):
+            problems.append(issue("TRANSFER_SOURCE_HASH_MISSING", source, "every transfer row requires a lowercase portable SHA-256"))
+            continue
+        source_path = root / source
+        if source_path.is_file() and portable_file_sha256(source_path) != declared_hash:
+            problems.append(issue("TRANSFER_SOURCE_HASH_MISMATCH", source, "manifest source_sha256 does not match portable source content"))
     core_sources = [row.get("source") for row in core if isinstance(row, dict) and isinstance(row.get("source"), str)]
     core_source_set = set(core_sources)
 

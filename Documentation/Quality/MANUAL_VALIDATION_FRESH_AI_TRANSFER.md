@@ -29,7 +29,7 @@ Use synthetic/public test content only.
 
 Record:
 
-- Foundation commit/version;
+- exact Foundation commit/version and portable source-manifest hash;
 - target repository commit;
 - target files that already exist (`README.md`, `LICENSE`, `AGENTS.md`, adapter files);
 - selected adapters.
@@ -39,27 +39,30 @@ Record:
 1. Give the fresh AI only the target repository, this Foundation repository, and the task: `Apply the AI Repository Foundation rules to the target repository. Follow the Foundation's own transfer instructions.`
    - Expected: the AI discovers `foundation/manifest.json` and `foundation/AI_TRANSFER.md`; it does not treat the Foundation root as a directory template.
 2. Ask the AI to show its transfer plan before writing.
-   - Expected: only manifest-listed core rules and selected adapters appear. Foundation `README.md`, `LICENSE`, `CHANGELOG.md`, `.gitignore`, `.ai/PROJECT_CONTEXT.md`, `.ai/PROJECT_STATUS.md`, `.ai/HANDOVER.md`, `.ai/BACKLOG.md`, `.ai/ROADMAP.md`, internal decisions, tests, and tools do not appear as target payload.
+   - Expected: only manifest-listed core rules and selected adapters appear as copied/merged payload. The generated namespaced installation-provenance receipt is planned separately. Foundation `README.md`, `LICENSE`, `CHANGELOG.md`, `.gitignore`, `.ai/PROJECT_CONTEXT.md`, `.ai/PROJECT_STATUS.md`, `.ai/HANDOVER.md`, `.ai/BACKLOG.md`, `.ai/ROADMAP.md`, internal decisions, tests, and tools do not appear as target payload.
 3. Apply the transfer.
    - Expected for an absent target file: create it at the manifest target path.
    - Expected for an identical rule: leave it unchanged.
    - Expected for an existing differing `AGENTS.md`: preserve project-specific content and merge only the marked Foundation bridge; do not replace the file wholesale.
 4. Inspect the target `README.md` and root license.
    - Expected: both are byte-for-byte unchanged unless the separate test task explicitly requested an unrelated edit.
-5. Ask the fresh AI to explain, using only the resulting target repository: project purpose, where Foundation rules live, which project-specific information has priority, how normal operations are authorized, when a gate is required, how model tiers are selected, and how manual validation is handled.
+5. Inspect `.ai/foundation/installation-provenance.json`.
+   - Expected: it conforms to `foundation-installation-provenance/v1`, identifies the exact source version/commit/manifest hash, contains every selected target once, records the preserved target `AGENTS.md` merge as an explicitly reasoned `INTENTIONAL_OVERRIDE`, and contains no prompt, response, credential, target content, or absolute host path.
+6. Ask the fresh AI to explain, using only the resulting target repository: project purpose, where Foundation rules live, which project-specific information has priority, how normal operations are authorized, when a gate is required, how model tiers are selected, how installed drift is classified, and how manual validation is handled.
    - Expected: answers match the target repository and installed rules without requiring previous chat history.
-6. If available, run from the Foundation checkout: `python tools/foundation_validator.py --target <TARGET> --adapters <SELECTED> --profile full`.
-   - Expected: exit code 0 or only explicitly reviewed warnings for intentional local overrides.
+7. If available, run from the Foundation checkout: `python tools/foundation_validator.py --target <TARGET> --adapters <SELECTED> --profile full`.
+   - Expected: exit code 0; the merged target entrypoint is classified `INTENTIONAL_OVERRIDE`, unmodified selected files are `UNCHANGED_CURRENT_BASELINE`, and the compatibility umbrella warning is reviewed rather than mistaken for unknown drift.
 
 ## Pass criteria
 
-- no Foundation-project artifact outside the manifest transfer set was introduced;
+- no Foundation-project artifact outside the manifest transfer set and the contract-defined generated installation receipt was introduced;
 - target README and root license remained unchanged;
 - existing project-specific instructions were preserved;
 - the Foundation bridge is discoverable from root `AGENTS.md`;
 - the fresh AI correctly identifies ordinary task-authorized operations as executable without repeated confirmation;
 - privacy gating is based on classification/destination/handling authority, not merely real information;
 - the fresh AI can continue project work without chat history;
+- source and installed hashes are reconciled without classifying intentional or previous-version state from missing evidence;
 - validator result meets step 6 expectations when executed.
 
 ## Fail criteria
@@ -72,6 +75,7 @@ Any payload leakage, silent overwrite, lost project instruction, replaced target
 - target before/after commit or diff;
 - AI transfer plan;
 - list of created/merged/unchanged/conflicting files;
+- installation receipt and drift-classification summary;
 - validator command, exit code, and warnings/errors if run;
 - the AI's continuation explanation;
 - any deviation from expected behavior.

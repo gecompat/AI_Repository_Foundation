@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-07
-Foundation version: 1.14.0
+Foundation version: 1.15.0 candidate
 
 ## Implemented baseline
 
@@ -14,6 +14,15 @@ Foundation version: 1.14.0
 - source-side transfer completeness/version guard and negative regression tests;
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
+
+## Foundation 1.15 candidate — WI-0002 / DEC-0021
+
+- every core, adapter, and optional-capability transfer row carries a portable SHA-256 using the existing UTF-8 LF/CRLF equivalence contract and exact bytes otherwise;
+- the source guard and installer fail closed on missing, malformed, or stale row hashes;
+- clean installs create an atomic, idempotent `foundation-installation-provenance/v1` receipt; a completed semantic transfer must explicitly name and explain every differing selected file before the receipt is written;
+- target validation distinguishes `UNCHANGED_CURRENT_BASELINE`, `INTENTIONAL_OVERRIDE`, `PREVIOUS_FOUNDATION_VERSION`, and `UNKNOWN_DRIFT` while retaining the legacy broad warning for compatibility;
+- the receipt stores only source/target identifiers, hashes, version/ref metadata, selections, integration state, and reasons; it grants no authority and proves neither semantic correctness nor project validation;
+- focused provenance/installation/transfer/upgrade tests and the complete 239-test suite pass locally on Windows; fresh-agent continuation and required PR checks remain pending before `WI-0001`/`WI-0002` completion.
 
 ## Foundation source self-hosting — WI-0029
 

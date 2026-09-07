@@ -3,6 +3,7 @@
 
 from __future__ import annotations
 
+import hashlib
 from pathlib import Path
 
 
@@ -39,3 +40,14 @@ def content_equivalent(left: bytes, right: bytes) -> bool:
 def files_equivalent(left: Path, right: Path) -> bool:
     """Compare two files using the Foundation transfer-equivalence contract."""
     return content_equivalent(left.read_bytes(), right.read_bytes())
+
+
+def portable_content_sha256(data: bytes) -> str:
+    """Hash content using the same narrow portability rules as transfer checks."""
+    normalized = _normalized_utf8_text(data)
+    return hashlib.sha256(data if normalized is None else normalized).hexdigest()
+
+
+def portable_file_sha256(path: Path) -> str:
+    """Hash one file using the Foundation transfer-equivalence contract."""
+    return portable_content_sha256(path.read_bytes())

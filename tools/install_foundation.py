@@ -5,15 +5,22 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
+import re
 import shutil
+import subprocess
 import sys
+import tempfile
 from dataclasses import dataclass
+from datetime import datetime, timezone
 from pathlib import Path
 
-from content_equivalence import files_equivalent
+from content_equivalence import files_equivalent, portable_file_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "foundation" / "manifest.json"
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+PROVENANCE_CONTRACT = "foundation-installation-provenance/v1"
 
 
 @dataclass(frozen=True)
@@ -22,6 +29,7 @@ class TransferEntry:
     target_rel: Path
     kind: str
     merge: str
+    source_sha256: str
 
 
 @dataclass(frozen=True)
@@ -95,8 +103,152 @@ def transfer_entries(
         source = ROOT / row["source"]
         if not source.is_file():
             raise ValueError(f"manifest source missing: {row['source']}")
-        result.append(TransferEntry(source, target_rel, row["kind"], row["merge"]))
+        source_sha256 = row.get("source_sha256")
+        if not isinstance(source_sha256, str) or not SHA256_RE.fullmatch(source_sha256):
+            raise ValueError(f"manifest source hash missing or invalid: {row['source']}")
+        actual_sha256 = portable_file_sha256(source)
+        if source_sha256 != actual_sha256:
+            raise ValueError(f"manifest source hash mismatch: {row['source']}")
+        result.append(TransferEntry(source, target_rel, row["kind"], row["merge"], source_sha256))
     return result
+
+
+def parse_intentional_overrides(values: list[str]) -> dict[str, str]:
+    overrides: dict[str, str] = {}
+    for value in values:
+        target, separator, reason = value.partition("=")
+        target = Path(target.strip()).as_posix()
+        reason = reason.strip()
+        if not separator or not target or not reason:
+            raise ValueError("intentional overrides require TARGET=REASON")
+        if target in overrides:
+            raise ValueError(f"duplicate intentional override: {target}")
+        overrides[target] = reason
+    return overrides
+
+
+def source_commit() -> str | None:
+    """Return an exact source commit only when the checkout has no local changes."""
+    try:
+        status = subprocess.run(
+            ["git", "status", "--porcelain", "--untracked-files=normal"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+        if status.stdout.strip():
+            return None
+        result = subprocess.run(
+            ["git", "rev-parse", "HEAD"],
+            cwd=ROOT,
+            check=True,
+            capture_output=True,
+            text=True,
+        )
+    except (OSError, subprocess.CalledProcessError):
+        return None
+    commit = result.stdout.strip().lower()
+    return commit if re.fullmatch(r"[0-9a-f]{40}", commit) else None
+
+
+def provenance_target(manifest: dict, target: Path) -> Path:
+    contract = manifest.get("installed_provenance_contract")
+    if not isinstance(contract, dict) or contract.get("profile") != PROVENANCE_CONTRACT:
+        raise ValueError("installed_provenance_contract is missing or invalid")
+    target_value = contract.get("target")
+    if not isinstance(target_value, str) or not target_value:
+        raise ValueError("installed_provenance_contract.target is missing")
+    return target / target_value
+
+
+def build_provenance(
+    manifest: dict,
+    target: Path,
+    entries: list[TransferEntry],
+    adapters: list[str],
+    capabilities: list[str],
+    overrides: dict[str, str],
+) -> dict:
+    selected = {entry.target_rel.as_posix() for entry in entries}
+    unknown = sorted(set(overrides) - selected)
+    if unknown:
+        raise ValueError(f"intentional override target is not selected: {', '.join(unknown)}")
+
+    files: list[dict[str, object]] = []
+    required_overrides: list[str] = []
+    for entry in sorted(entries, key=lambda item: item.target_rel.as_posix()):
+        destination = target / entry.target_rel
+        if not destination.is_file():
+            raise ValueError(f"selected target file is missing: {entry.target_rel.as_posix()}")
+        installed_sha256 = portable_file_sha256(destination)
+        target_name = entry.target_rel.as_posix()
+        differs = installed_sha256 != entry.source_sha256
+        if differs and target_name not in overrides:
+            required_overrides.append(target_name)
+        if not differs and target_name in overrides:
+            raise ValueError(f"intentional override matches the Foundation baseline: {target_name}")
+        files.append(
+            {
+                "source": entry.source.relative_to(ROOT).as_posix(),
+                "target": target_name,
+                "kind": entry.kind,
+                "merge": entry.merge,
+                "source_sha256": entry.source_sha256,
+                "installed_sha256": installed_sha256,
+                "integration_state": "INTENTIONAL_OVERRIDE" if differs else "FOUNDATION_BASELINE",
+                "reason": overrides.get(target_name),
+            }
+        )
+    if required_overrides:
+        raise ValueError(
+            "differing selected files require explicit --intentional-override TARGET=REASON: "
+            + ", ".join(required_overrides)
+        )
+
+    repository = manifest.get("source_repository")
+    if not isinstance(repository, str) or not repository:
+        raise ValueError("manifest source_repository is missing")
+    return {
+        "schema_version": 1,
+        "contract": PROVENANCE_CONTRACT,
+        "ruleset_version": manifest["ruleset_version"],
+        "source_repository": repository,
+        "source_commit": source_commit(),
+        "source_manifest_sha256": portable_file_sha256(MANIFEST_PATH),
+        "recorded_at": datetime.now(timezone.utc).replace(microsecond=0).isoformat().replace("+00:00", "Z"),
+        "selection": {
+            "adapters": sorted(adapters),
+            "capabilities": sorted(capabilities),
+        },
+        "files": files,
+    }
+
+
+def write_provenance(path: Path, payload: dict) -> bool:
+    """Atomically write changed provenance; preserve timestamps for an identical receipt."""
+    if path.is_file():
+        try:
+            current = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            current = None
+        if isinstance(current, dict):
+            comparable_current = {**current, "recorded_at": payload["recorded_at"]}
+            if comparable_current == payload:
+                return False
+    path.parent.mkdir(parents=True, exist_ok=True)
+    fd, temp_name = tempfile.mkstemp(prefix=f".{path.name}.", suffix=".tmp", dir=path.parent)
+    temp_path = Path(temp_name)
+    try:
+        with os.fdopen(fd, "w", encoding="utf-8", newline="\n") as stream:
+            json.dump(payload, stream, indent=2, sort_keys=False)
+            stream.write("\n")
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temp_path, path)
+    finally:
+        temp_path.unlink(missing_ok=True)
+    return True
 
 
 def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
@@ -229,6 +381,7 @@ def plan_payload(plan: list[PlanItem], notices: list[dict[str, str]] | None = No
                 "target": item.entry.target_rel.as_posix(),
                 "kind": item.entry.kind,
                 "merge": item.entry.merge,
+                "source_sha256": item.entry.source_sha256,
             }
             for item in plan
         ],
@@ -255,6 +408,18 @@ def main(argv: list[str] | None = None) -> int:
         help="default, none, or comma-separated optional capability names",
     )
     parser.add_argument("--apply", action="store_true", help="create missing files after a clean plan")
+    parser.add_argument(
+        "--record-provenance",
+        action="store_true",
+        help="record an already completed direct/semantic transfer without copying files",
+    )
+    parser.add_argument(
+        "--intentional-override",
+        action="append",
+        default=[],
+        metavar="TARGET=REASON",
+        help="classify one selected differing target as an intentional semantic override",
+    )
     parser.add_argument("--json", action="store_true", dest="json_output")
     args = parser.parse_args(argv)
 
@@ -268,8 +433,17 @@ def main(argv: list[str] | None = None) -> int:
         adapters = parse_adapters(manifest, args.adapters)
         capabilities = parse_capabilities(manifest, args.capabilities)
         entries = transfer_entries(manifest, adapters, capabilities)
+        overrides = parse_intentional_overrides(args.intentional_override)
+        receipt_path = provenance_target(manifest, target)
     except (OSError, ValueError, json.JSONDecodeError) as exc:
         print(f"[BLOCK] {exc}")
+        return 2
+
+    if args.apply and args.record_provenance:
+        print("[BLOCK] --apply and --record-provenance are mutually exclusive")
+        return 2
+    if args.intentional_override and not args.record_provenance:
+        print("[BLOCK] --intentional-override requires --record-provenance")
         return 2
 
     notices = capability_notices(capabilities)
@@ -287,6 +461,20 @@ def main(argv: list[str] | None = None) -> int:
         print("[BLOCK] semantic merge/conflict review required; nothing written")
         return 2
 
+    if args.record_provenance:
+        conflicts = [item for item in plan if item.state in {"CREATE", "CONFLICT"}]
+        if conflicts:
+            print("[BLOCK] every selected target must be an existing file before provenance is recorded")
+            return 2
+        try:
+            receipt = build_provenance(manifest, target, entries, adapters, capabilities, overrides)
+            changed = write_provenance(receipt_path, receipt)
+        except (OSError, ValueError) as exc:
+            print(f"[BLOCK] {exc}")
+            return 2
+        print(f"[PROVENANCE] {'written' if changed else 'unchanged'}={receipt_path.relative_to(target).as_posix()}")
+        return 0
+
     if not args.apply:
         creates = sum(item.state == "CREATE" for item in plan)
         unchanged = sum(item.state == "UNCHANGED" for item in plan)
@@ -303,7 +491,14 @@ def main(argv: list[str] | None = None) -> int:
         item.destination.parent.mkdir(parents=True, exist_ok=True)
         shutil.copy2(item.entry.source, item.destination)
         created += 1
+    try:
+        receipt = build_provenance(manifest, target, entries, adapters, capabilities, {})
+        provenance_changed = write_provenance(receipt_path, receipt)
+    except (OSError, ValueError) as exc:
+        print(f"[BLOCK] transferred files were written but provenance failed: {exc}")
+        return 2
     print(f"[OK] created={created} unchanged={sum(i.state == 'UNCHANGED' for i in plan)}")
+    print(f"[PROVENANCE] {'written' if provenance_changed else 'unchanged'}={receipt_path.relative_to(target).as_posix()}")
     return 0
 
 

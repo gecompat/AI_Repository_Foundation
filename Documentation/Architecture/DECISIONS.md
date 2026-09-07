@@ -187,3 +187,11 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Decision: Add a runtime-neutral capability and work-planning control plane while keeping every executable planner, adapter, executor, provisioner, and client integration optional. Preserve router v1 and the deterministic meaning of `LOCAL`; isolate provider failures; intersect operations with actual authority; and use risk-gated validation without treating generated adapters or model agreement as permission or proof.
 - Consequences: Foundation can coordinate software, research, documentation, data, media, and future AI-assisted work across available systems while remaining valid with no AI runtime at all. Implementation is staged through `WI-0020`–`WI-0029`, including source-project self-hosting without versioned runtime state.
 - Full record: `decisions/DEC-0020-capability-oriented-ai-work-orchestration.md`.
+
+## DEC-0021 — Installed Foundation provenance uses portable manifest hashes and explicit override receipts
+
+- Status: Accepted
+- Date: 2026-09-07
+- Decision: Bind every selected transfer source to a portable SHA-256 and record completed target installations in a content-minimized receipt that distinguishes current baseline, explicit semantic override, intact previous version, and unknown drift.
+- Consequences: Foundation 1.15 fails closed on stale manifest hashes or unexplained target differences while preserving LF/CRLF portability and the separation between provenance, semantic approval, authority, and project validation.
+- Full record: `decisions/DEC-0021-portable-installation-provenance.md`.

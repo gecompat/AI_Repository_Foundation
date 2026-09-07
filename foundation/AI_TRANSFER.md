@@ -12,12 +12,16 @@ Do not infer current source capabilities from an older Foundation copy already i
 - `adapters` are selected discovery adapters.
 - `capabilities` are optional implementation modules and are transferred only when explicitly selected.
 - `ruleset_version` describes the source ruleset at that Foundation ref.
+- every selected transfer row carries `source_sha256`, computed with the portable content-equivalence rule below;
+- `installed_provenance_contract` defines the generated target receipt and its four drift classifications;
 - `transfer_coverage_contract` defines source-side transfer/version checks.
 - `feature_catalog.json` records semantic features, their introduction/material-change versions, applicability evidence, and recommendation/decision semantics.
 
 Files outside selected manifest sections are not transferred. Never copy the Foundation project's README, root LICENSE, changelog, project context, Foundation metadata/state, backlog, roadmap, internal decisions, identity registry, tests, or unlisted tool source merely because they exist.
 
 The target project's root license is never changed by Foundation transfer.
+
+Before copying or merging a selected source, recompute its portable SHA-256 and require it to equal the row's `source_sha256`. A mismatch means the manifest and source checkout do not identify one coherent transfer payload; stop rather than copying unverified content.
 
 ## Source version versus installed target version
 
@@ -46,6 +50,24 @@ When planning, validating, or performing post-merge verification:
 - preserve an existing target EOL policy; a target may independently choose a namespaced `eol=lf` or stronger byte-stability rule when its own build/runtime semantics require one.
 
 When the source tools are available, use `tools/install_foundation.py` and `tools/foundation_validator.py`; both use the same portable text-equivalence contract. If an AI implements the equivalent comparison directly, it must preserve the same narrow semantics: CRLF versus LF may normalize, lone CR/final-newline/content changes remain significant, and binary data remains byte-exact.
+
+## Installed provenance receipt
+
+After every completed install or semantic transfer, create or replace `.ai/foundation/installation-provenance.json` according to `foundation/schemas/installation-provenance.schema.json`. Record the exact ruleset version, source repository, exact source commit when established (otherwise `null`), portable source-manifest hash, selected adapters/capabilities, and one record for every selected file.
+
+- Use `FOUNDATION_BASELINE` only when the installed portable hash equals the manifest row's source hash; its reason is `null`.
+- Use `INTENTIONAL_OVERRIDE` only after semantic integration is complete, the installed hash differs from the source hash, and a non-empty target-specific reason explains the preserved/merged project behavior.
+- Do not label a difference intentional merely to silence validation.
+- The receipt contains no prompt, response, credential, absolute host path, private runtime state, or copied project content.
+- The receipt is provenance, not authorization, semantic approval, a signature, or evidence that target validation passed.
+
+The installer writes the receipt automatically for a clean `--apply`. After an AI performs required semantic merges, it can ask the source tool to validate and record the completed state without copying files:
+
+```text
+python tools/install_foundation.py TARGET --adapters SELECTED --capabilities SELECTED --record-provenance --intentional-override "AGENTS.md=Preserved target governance and merged only the Foundation bridge"
+```
+
+Repeat `--intentional-override TARGET=REASON` for every differing selected file. The command fails closed for missing files, unselected targets, unexplained differences, baseline files falsely declared as overrides, stale manifest hashes, or malformed contract metadata. Without Python, produce the same schema-conformant receipt directly and verify every portable hash before completion.
 
 ## Mandatory semantic upgrade assessment
 
@@ -280,8 +302,9 @@ Do not replace richer target policies with simplified Foundation vocabulary.
 11. If v2 central registry is selected, establish its canonical path, migration mapping, generated-view ownership, validation/merge gates, and surface the non-blocking GitHub repository-protection recommendation when GitHub is used; do not silently change target repository administration.
 12. If mandatory external CI can block repository continuity, assess `repository-continuity-break-glass`; surface the recommendation/decision boundary without choosing bypass actors or changing Rulesets automatically.
 13. If rule-context caching is used, preserve native per-run instruction discovery, keep semantic analysis session-local, and configure only a project-authorized non-versioned cache destination; uncertainty is a full miss.
-14. Run/perform `FOUNDATION_INTEGRITY` with portable text-EOL comparison; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
-15. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, identifier/registration/registry/cache choices, GitHub administration and continuity recommendations/state when relevant, discovery fixes, unresolved conflicts, and validation evidence by scope.
+14. Verify every selected source against its manifest hash and record exact installed provenance after all semantic merges; unexplained differences remain `UNKNOWN_DRIFT`.
+15. Run/perform `FOUNDATION_INTEGRITY` with portable text-EOL comparison; determine and preserve relevant `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks.
+16. Report source ref/version, installed version, complete feature assessment, selected capabilities, file plan, semantic classifications, provenance/drift classifications, identifier/registration/registry/cache choices, GitHub administration and continuity recommendations/state when relevant, discovery fixes, unresolved conflicts, and validation evidence by scope.
 
 ## Authorization
 

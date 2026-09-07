@@ -50,12 +50,14 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("profile: foundation-ai-client-integration/v1", repo_map)
             self.assertIn("manual_fallback_status: MANUAL_DISPATCH_REQUIRED", repo_map)
             self.assertIn("unattested_status: REQUESTED_NOT_ATTESTED", repo_map)
+            self.assertIn("installation_receipt: .ai/foundation/installation-provenance.json", repo_map)
+            self.assertIn("UNKNOWN_DRIFT", repo_map)
 
     def test_feature_catalog_and_manifest_versions_match(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.14.0")
+        self.assertEqual(manifest["ruleset_version"], "1.15.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -133,6 +135,12 @@ class UpgradeInstallationTests(unittest.TestCase):
         self.assertEqual(integration["candidate_reasons"], ["introduced_in:1.14.0"])
         self.assertIn("model_dispatch_attestation", integration["applicability"]["signals"])
         self.assertIn("manual handoff", integration["recommendation"]["summary"])
+
+    def test_1_14_to_1_15_delta_surfaces_installed_provenance(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.14.0", "1.15.0")
+        self.assertEqual([item["feature_id"] for item in candidates], ["installed-foundation-provenance"])
+        self.assertEqual(candidates[0]["candidate_reasons"], ["introduced_in:1.15.0"])
 
 
 if __name__ == "__main__":
