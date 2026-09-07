@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-07
-Foundation version: 1.12.0 candidate
+Foundation version: 1.13.0 candidate
 
 ## Implemented baseline
 
@@ -14,6 +14,17 @@ Foundation version: 1.12.0 candidate
 - source-side transfer completeness/version guard and negative regression tests;
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
+
+## v1.13.0 candidate — WI-0026
+
+- the optional `ai-provisioning` reference provides isolated runtime diagnosis/inventory, detects configured installations outside `PATH`, and leaves absent or broken runtimes non-blocking for Foundation integrity;
+- expiring content-addressed plans bind exact source/artifact/runtime/target, license evidence, digest, resource/network/cost ceilings, shell-free offline install and verification commands, rollback, and recovery;
+- one exact unexpired `approve:provision` receipt authorizes only the sealed plan; completed plans do not redownload, and failed or ambiguous non-idempotent work requires reconciliation plus a changed newly approved plan;
+- runtime state, targets, plans, approvals, downloads, host paths, and cost evidence remain outside Git; no installation, network, credential, spend, repository, push, PR, or publication authority is inferred;
+- cost evidence is independently cached per verified source, including failure attempts in the at-most-once-per-24-hours bound; unexpired evidence remains locally queryable without AI/network and expired monetary conversions are never invented;
+- portable request/inventory/approval/report schemas, manual no-Python instructions, installer integration, and deterministic failure/recovery tests cover the host-preparation contract.
+- v1.13.0 local completion gate on 2026-09-07: transfer and semantic feature guards against `origin/main`, registry validation/backlog projection, full Foundation validator, JSON/compile/diff hygiene, focused provisioning/install/upgrade tests, and all 207 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
+- read-only runtime acceptance found Ollama 0.33.3 outside `PATH` and the LM Studio CLI on `PATH`, then inventoried both without persisting output; cloud-tagged Ollama entries were classified `REMOTE`, while other model execution boundaries remained truthfully `UNKNOWN` pending invocation evidence.
 
 ## v1.5 — WI-0013
 
@@ -157,4 +168,4 @@ Foundation version: 1.12.0 candidate
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, WI-0020, WI-0021, WI-0022, WI-0023, WI-0024, and WI-0025 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion; WI-0026–WI-0029 continue the AI-work implementation program.
+WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, WI-0020, WI-0021, WI-0022, WI-0023, WI-0024, WI-0025, and WI-0026 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion; WI-0027–WI-0029 continue the AI-work implementation program.

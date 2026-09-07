@@ -46,6 +46,8 @@ Resource prices and conversions are expiring runtime evidence, not durable model
 
 Automated refresh MUST NOT contact the same source more than once in 24 hours. Source-specific validity normally makes refresh less frequent; event-driven/manual refresh beyond that bound requires separate explicit authority. Every value records its subject, unit, original currency, source locator/kind, provenance, observation and expiry, content hash, last attempt, next permitted attempt, and suggested refresh. Currency/resource conversion records their method and source. Network, credentials, spend, and data-transfer permissions remain explicit.
 
+The per-source bound applies to failed attempts as well as successful refreshes. Refresh failure MUST be isolated from other sources and MUST NOT trigger an immediate retry loop. Research agents may propose source definitions, but only a reviewed exact source, deterministic extraction, explicit units and provenance may update usable evidence. Routing and policy evaluation MUST remain possible from unexpired cached evidence or without a monetary conversion when research, AI, Python, or network access is unavailable.
+
 Only unexpired measured or configured per-attempt USD values with traceable evidence enter the monetary routing objective. Research evidence becomes usable only through an explicit verified project configuration. If refresh fails, an unexpired last-known-good value may remain available. After expiry, the router omits the monetary conversion and uses evidenced resource consumption only as a hard constraint and explainable tie-breaker; it never invents a price.
 
 ## Validation and human approval
@@ -71,6 +73,10 @@ An `ExecutionReport` records attempts, validation, limits, costs/resources, cons
 ## Provisioning and local adapter synthesis
 
 A `ProvisionPlan` is read-only until explicitly approved. It is content-addressed, expires, and lists exact source, artifact/model identifier, target runtime, license/use notice, expected transfer/disk/memory, network destination, monetary ceiling, verification, rollback, and recovery. Automated provisioning may perform only actions included in the approved plan; partial failure must not look complete.
+
+Host preparation follows `doctor -> inventory -> plan-provision -> approve -> provision -> verify`. Discovery SHOULD check project-configured absolute locations as well as `PATH`, isolate each runtime failure, and treat product/process/loopback identity as insufficient execution-boundary evidence. One approval may cover the complete bounded plan, but never actions, destinations, downloads, costs, credentials, or validity outside its exact hash. Installers that may contact the network require a stronger separately authorized execution boundary; the optional reference provisioner accepts only reviewed offline install commands over an already verified artifact.
+
+Provision state and targets remain outside version control. A completed exact plan may be read or verified again without repeating the download. A failed plan requires changed inputs, adapter, or evidence and a newly approved plan. An interrupted non-idempotent action is `MANUAL_REQUIRED` until reconciled. Cleanup MUST identify exact staged/target artifacts and MUST NOT delete an unknown or pre-existing target.
 
 Local adapter synthesis requires explicit `allow_local_adapter_synthesis` authority. Generated material remains outside the repository, starts without network, credentials, or repository write access, includes its source hash, and is quarantined until protocol conformance passes. Durable repository adoption is a separate authorized workflow.
 

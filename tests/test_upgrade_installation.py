@@ -43,12 +43,15 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("capability_failures: isolated", repo_map)
             self.assertIn("authority_expansion: prohibited", repo_map)
             self.assertIn("python_required: false", repo_map)
+            self.assertIn("runtime_inventory_schema: .ai/foundation/schemas/runtime-inventory.schema.json", repo_map)
+            self.assertIn("host_preparation_capability: ai-provisioning", repo_map)
+            self.assertIn("cost_refresh_minimum_seconds: 86400", repo_map)
 
     def test_feature_catalog_and_manifest_versions_match(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.12.0")
+        self.assertEqual(manifest["ruleset_version"], "1.13.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -105,6 +108,16 @@ class UpgradeInstallationTests(unittest.TestCase):
         by_id = {item["feature_id"]: item for item in candidates}
         self.assertEqual(by_id["ai-work-orchestration"]["candidate_reasons"], ["material_change:1.12.0"])
         self.assertEqual(by_id["ai-work-execution"]["candidate_reasons"], ["introduced_in:1.12.0"])
+
+    def test_1_12_to_1_13_delta_surfaces_bounded_host_preparation(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.12.0", "1.13.0")
+        by_id = {item["feature_id"]: item for item in candidates}
+        self.assertEqual(by_id["ai-work-orchestration"]["candidate_reasons"], ["material_change:1.13.0"])
+        preparation = by_id["ai-host-preparation"]
+        self.assertEqual(preparation["candidate_reasons"], ["introduced_in:1.13.0"])
+        self.assertIn("runtime_outside_path", preparation["applicability"]["signals"])
+        self.assertIn("no more than once per source per day", preparation["recommendation"]["summary"])
 
 
 if __name__ == "__main__":

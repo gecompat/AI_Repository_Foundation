@@ -90,7 +90,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.12.0")
+            self.assertEqual(catalog["ruleset_version"], "1.13.0")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
             self.assertIn("rule-context-cache", catalog["features"])
@@ -120,6 +120,10 @@ class InstallationModelTests(unittest.TestCase):
                 "validation-evidence.schema.json",
                 "gap-report.schema.json",
                 "provision-plan.schema.json",
+                "provision-request.schema.json",
+                "provision-approval.schema.json",
+                "provision-report.schema.json",
+                "runtime-inventory.schema.json",
                 "ai-adapter-protocol.schema.json",
                 "resource-cost-evidence.schema.json",
             ]:
@@ -139,6 +143,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertFalse((target / ".ai" / "foundation" / "ai_work").exists())
             self.assertFalse((target / ".ai" / "foundation" / "ai_runtime_adapters").exists())
             self.assertFalse((target / ".ai" / "foundation" / "ai_executor").exists())
+            self.assertFalse((target / ".ai" / "foundation" / "ai_provisioning").exists())
 
     def test_reference_clients_and_github_registry_capabilities_are_opt_in(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -193,6 +198,14 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((executor_dir / "ai_executor.py").is_file())
             self.assertIn("foundation-ai-executor-checkpoint/v1", (executor_dir / "ai_executor.py").read_text(encoding="utf-8"))
             self.assertTrue((target / ".ai" / "foundation" / "ai_work" / "ai_work.py").is_file())
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            self.assertEqual(self.install(target, "--capabilities", "ai-provisioning"), 0)
+            provisioner = target / ".ai" / "foundation" / "ai_provisioning"
+            self.assertTrue((provisioner / "AI_PROVISIONING.md").is_file())
+            self.assertTrue((provisioner / "host_preparation.py").is_file())
+            self.assertIn("foundation-ai-host-preparation/v1", (provisioner / "host_preparation.py").read_text(encoding="utf-8"))
+            self.assertTrue((target / ".ai" / "foundation" / "ai_work" / "ai_work.py").is_file())
 
     def test_model_router_capability_surfaces_runtime_configuration_notice(self) -> None:
         notices = install_foundation.capability_notices(["model-router"])
@@ -222,6 +235,14 @@ class InstallationModelTests(unittest.TestCase):
         self.assertEqual(notices[0]["code"], "AI_EXECUTOR_RUNTIME_CONFIGURATION_REQUIRED")
         self.assertIn("outside version control", notices[0]["message"])
         self.assertIn("non-idempotent", notices[0]["message"])
+
+    def test_ai_provisioning_requires_exact_external_approval(self) -> None:
+        notices = install_foundation.capability_notices(["ai-provisioning"])
+        self.assertEqual(len(notices), 1)
+        self.assertEqual(notices[0]["code"], "AI_PROVISIONING_EXACT_APPROVAL_REQUIRED")
+        self.assertIn("outside version control", notices[0]["message"])
+        self.assertIn("exact unexpired plan", notices[0]["message"])
+        self.assertIn("grants no network", notices[0]["message"])
 
     def test_github_registry_capability_surfaces_non_blocking_protection_recommendation(self) -> None:
         notices = install_foundation.capability_notices(["artifact-registry-github"])
@@ -315,6 +336,9 @@ class InstallationModelTests(unittest.TestCase):
         self.assertEqual(work["capability_failures"], "isolated")
         self.assertEqual(work["authority_expansion"], "prohibited")
         self.assertEqual(work["runtime_state"], "outside_version_control")
+        self.assertEqual(work["host_preparation"]["profile"], "foundation-ai-host-preparation/v1")
+        self.assertEqual(work["host_preparation"]["cost_refresh_minimum_seconds"], 86400)
+        self.assertEqual(work["host_preparation"]["reference_install_network"], "denied")
 
         upgrade = self.manifest["upgrade_contract"]
         self.assertTrue(upgrade["complete_feature_delta_required"])
@@ -386,7 +410,7 @@ class InstallationModelTests(unittest.TestCase):
         apply = bootstrap.compatibility_args(["target"])
         self.assertIn("--apply", apply)
 
-    def test_manifest_sources_exist_targets_unique_and_version_is_v1_12(self) -> None:
+    def test_manifest_sources_exist_targets_unique_and_version_is_v1_13(self) -> None:
         rows = list(self.manifest["core"])
         for adapter_rows in self.manifest["adapters"].values():
             rows.extend(adapter_rows)
@@ -397,7 +421,7 @@ class InstallationModelTests(unittest.TestCase):
         for row in rows:
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.12.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.13.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

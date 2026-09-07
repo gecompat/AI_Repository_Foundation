@@ -2,6 +2,24 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.13.0] - 2026-09-07
+
+### Added
+
+- optional `ai-provisioning` reference capability with isolated `doctor` and `inventory`, expiring content-addressed `plan-provision`, exact-plan-approved `provision`, repeatable `verify`, and per-source cost-evidence refresh;
+- portable runtime-inventory, host-provision-request, exact provision-approval, and provision-report schemas plus a complete manual workflow for environments without Python;
+- regressions for discovery outside `PATH`, partial runtime failure, hard resource/network limits, approval binding, verified resume, terminal hash failure, non-idempotent ambiguity, external state, and successful/failed refresh throttling.
+
+### Changed
+
+- provision actions may carry reference-executor metadata for exact target, license source, shell-free install/verify argument arrays, environment allowlisting, idempotency, and required offline installation;
+- failed cost-source attempts are throttled as strictly as successful refreshes, while unexpired last-known-good evidence remains locally usable and unrelated sources remain isolated;
+- host preparation treats discovery as evidence only, never as trust or authority, and requires a changed newly approved plan after failure or ambiguous non-idempotent execution.
+
+### Migration
+
+Core rules and schemas remain runtime-neutral and usable without Python, models, Ollama, LM Studio, MCP, providers, or network access. Select `ai-provisioning` only when its optional reference is useful. Keep definitions, inventories, plans, approvals, targets, downloads, checkpoints, credentials, and cost evidence outside Git. Installation grants no download, network, credential, spend, install, repository, push, pull-request, or publication authority.
+
 ## [1.12.0] - 2026-09-07
 
 ### Added

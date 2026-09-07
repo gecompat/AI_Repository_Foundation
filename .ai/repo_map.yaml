@@ -135,8 +135,13 @@ transfer:
     - foundation/schemas/validation-evidence.schema.json
     - foundation/schemas/gap-report.schema.json
     - foundation/schemas/provision-plan.schema.json
+    - foundation/schemas/provision-request.schema.json
+    - foundation/schemas/provision-approval.schema.json
+    - foundation/schemas/provision-report.schema.json
+    - foundation/schemas/runtime-inventory.schema.json
   optional_ai_work_capability: foundation/capabilities/ai-work/
   optional_ai_executor_capability: foundation/capabilities/ai-executor/
+  optional_ai_provisioning_capability: foundation/capabilities/ai-provisioning/
   schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
   optional_github_registry_capability: foundation/capabilities/artifact-registry-github/
@@ -155,3 +160,5 @@ installation:
   optional_github_registry: python tools/install_foundation.py TARGET --capabilities artifact-registry-github
   optional_model_router: python tools/install_foundation.py TARGET --capabilities model-router
   optional_ai_work_planner: python tools/install_foundation.py TARGET --capabilities ai-work
+  optional_ai_executor: python tools/install_foundation.py TARGET --capabilities ai-executor
+  optional_ai_provisioning: python tools/install_foundation.py TARGET --capabilities ai-provisioning
