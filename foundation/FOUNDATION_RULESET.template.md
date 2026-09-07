@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.14.0
+Ruleset version: 1.15.0
 
 This directory contains reusable governance rules, machine-readable schemas, the semantic feature catalog, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -27,6 +27,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - semantic feature catalog: `feature_catalog.json`
 - registration schemas: `schemas/artifact-record.schema.json`, `schemas/artifact-registry.schema.json`, `schemas/artifact-registry-v2.schema.json`, `schemas/artifact-registration-request.schema.json`
 - upgrade schemas: `schemas/feature-catalog.schema.json`, `schemas/upgrade-assessment.schema.json`
+- installed provenance schema: `schemas/installation-provenance.schema.json`
 - rule-context cache record schema: `schemas/rule-context-cache.schema.json`
 - model-routing schemas: v1 request/decision/catalog/snapshot/profiles plus `schemas/model-routing-request-v2.schema.json`, `schemas/model-routing-decision-v2.schema.json`, and `schemas/model-router-catalog-fragment-v2.schema.json`
 - AI work schemas: `schemas/ai-work-request.schema.json`, `schemas/capability-descriptor.schema.json`, `schemas/execution-plan.schema.json`, `schemas/execution-report.schema.json`, `schemas/execution-checkpoint.schema.json`, `schemas/approval-receipt.schema.json`, `schemas/validation-evidence.schema.json`, `schemas/gap-report.schema.json`, `schemas/provision-plan.schema.json`, `schemas/provision-request.schema.json`, `schemas/provision-approval.schema.json`, `schemas/provision-report.schema.json`, `schemas/runtime-inventory.schema.json`, `schemas/ai-adapter-protocol.schema.json`, `schemas/resource-cost-evidence.schema.json`, `schemas/client-integration-plan.schema.json`, `schemas/manual-handoff.schema.json`, `schemas/dispatch-receipt.schema.json`, and `schemas/adapter-synthesis-report.schema.json`
@@ -89,7 +90,7 @@ For UTF-8 Foundation text, LF and CRLF-only working-tree representations are equ
 
 A required check that ran and found a substantive defect is `VALIDATION_FAILURE` and must not be bypassed under break-glass policy. A check that cannot produce a trustworthy result because its external execution infrastructure is unavailable may be classified `INFRASTRUCTURE_UNAVAILABLE`; a project-defined break-glass path may then preserve repository continuity while keeping missing validation pending for post-recovery execution. `UNKNOWN` is non-bypassable until classified.
 
-A local override or drift warning identifies a difference; it is not semantic approval of that difference. A green Foundation validator must never be used as evidence that the entire target project is validated.
+Every selected transfer file has a portable source hash in the source manifest. `.ai/foundation/installation-provenance.json` records the exact ruleset/manifest identity and installed hashes after deterministic installation or completed semantic integration. Validation distinguishes `UNCHANGED_CURRENT_BASELINE`, `INTENTIONAL_OVERRIDE`, `PREVIOUS_FOUNDATION_VERSION`, and `UNKNOWN_DRIFT`. A receipt or override classification identifies provenance only; it is not semantic approval or project validation. A green Foundation validator must never be used as evidence that the entire target project is validated.
 
 ## Model-routing boundary
 

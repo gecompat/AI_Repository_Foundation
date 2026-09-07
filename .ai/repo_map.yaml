@@ -19,6 +19,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0018-rule-context-cache.md
     - Documentation/Architecture/decisions/DEC-0019-dynamic-cost-aware-model-routing.md
     - Documentation/Architecture/decisions/DEC-0020-capability-oriented-ai-work-orchestration.md
+    - Documentation/Architecture/decisions/DEC-0021-portable-installation-provenance.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -155,6 +156,7 @@ transfer:
   optional_github_registry_capability: foundation/capabilities/artifact-registry-github/
 validation:
   transfer_completeness_command: python tools/transfer_manifest_guard.py
+  transfer_hash_command: python tools/refresh_manifest_hashes.py --check
   semantic_feature_command: python tools/feature_catalog_guard.py
   central_registry_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json
   backlog_projection_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check

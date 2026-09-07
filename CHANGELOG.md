@@ -2,6 +2,25 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.15.0] - 2026-09-07
+
+### Added
+
+- portable SHA-256 provenance on every manifest transfer row and a core `foundation-installation-provenance/v1` schema;
+- atomic installed receipts containing exact ruleset/manifest identity, selected modules, and source/installed hashes without payloads, secrets, or host paths;
+- precise drift classifications for current baseline, intentional override, previous Foundation version, and unknown drift;
+- deterministic hash refresh/check tooling and regression coverage for tampering, stale receipts, semantic overrides, previous versions, and LF/CRLF portability.
+
+### Changed
+
+- clean installer applications now write an idempotent receipt; completed direct semantic transfers can record explicitly reasoned overrides without recopying files;
+- target validation retains the legacy broad drift warning for compatibility while adding exact provenance classifications;
+- transfer instructions require source-hash verification and a receipt after installation or semantic merge.
+
+### Validation
+
+- `WI-0001` closes only after the documented fresh-agent transfer and continuation procedure succeeds on a disposable synthetic repository; `WI-0002` closes only after deterministic local and required PR checks pass.
+
 ## [1.14.0] - 2026-09-07
 
 ### Added

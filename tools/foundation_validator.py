@@ -7,9 +7,10 @@ import argparse
 import json
 import re
 import sys
+from datetime import datetime
 from pathlib import Path
 
-from content_equivalence import files_equivalent
+from content_equivalence import files_equivalent, portable_file_sha256
 
 ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "foundation" / "manifest.json"
@@ -42,6 +43,7 @@ PROJECT_REQUIRED = [
     "foundation/schemas/artifact-registry-v2.schema.json",
     "foundation/schemas/artifact-registration-request.schema.json",
     "foundation/schemas/feature-catalog.schema.json",
+    "foundation/schemas/installation-provenance.schema.json",
     "foundation/schemas/upgrade-assessment.schema.json",
     "foundation/schemas/rule-context-cache.schema.json",
     "foundation/schemas/model-routing-request.schema.json",
@@ -50,6 +52,7 @@ PROJECT_REQUIRED = [
     "foundation/schemas/model-routing-snapshot.schema.json",
     "foundation/schemas/model-router-profiles.schema.json",
     "tools/content_equivalence.py", "tools/install_foundation.py", "tools/foundation_validator.py",
+    "tools/refresh_manifest_hashes.py",
 ]
 
 FORBIDDEN_TARGETS = {"README.md", "LICENSE", "CHANGELOG.md", "CONTRIBUTING.md", "SECURITY.md", ".gitignore"}
@@ -60,6 +63,21 @@ SECRET_PATTERNS = [
 ABSOLUTE_PATHS = [re.compile(r"[A-Za-z]:\\Users\\"), re.compile(r"/home/[^/\s]+/")]
 CONFLICT = re.compile(r"^(?:<<<<<<<|=======|>>>>>>>)", re.MULTILINE)
 PLACEHOLDER = re.compile(r"\b(?:CHANGEME|TODO_TEMPLATE|TBD_TEMPLATE)\b")
+SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
+SEMVER_RE = re.compile(r"^(0|[1-9]\d*)\.(0|[1-9]\d*)\.(0|[1-9]\d*)$")
+PROVENANCE_CONTRACT = {
+    "profile": "foundation-installation-provenance/v1",
+    "target": ".ai/foundation/installation-provenance.json",
+    "schema_target": ".ai/foundation/schemas/installation-provenance.schema.json",
+    "hash_algorithm": "sha256",
+    "content_normalization": "UTF8_CRLF_TO_LF_ELSE_EXACT",
+    "classifications": [
+        "UNCHANGED_CURRENT_BASELINE",
+        "INTENTIONAL_OVERRIDE",
+        "PREVIOUS_FOUNDATION_VERSION",
+        "UNKNOWN_DRIFT",
+    ],
+}
 
 VALIDATION_CONTRACT = {
     "foundation_validator_scope": "FOUNDATION_INTEGRITY",
@@ -367,11 +385,156 @@ def validate_markers(text: str, display: str, code: str, markers: list[str]) -> 
             add("ERROR", code, display, f"required marker missing: {marker}")
 
 
+def semver(value: object) -> tuple[int, int, int] | None:
+    if not isinstance(value, str):
+        return None
+    match = SEMVER_RE.fullmatch(value)
+    return tuple(int(part) for part in match.groups()) if match else None
+
+
+def validate_provenance_shape(value: object, manifest: dict) -> tuple[dict | None, str | None]:
+    required = {
+        "schema_version", "contract", "ruleset_version", "source_repository", "source_commit",
+        "source_manifest_sha256", "recorded_at", "selection", "files",
+    }
+    if not isinstance(value, dict) or set(value) != required:
+        return None, "provenance root fields do not match the v1 contract"
+    if value.get("schema_version") != 1 or value.get("contract") != PROVENANCE_CONTRACT["profile"]:
+        return None, "provenance contract identifier is invalid"
+    if semver(value.get("ruleset_version")) is None:
+        return None, "provenance ruleset_version is invalid"
+    if value.get("source_repository") != manifest.get("source_repository"):
+        return None, "provenance source_repository does not match this Foundation source"
+    commit = value.get("source_commit")
+    if commit is not None and (not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit)):
+        return None, "provenance source_commit is invalid"
+    if not isinstance(value.get("source_manifest_sha256"), str) or not SHA256_RE.fullmatch(value["source_manifest_sha256"]):
+        return None, "provenance source_manifest_sha256 is invalid"
+    try:
+        recorded_at = datetime.fromisoformat(str(value.get("recorded_at", "")).replace("Z", "+00:00"))
+    except ValueError:
+        return None, "provenance recorded_at is invalid"
+    if recorded_at.tzinfo is None:
+        return None, "provenance recorded_at must include a timezone"
+    selection = value.get("selection")
+    if not isinstance(selection, dict) or set(selection) != {"adapters", "capabilities"}:
+        return None, "provenance selection is invalid"
+    for name in ("adapters", "capabilities"):
+        items = selection.get(name)
+        if not isinstance(items, list) or any(not isinstance(item, str) or not item for item in items):
+            return None, f"provenance selection.{name} is invalid"
+        if len(items) != len(set(items)):
+            return None, f"provenance selection.{name} is invalid"
+    files = value.get("files")
+    if not isinstance(files, list) or not files:
+        return None, "provenance files must be a non-empty array"
+    expected_file_fields = {
+        "source", "target", "kind", "merge", "source_sha256", "installed_sha256",
+        "integration_state", "reason",
+    }
+    targets: set[str] = set()
+    for record in files:
+        if not isinstance(record, dict) or set(record) != expected_file_fields:
+            return None, "provenance file fields do not match the v1 contract"
+        if any(not isinstance(record.get(name), str) or not record[name] for name in ("source", "target", "kind", "merge")):
+            return None, "provenance file identifiers are invalid"
+        if record["target"] in targets:
+            return None, f"provenance target occurs more than once: {record['target']}"
+        targets.add(record["target"])
+        for name in ("source_sha256", "installed_sha256"):
+            if not isinstance(record.get(name), str) or not SHA256_RE.fullmatch(record[name]):
+                return None, f"provenance {name} is invalid for {record['target']}"
+        state = record.get("integration_state")
+        reason = record.get("reason")
+        if state == "FOUNDATION_BASELINE":
+            if reason is not None or record["installed_sha256"] != record["source_sha256"]:
+                return None, f"baseline provenance is inconsistent for {record['target']}"
+        elif state == "INTENTIONAL_OVERRIDE":
+            if not isinstance(reason, str) or not reason or record["installed_sha256"] == record["source_sha256"]:
+                return None, f"intentional-override provenance is inconsistent for {record['target']}"
+        else:
+            return None, f"provenance integration_state is invalid for {record['target']}"
+    if value["ruleset_version"] == manifest.get("ruleset_version") and value["source_manifest_sha256"] == portable_file_sha256(MANIFEST_PATH):
+        if any(name not in manifest.get("adapters", {}) for name in selection["adapters"]):
+            return None, "current provenance names an unknown adapter"
+        if any(name not in manifest.get("capabilities", {}) for name in selection["capabilities"]):
+            return None, "current provenance names an unknown capability"
+        expected_rows = list(manifest.get("core", []))
+        for name in selection["adapters"]:
+            expected_rows.extend(manifest["adapters"][name])
+        for name in selection["capabilities"]:
+            expected_rows.extend(manifest["capabilities"][name])
+        expected_targets = {row["target"] for row in expected_rows}
+        if targets != expected_targets:
+            return None, "current provenance files do not exactly match the recorded selection"
+    return value, None
+
+
+def load_target_provenance(target: Path, manifest: dict) -> tuple[dict | None, str | None, Path]:
+    path = target / PROVENANCE_CONTRACT["target"]
+    if not path.is_file():
+        return None, "installed provenance is missing", path
+    try:
+        value = json.loads(path.read_text(encoding="utf-8"))
+    except (OSError, json.JSONDecodeError) as exc:
+        return None, f"installed provenance is unreadable: {exc}", path
+    provenance, error = validate_provenance_shape(value, manifest)
+    return provenance, error, path
+
+
+def classify_installed_file(row: dict, destination: Path, manifest: dict, provenance: dict | None) -> str:
+    current_hash = portable_file_sha256(destination)
+    source_hash = row.get("source_sha256")
+    if provenance is None:
+        return "UNCHANGED_CURRENT_BASELINE" if current_hash == source_hash else "UNKNOWN_DRIFT"
+    current_version = semver(str(manifest.get("ruleset_version", "")))
+    installed_version = semver(str(provenance.get("ruleset_version", "")))
+    records = {record["target"]: record for record in provenance["files"]}
+    record = records.get(row["target"])
+    if record is None or current_version is None or installed_version is None:
+        return "UNKNOWN_DRIFT"
+    if current_hash != record["installed_sha256"]:
+        return "UNKNOWN_DRIFT"
+    current_manifest_hash = portable_file_sha256(MANIFEST_PATH)
+    if installed_version < current_version:
+        return "PREVIOUS_FOUNDATION_VERSION" if provenance["source_manifest_sha256"] != current_manifest_hash else "UNKNOWN_DRIFT"
+    if installed_version > current_version:
+        return "UNKNOWN_DRIFT"
+    if provenance["source_manifest_sha256"] != current_manifest_hash:
+        return "UNKNOWN_DRIFT"
+    metadata_matches = all(
+        record[name] == expected
+        for name, expected in {
+            "source": row.get("source"),
+            "target": row.get("target"),
+            "kind": row.get("kind"),
+            "merge": row.get("merge"),
+            "source_sha256": source_hash,
+        }.items()
+    )
+    if not metadata_matches:
+        return "UNKNOWN_DRIFT"
+    if record["integration_state"] == "INTENTIONAL_OVERRIDE":
+        return "INTENTIONAL_OVERRIDE"
+    return "UNCHANGED_CURRENT_BASELINE" if current_hash == source_hash else "UNKNOWN_DRIFT"
+
+
 def validate_manifest(manifest: dict) -> None:
     if manifest.get("schema_version") != 1:
         add("ERROR", "MANIFEST_SCHEMA", "foundation/manifest.json", "schema_version must be 1")
     if not manifest.get("ruleset_version"):
         add("ERROR", "MANIFEST_VERSION", "foundation/manifest.json", "ruleset_version is required")
+
+    if not isinstance(manifest.get("source_repository"), str) or not manifest["source_repository"].startswith("https://"):
+        add("ERROR", "MANIFEST_SOURCE_REPOSITORY", "foundation/manifest.json", "source_repository must be a non-empty HTTPS locator")
+
+    provenance_contract = manifest.get("installed_provenance_contract")
+    if not isinstance(provenance_contract, dict):
+        add("BLOCKING", "INSTALLED_PROVENANCE_CONTRACT", "foundation/manifest.json", "installed_provenance_contract is required")
+    else:
+        for key, expected in PROVENANCE_CONTRACT.items():
+            if provenance_contract.get(key) != expected:
+                add("ERROR", "INSTALLED_PROVENANCE_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
 
     validation_contract = manifest.get("validation_contract")
     if not isinstance(validation_contract, dict):
@@ -464,6 +627,11 @@ def validate_manifest(manifest: dict) -> None:
         source_path = ROOT / source
         if not source_path.is_file():
             add("ERROR", "MISSING_SOURCE", source, "manifest source does not exist")
+        declared_hash = row.get("source_sha256")
+        if not isinstance(declared_hash, str) or not SHA256_RE.fullmatch(declared_hash):
+            add("ERROR", "MANIFEST_SOURCE_HASH", source, "source_sha256 must be a lowercase SHA-256")
+        elif source_path.is_file() and portable_file_sha256(source_path) != declared_hash:
+            add("ERROR", "MANIFEST_SOURCE_HASH", source, "source_sha256 does not match portable source content")
 
     integration_rows = [row for row in rows if row.get("source") == INTEGRATION_CONTRACT["policy_source"] and row.get("target") == INTEGRATION_CONTRACT["policy_target"]]
     if len(integration_rows) != 1:
@@ -497,6 +665,9 @@ def validate_manifest(manifest: dict) -> None:
     for schema_target in MODEL_ROUTING_CONTRACT["schema_targets"]:
         if sum(row.get("target") == schema_target for row in rows) != 1:
             add("BLOCKING", "MODEL_ROUTING_SCHEMA_MAPPING", schema_target, "model-routing schema must be transferred exactly once")
+
+    if sum(row.get("target") == PROVENANCE_CONTRACT["schema_target"] for row in rows) != 1:
+        add("BLOCKING", "INSTALLED_PROVENANCE_SCHEMA_MAPPING", PROVENANCE_CONTRACT["schema_target"], "installed provenance schema must be transferred exactly once")
 
     for adapter in manifest.get("default_adapters", []):
         if adapter not in manifest.get("adapters", {}):
@@ -611,12 +782,33 @@ def validate_target(target: Path, adapter_selection: str, capability_selection: 
     add("INFO", "PROJECT_IDENTITY_SEMANTICS_OUT_OF_SCOPE", ".", "Foundation validator verifies the installed identity contract but cannot prove that an arbitrary target's historical identifiers, aliases, relations, or migration mappings are semantically correct. Review them under PROJECT_SEMANTIC and RUNTIME_EMPIRICAL when affected.")
     add("INFO", "PROJECT_REGISTRATION_AUTHORITY_OUT_OF_SCOPE", ".", "Foundation validator verifies the installed registration/central-registry contracts and selected capability files, but cannot prove that a target-specific issue tracker, service, database, registry path, or allocator is the correct serialized Registration Authority. Review that under PROJECT_SEMANTIC/RUNTIME_EMPIRICAL.")
 
+    provenance, provenance_error, provenance_path = load_target_provenance(target, manifest)
+    provenance_display = provenance_path.relative_to(target).as_posix()
+    if provenance_error:
+        add(
+            "WARNING",
+            "INSTALLED_PROVENANCE_MISSING" if not provenance_path.exists() else "INSTALLED_PROVENANCE_INVALID",
+            provenance_display,
+            provenance_error + "; file-level state falls back to current-baseline or UNKNOWN_DRIFT without claiming installation history",
+        )
+    if provenance_path.is_file() and profile != "quick":
+        scan_text(provenance_path, provenance_display)
+
     selected_paths: list[Path] = []
     required_mit_notice = (ROOT / "LICENSE").read_text(encoding="utf-8")
     for row in rows:
         source = ROOT / row["source"]
         destination = target / row["target"]
         display = row["target"]
+        declared_source_hash = row.get("source_sha256")
+        if (
+            not isinstance(declared_source_hash, str)
+            or not SHA256_RE.fullmatch(declared_source_hash)
+            or not source.is_file()
+            or portable_file_sha256(source) != declared_source_hash
+        ):
+            add("BLOCKING", "SOURCE_MANIFEST_HASH_INVALID", row.get("source", "foundation/manifest.json"), "selected source does not match its portable manifest hash")
+            continue
         if not destination.is_file():
             add("ERROR", "MISSING_TARGET_RULE", display, "selected Foundation rule/adapter/capability is missing")
             continue
@@ -639,6 +831,15 @@ def validate_target(target: Path, adapter_selection: str, capability_selection: 
             validate_markers(text, display, "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
             validate_markers(text, display, "RULE_CONTEXT_CACHE_SCOPE_MAP", RULE_CONTEXT_CACHE_MAP_MARKERS)
             validate_markers(text, display, "MODEL_ROUTING_SCOPE_MAP", MODEL_ROUTING_MAP_MARKERS)
+        classification = classify_installed_file(row, destination, manifest, provenance)
+        severity = "WARNING" if classification == "UNKNOWN_DRIFT" else "INFO"
+        messages = {
+            "UNCHANGED_CURRENT_BASELINE": "installed content matches the current manifest source hash",
+            "INTENTIONAL_OVERRIDE": "installed content matches an explicitly recorded intentional semantic override; semantic correctness remains target-owned",
+            "PREVIOUS_FOUNDATION_VERSION": "installed content matches its receipt but the receipt identifies an older Foundation ruleset version",
+            "UNKNOWN_DRIFT": "installed content cannot be reconciled with a current baseline, an exact intentional-override receipt, or a previous-version receipt",
+        }
+        add(severity, classification, display, messages[classification])
         if display.startswith(".ai/foundation/") and source.is_file() and not files_equivalent(destination, source):
             add("WARNING", "LOCAL_OVERRIDE_OR_DRIFT", display, "installed Foundation rule/provenance/capability file differs from current source after portable text-EOL normalization; this detects drift only and does not establish semantic correctness of the override")
 
