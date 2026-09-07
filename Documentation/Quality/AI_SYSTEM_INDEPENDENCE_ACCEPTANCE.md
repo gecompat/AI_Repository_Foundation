@@ -23,7 +23,7 @@ Automated acceptance uses synthetic local fixtures and deliberately unavailable 
 
 The full existing suite also covers router-v1 golden compatibility, malformed provider isolation, circuit breaking, bounded timeouts/cancellation, invalid JSON, last-known-good fragments, missing credentials, hard money/RAM/VRAM/CPU/GPU/disk/network/energy constraints, approval scope, resumable execution, and client configuration rollback.
 
-Cross-platform evidence: PR #25 head `b7878347cb1fe7866ae99bdb55729974d8fa8ca3` passed Foundation CI run `34147019605`, comprising the runtime-neutral contract selection on macOS and Windows followed by the required complete Linux `validate` gate. Foundation Artifact Registry run `34147019778` also passed. The same head passed the focused 91-test selection and all 229 tests locally on Windows.
+Cross-platform evidence: PR #25 final head `29b36e986937a2f245fa946ab11aa19f71970ac0` passed Foundation CI run `34147221089`, comprising the runtime-neutral contract selection on macOS and Windows followed by the required complete Linux `validate` gate. Foundation Artifact Registry run `34147221135` also passed. The implementation head passed the focused 91-test selection and all 229 tests locally on Windows. The PR was squash-merged as `a50b843a58b17368ed600350d6ae0eb9dc031f81`; post-merge Foundation CI run `34147315393` passed the same platform gate.
 
 ## Windows dual-runtime acceptance — 2026-09-07
 

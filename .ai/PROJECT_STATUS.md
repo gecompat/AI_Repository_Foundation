@@ -24,7 +24,7 @@ Foundation version: 1.14.0
 - checkpoint/report evidence contains content-free hashes/status/cost/resource metadata and one attempt without host paths, payloads, prompts, responses, environment values, credentials, or requested/actual model claims; resume does not repeat the completed invocation;
 - the same profile with no optional capability returns its configured truthful `MANUAL_REQUIRED` state;
 - the local candidate gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, diff hygiene, the focused 97-test cross-platform contract selection, and all 231 tests on Windows;
-- PR #26 head `487471b6155d19edc9d9a0bdd222b00e0cc40b26` passed Foundation CI run `34148146132`: macOS and Windows contract jobs plus the required Linux `validate` gate. Foundation Artifact Registry run `34148145993` also passed. `WI-0029` is done.
+- PR #26 final head `653a2c9bc3635d5ed355f0d09acc3cb0981d8ddb` passed Foundation CI run `34148362064`: macOS and Windows contract jobs plus the required Linux `validate` gate. Foundation Artifact Registry run `34148361996` also passed. It was squash-merged as `39cd94fe56ebfbd4218f971644cda5d0e12fc246`; post-merge Foundation CI run `34148447309` passed. `WI-0029` is done.
 
 ## System-independence acceptance — WI-0028
 
