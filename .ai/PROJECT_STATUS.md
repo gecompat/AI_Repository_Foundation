@@ -107,6 +107,7 @@ Foundation version: 1.9.0
 
 ## Validation evidence
 
+- AI work program registration: PR #19 head `5a0cb7a49e59bd6e5876f2a48391b0e921c7be05` passed Foundation Artifact Registry run `34121700368` and Foundation CI run `34121700457`.
 - v1.2.0 semantic integration: Foundation CI run `32646967820`, success.
 - v1.3.0 persistent identity: Foundation CI run `32708542537`, success.
 - v1.4.0 artifact registration: Foundation CI runs `32711801576` and `32711959226`, success.

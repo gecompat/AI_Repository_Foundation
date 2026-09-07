@@ -14,6 +14,8 @@ The 2026-09-07 post-merge audit found two bounded follow-ups while confirming th
 
 Accepted `DEC-0020` and registered `WI-0022`–`WI-0029` define the staged system-independent AI work program. The design keeps rules and contracts usable without an AI runtime, treats Ollama/MCP/Python/providers as optional capabilities, isolates failures, adds an optional risk-gated executor and bounded provisioner, and ends with cross-system degradation plus Foundation source-project self-hosting. `WI-0022` is the active first implementation item.
 
+PR #19 head `5a0cb7a49e59bd6e5876f2a48391b0e921c7be05` passed Foundation Artifact Registry run `34121700368` and Foundation CI run `34121700457` for the program-registration baseline.
+
 PR #15 is the Foundation 1.8.0 integration record for completed `WI-0018` and accepted `DEC-0018`. It adds a transferable Rule Context Cache contract/schema and an opt-in reference planner while preserving native Codex instruction discovery. Feature head `4a958344dea5cc8a8b57d2468752c415562e8486` passed Foundation Artifact Registry run `33560909931` and Foundation CI run `33560910019`, then squash-merged as `9a0f949ee0cdba73c8309e9dbb75c077ca21ab06`. The exact merge commit passed post-merge Foundation CI run `33561041239`.
 
 The local completion gate on 2026-09-01 passed transfer/feature guards, registry/backlog checks, the full Foundation validator, diff hygiene, compilation/JSON parsing, focused regressions, and all 94 tests. Post-merge local read-back confirmed the canonical clone and `origin/main` at the same merge commit with transfer, feature, registry, backlog, and Foundation validation green.
