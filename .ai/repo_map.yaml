@@ -16,6 +16,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0017-break-glass-repository-continuity.md
     - Documentation/Architecture/decisions/DEC-0018-rule-context-cache.md
     - Documentation/Architecture/decisions/DEC-0019-dynamic-cost-aware-model-routing.md
+    - Documentation/Architecture/decisions/DEC-0020-capability-oriented-ai-work-orchestration.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md

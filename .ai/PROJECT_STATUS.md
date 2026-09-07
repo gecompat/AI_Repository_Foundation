@@ -98,6 +98,13 @@ Foundation version: 1.9.0
 - `WI-0021` tracks a bounded evaluation/accounting gap: evaluation plans do not explicitly encode the required task set, sample count, and stopping rules, and paired candidate/incumbent reservations currently settle only the candidate-reported cost into daily evaluation spend;
 - these follow-ups do not reopen completed `WI-0019`; they preserve its implemented baseline and identify only the remaining work demonstrated by code-path and regression-counterexample review.
 
+## System-independent AI work program — DEC-0020 / WI-0022–WI-0029
+
+- `DEC-0020` establishes a runtime-neutral AI work control plane in which deterministic tools, models, retrieval, rendering, validation, external services, and human checkpoints are discovered capabilities rather than mandatory dependencies;
+- `WI-0020` and `WI-0021` remain the first router-correctness prerequisites; `WI-0022` through `WI-0028` stage contracts, isolated adapters, resumable execution, total-resource economics, bounded provisioning, client integration, and degradation validation;
+- `WI-0029` applies the completed contracts to this Foundation source repository without committing host paths, credentials, model catalogs, payloads, or runtime traces;
+- every implementation stage must preserve router-v1 compatibility and leave Foundation governance usable when Python, MCP, network, providers, models, and optional executors are absent.
+
 ## Validation evidence
 
 - v1.2.0 semantic integration: Foundation CI run `32646967820`, success.
