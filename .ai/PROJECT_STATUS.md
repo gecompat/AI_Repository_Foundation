@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-07
-Foundation version: 1.13.0 candidate
+Foundation version: 1.14.0 candidate
 
 ## Implemented baseline
 
@@ -14,6 +14,16 @@ Foundation version: 1.13.0 candidate
 - source-side transfer completeness/version guard and negative regression tests;
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
+
+## v1.14.0 candidate — WI-0027
+
+- optional client integration now follows `detect -> plan -> apply -> verify -> rollback`, revalidates executable/configuration hashes, preserves unrelated settings, and stores exact backups/state outside Git;
+- Codex uses policy/CLI/launcher/snapshot paths, Visual Studio and GitHub Copilot retain their distinct MCP shapes, and generic clients remain capability-driven rather than vendor-assumed;
+- requested and actual models are distinct facts: only matching host execution/response metadata yields `ATTESTED`; every weaker claim remains `REQUESTED_NOT_ATTESTED`;
+- unavailable or unattested automatic dispatch produces an expiring privacy-safe `MANUAL_DISPATCH_REQUIRED` handoff whose prompt content stays in an external handle and whose concrete model is optional fresh runtime evidence;
+- local adapter synthesis requires explicit authority, reviewed source material, external storage, network/credential/repository-write denial, source/configuration hashes, initial quarantine, and full JSONL protocol conformance before `VERIFIED`;
+- capability gaps remain content-free local/stdout reports unless a separately authorized Registration Authority and repository workflow creates a durable work item.
+- v1.14.0 local completion gate on 2026-09-07: transfer/feature guards, registry validation/backlog projection, full Foundation validator, JSON/compile/diff hygiene, focused client/install/upgrade/self-hosting tests, and all 222 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
 
 ## v1.13.0 candidate — WI-0026
 

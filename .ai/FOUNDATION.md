@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.13.0
+- version: 1.14.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -30,6 +30,7 @@ Status: AUTHORITATIVE
 - rule_context_cache_contract: native instruction discovery per run; session-local semantic analyses keyed by validated scope/source dependencies; optional local records contain fingerprints/dependency metadata only and fail closed on scope, instruction, topology, source-set, schema, generator, corruption, or uncertainty changes
 - model_routing_contract: compatible `foundation-model-router/v1` plus v2 boundaries/resources/isolated fragments; complete-chain expected cost of success; price-epoch expiry; conditional affinity; paired bounded evaluation; runtime state outside version control
 - ai_work_contract: runtime-neutral `foundation-ai-work/v1`; payload handles; isolated optional capabilities; authority intersection; truthful degradation; risk-gated validation; optional content-free resumable execution; runtime state outside version control
+- ai_client_integration_contract: semantic detect/plan/apply/verify/rollback; requested-versus-actual dispatch evidence; privacy-safe external manual handoff; quarantined governed adapter synthesis
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
@@ -41,7 +42,7 @@ Status: AUTHORITATIVE
 - target_github_merge_protection: recommended when relevant, never silently imposed by Foundation transfer
 - python_runtime_required: false
 - powershell_reference_client: supported first-class for the v1 compatibility profile
-- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`; `ai-executor`; `ai-provisioning`
+- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`; `ai-executor`; `ai-provisioning`; `ai-client-integration`
 - target_project_license: never replaced or modified by installation
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none
@@ -107,6 +108,8 @@ Concrete model identifiers, providers, capabilities, availability, and prices re
 The optional `model-router` capability provides a dependency-free Python core and CLI, an Ollama Cloud discovery/pricing adapter, a local newline-delimited JSON-RPC stdio MCP server, a shell-free launcher, and expiring snapshots. Runtime catalogs, aggregate outcomes, hashed session references, evaluation reservations, launchers, and snapshots stay outside Git under atomic locking. Credentials are read from the execution environment and never stored. Visual Studio and GitHub Copilot receive separate MCP examples because their configuration shapes differ; Codex and all other clients can always use the CLI/launcher/snapshot fallback.
 
 Foundation 1.13 adds optional bounded host preparation without making provisioning a prerequisite. Runtime inventory, provision request/plan/approval/report, exact source/license/hash/resource limits, offline installation, terminal failure recovery, and per-source at-most-daily cost-evidence refresh are portable contracts. The `ai-provisioning` Python reference is opt-in; all state, targets, inventories, approvals, downloads, and observed prices remain outside Git. Missing Python, network, runtimes, providers, or the provisioner leaves the Foundation rules valid and yields a deterministic alternative or truthful unavailable/manual status.
+
+Foundation 1.14 adds optional client integration without trusting a requested model as execution evidence. Codex, Visual Studio, GitHub Copilot, and generic clients use capability-specific `detect -> plan -> apply -> verify -> rollback` flows that preserve unrelated configuration and keep exact backups outside Git. Matching host execution/response metadata is required for `ATTESTED`; otherwise the result remains `REQUESTED_NOT_ATTESTED`. When automatic dispatch is unavailable, an expiring `MANUAL_DISPATCH_REQUIRED` handoff separates prompt content from its control record and recommends a concrete model only from fresh privacy-eligible runtime evidence. Explicitly authorized local adapter synthesis copies reviewed sources into an external least-privilege quarantine and cannot be used before conformance passes.
 
 For existing repositories, semantic integration preserves target-owned governance. Foundation `REQUIRED` rules are minimum floors; stricter target rules are compatible. Existing target policy vocabularies do not need to be rewritten into Foundation terms when a semantic mapping is sufficient.
 

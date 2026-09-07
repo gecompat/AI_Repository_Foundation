@@ -185,6 +185,21 @@ def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
                 ),
             }
         )
+    if "ai-client-integration" in capabilities:
+        notices.append(
+            {
+                "code": "AI_CLIENT_INTEGRATION_EXTERNAL_STATE_AND_AUTHORITY_REQUIRED",
+                "severity": "NOTICE",
+                "message": (
+                    "The ai-client-integration capability installs optional reference code only. Detect and plan before any "
+                    "apply, preserve existing client configuration semantically, and keep backups, plans, prompt handles, "
+                    "dispatch receipts, and synthesized adapters outside version control. A requested model is not proof of "
+                    "actual execution; use host execution/response evidence or preserve REQUESTED_NOT_ATTESTED and the "
+                    "MANUAL_DISPATCH_REQUIRED fallback. Installation grants no configuration, repository, network, credential, "
+                    "model, push, pull-request, publication, or adapter-synthesis authority."
+                ),
+            }
+        )
     return notices
 
 

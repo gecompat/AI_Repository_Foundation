@@ -215,14 +215,16 @@ After installation:
 2. provide `OLLAMA_API_KEY` through the execution environment only—never store it in the catalog, profile, snapshot, repository, or generated launcher;
 3. configure project-specific quality priors, capability declarations, budgets, and evaluation bounds without treating discovery as proof of quality;
 4. sync the live catalog and retain only an unexpired last-known-good catalog if refresh fails;
-5. use local MCP, CLI, shell-free launcher, or unexpired snapshot in that order, preserving explicit remote authorization and fail-closed behavior at every layer;
+5. use local MCP, CLI, shell-free launcher, unexpired snapshot, or an expiring manual handoff in that order, preserving explicit remote authorization and fail-closed behavior at every layer;
 6. merge the relevant MCP example manually: Visual Studio uses the supplied `servers` template, while GitHub Copilot uses the supplied `mcpServers` template. Do not copy either example over an existing client configuration wholesale.
 
 Runtime catalogs, aggregate outcomes, session hashes, evaluation reservations, launchers, and snapshots stay outside version control. The capability does not invoke a model itself and does not make client-specific routing policy authoritative.
 
+Do not infer actual dispatch from a requested model, accepted model parameter, catalog listing, subagent creation, or an untrusted `evidence_kind` label. Matching host execution/response metadata from an explicitly trusted issuer is required for `ATTESTED`; otherwise preserve `REQUESTED_NOT_ATTESTED`. The optional `ai-client-integration` capability implements `detect -> plan -> apply -> verify -> rollback`, distinct Visual Studio/GitHub Copilot shapes, external exact backups, dispatch receipts, and `MANUAL_DISPATCH_REQUIRED` handoffs. A manual handoff keeps prompt content in an external handle and recommends a concrete model only from fresh eligible evidence; selection and execution remain user/client actions.
+
 ## System-independent AI work and host preparation
 
-The core `foundation-ai-work/v1` schemas and `AI_WORK_ORCHESTRATION_POLICY.md` apply without any executable AI component. Select `ai-work`, `ai-runtime-adapters`, `ai-executor`, and `ai-provisioning` independently and only when their optional reference behavior is useful. Their dependency declarations install required contract code but grant no runtime authority.
+The core `foundation-ai-work/v1` schemas and `AI_WORK_ORCHESTRATION_POLICY.md` apply without any executable AI component. Select `ai-work`, `ai-runtime-adapters`, `ai-executor`, `ai-provisioning`, and `ai-client-integration` independently and only when their optional reference behavior is useful. Their dependency declarations install required contract code but grant no runtime authority.
 
 The optional `ai-provisioning` capability can diagnose configured runtimes outside `PATH`, inventory each runtime independently, create an expiring hash-bound `ProvisionPlan`, execute a matching approved bounded download/offline install, verify the result, and maintain isolated cost-evidence cache entries. It is one implementation of the language-neutral contract; Python, Ollama, LM Studio, any cloud, and any specific model remain optional.
 
@@ -237,6 +239,8 @@ Before selecting or using it:
 7. configure cost research from independently verified primary/project sources, at most once per source per 24 hours including failures, and preserve routing without AI/network when evidence is cached or unavailable.
 
 Do not transfer external definitions, plans, approvals, inventories, downloads, checkpoints, host paths, cost observations, or credentials into the target repository. The capability documentation includes a full manual procedure for environments without Python.
+
+For client integration, keep detection evidence, plans, prompt files, dispatch receipts, original client-configuration backups, and synthesis state outside version control. Configuration writes and repository writes require their distinct declared authority. A capability gap remains a content-free local/stdout `GapReport` unless a separately authorized Registration Authority and repository workflow creates a durable artifact. Local adapter synthesis requires explicit authority, copies only reviewed sources, denies network/credentials/repository writes by default, and remains quarantined until complete protocol conformance passes; promotion into a repository is always separate.
 
 ## Required attribution
 

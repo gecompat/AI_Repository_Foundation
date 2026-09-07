@@ -70,6 +70,14 @@ Runtime state lives outside version control. By default it contains only identif
 
 An `ExecutionReport` records attempts, validation, limits, costs/resources, constraints, and remaining actions without inventing success. A `GapReport` identifies a missing capability, tested alternatives, an optional least-privilege local remedy, and the authority needed to apply it. Without repository authority, gap reports remain local/stdout; they do not create issues, commits, branches, pushes, or pull requests.
 
+## Client integration and model-dispatch evidence
+
+Client integration follows `detect -> plan -> apply -> verify -> rollback`. Existing configuration is read and merged semantically; wholesale replacement, unreviewed key collision, or erasure of unrelated configuration is prohibited. Apply revalidates the observed file and executable hashes. Rollback restores only an exact recorded predecessor while the applied output remains unchanged. Configuration writes, repository writes, push, pull request, and publication remain separate authorities.
+
+Client support is capability-based. Codex may use policy plus CLI/launcher/snapshot; Visual Studio and GitHub Copilot may use their distinct MCP configuration shapes; generic clients may use any attested compatible transport. A client session, advertised model list, accepted model parameter, requested subagent model, model self-report, or untrusted evidence label does not prove a switch. Actual automatic dispatch requires a receipt identifying requested and actual model from host execution/response evidence issued by a target-configured trusted runtime identity. Otherwise the result is `REQUESTED_NOT_ATTESTED`.
+
+When automatic dispatch is unavailable or unattested, create an expiring content-free `ManualHandoff` with `MANUAL_DISPATCH_REQUIRED`. It identifies tier, capabilities, data/risk classification, acceptance and validation requirements, and a separate prompt handle. A fresh concrete model may be suggested from catalog/configuration evidence but MUST remain marked as not execution-attested until the subsequent receipt. Without such evidence, recommend only the portable tier/capabilities. `LOCAL` never recommends a generative model. Non-public content MUST NOT be handed to a remote or unknown boundary without explicit transfer authority.
+
 ## Provisioning and local adapter synthesis
 
 A `ProvisionPlan` is read-only until explicitly approved. It is content-addressed, expires, and lists exact source, artifact/model identifier, target runtime, license/use notice, expected transfer/disk/memory, network destination, monetary ceiling, verification, rollback, and recovery. Automated provisioning may perform only actions included in the approved plan; partial failure must not look complete.
@@ -79,6 +87,8 @@ Host preparation follows `doctor -> inventory -> plan-provision -> approve -> pr
 Provision state and targets remain outside version control. A completed exact plan may be read or verified again without repeating the download. A failed plan requires changed inputs, adapter, or evidence and a newly approved plan. An interrupted non-idempotent action is `MANUAL_REQUIRED` until reconciled. Cleanup MUST identify exact staged/target artifacts and MUST NOT delete an unknown or pre-existing target.
 
 Local adapter synthesis requires explicit `allow_local_adapter_synthesis` authority. Generated material remains outside the repository, starts without network, credentials, or repository write access, includes its source hash, and is quarantined until protocol conformance passes. Durable repository adoption is a separate authorized workflow.
+
+Reference synthesis SHOULD materialize reviewed sources rather than executing unconstrained generated code. Conformance MUST revalidate source/configuration hashes and least privilege, exercise the required protocol operations through bounded content handles, and leave any failing adapter quarantined. Conformance proves protocol behavior, not capability quality or a safe execution boundary for an arbitrary child command.
 
 ## Compatibility
 

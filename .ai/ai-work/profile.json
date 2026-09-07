@@ -5,6 +5,15 @@
     "payload_persistence": "PROHIBITED",
     "remote_data_classes": []
   },
+  "client_dispatch": {
+    "actual_model_evidence": ["HOST_EXECUTION", "HOST_RESPONSE_METADATA"],
+    "client_requirements": [],
+    "manual_fallback": "MANUAL_DISPATCH_REQUIRED",
+    "requested_without_actual_evidence": "REQUESTED_NOT_ATTESTED",
+    "runtime_state_location": "OUTSIDE_REPOSITORY",
+    "synthesized_adapter_default": "DENY_UNLESS_EXPLICITLY_AUTHORIZED_AND_CONFORMANCE_VERIFIED",
+    "trusted_dispatch_issuers": []
+  },
   "degradation": {
     "no_capability": "MANUAL_REQUIRED",
     "no_executor": "PLAN_ONLY",

@@ -118,7 +118,10 @@ Use the strongest integration available in this order:
 2. CLI pull routing (`ai-model-router route`);
 3. push routing with `launch`, which substitutes whole-argument placeholders and starts the client without a shell;
 4. an expiring runtime snapshot for a client that cannot call tools;
-5. the Foundation tier semantics only, without inventing a current concrete model or price.
+5. an expiring privacy-safe manual handoff that tells the user which tier/capabilities and, only with fresh eligible evidence, which concrete model to select;
+6. the Foundation tier semantics only, without inventing a current concrete model or price.
+
+Requesting a model does not prove that a client or subagent used it. Preserve requested and actual model separately, require matching host execution/response metadata from an explicitly trusted issuer for `ATTESTED`, and otherwise report `REQUESTED_NOT_ATTESTED`. The optional `ai-client-integration` capability implements this receipt check and the `MANUAL_DISPATCH_REQUIRED` fallback; it remains separate from routing so the router stays decision-only.
 
 Example push routing:
 

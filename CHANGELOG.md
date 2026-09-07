@@ -2,6 +2,25 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.14.0] - 2026-09-07
+
+### Added
+
+- optional `ai-client-integration` reference capability with semantic `detect`, `plan`, `apply`, `verify`, and exact `rollback` for Codex, Visual Studio, GitHub Copilot, and generic client paths;
+- portable client-plan, manual-handoff, model-dispatch-receipt, and adapter-synthesis-report schemas;
+- an expiring `MANUAL_DISPATCH_REQUIRED` fallback that stores prompt content only in an external handle and may suggest a concrete model only from fresh eligible runtime evidence;
+- governed local adapter materialization with explicit synthesis authority, reviewed source hashes, least-privilege configuration, quarantine, and full JSONL protocol conformance.
+
+### Changed
+
+- a requested model, accepted parameter, advertised model, or created subagent no longer counts as proof of execution; only matching host execution/response metadata produces `ATTESTED`, otherwise status is `REQUESTED_NOT_ATTESTED`;
+- graceful degradation now includes a truthful manual model-selection step before portable tier-only guidance;
+- client configuration and capability-gap handling preserve separate configuration/repository/push/PR/publication authorities and keep backups, prompts, receipts, plans, and synthesis state outside version control.
+
+### Migration
+
+Core policy and schemas remain usable without Python, MCP, a model router, any AI runtime, network, or client integration. Select `ai-client-integration` only when its optional reference is useful. Existing client settings are semantically merged, never replaced wholesale; automatic or manual model selection does not grant data-transfer, spend, write, push, PR, or publication authority.
+
 ## [1.13.0] - 2026-09-07
 
 ### Added

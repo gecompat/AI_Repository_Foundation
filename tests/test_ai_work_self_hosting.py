@@ -16,6 +16,8 @@ class AIWorkSelfHostingTests(unittest.TestCase):
         self.assertEqual(self.profile["contract"], "foundation-ai-work/v1")
         self.assertEqual(self.profile["provider_requirements"], [])
         self.assertEqual(self.profile["runtime_inventory_location"], "OUTSIDE_REPOSITORY")
+        self.assertEqual(self.profile["client_dispatch"]["client_requirements"], [])
+        self.assertEqual(self.profile["client_dispatch"]["runtime_state_location"], "OUTSIDE_REPOSITORY")
         text = json.dumps(self.profile).lower()
         for forbidden in ("ollama", "openai", "lm studio", "c:\\", "d:\\", "token", "credential"):
             self.assertNotIn(forbidden, text)
@@ -28,6 +30,11 @@ class AIWorkSelfHostingTests(unittest.TestCase):
         )
         self.assertEqual(self.profile["degradation"]["no_capability"], "MANUAL_REQUIRED")
         self.assertEqual(self.profile["degradation"]["provider_failure"], "EXCLUDE_PROVIDER_FRAGMENT_ONLY")
+        dispatch = self.profile["client_dispatch"]
+        self.assertEqual(dispatch["requested_without_actual_evidence"], "REQUESTED_NOT_ATTESTED")
+        self.assertEqual(dispatch["manual_fallback"], "MANUAL_DISPATCH_REQUIRED")
+        self.assertEqual(dispatch["actual_model_evidence"], ["HOST_EXECUTION", "HOST_RESPONSE_METADATA"])
+        self.assertEqual(dispatch["trusted_dispatch_issuers"], [])
 
     def test_foundation_validation_is_shell_free_and_maps_existing_gates(self) -> None:
         validation = self.profile["validation_capabilities"]["foundation.validate"]

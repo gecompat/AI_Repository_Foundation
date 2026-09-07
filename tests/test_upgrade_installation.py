@@ -46,12 +46,16 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("runtime_inventory_schema: .ai/foundation/schemas/runtime-inventory.schema.json", repo_map)
             self.assertIn("host_preparation_capability: ai-provisioning", repo_map)
             self.assertIn("cost_refresh_minimum_seconds: 86400", repo_map)
+            self.assertIn("ai_client_integration_contract:", repo_map)
+            self.assertIn("profile: foundation-ai-client-integration/v1", repo_map)
+            self.assertIn("manual_fallback_status: MANUAL_DISPATCH_REQUIRED", repo_map)
+            self.assertIn("unattested_status: REQUESTED_NOT_ATTESTED", repo_map)
 
     def test_feature_catalog_and_manifest_versions_match(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.13.0")
+        self.assertEqual(manifest["ruleset_version"], "1.14.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -118,6 +122,17 @@ class UpgradeInstallationTests(unittest.TestCase):
         self.assertEqual(preparation["candidate_reasons"], ["introduced_in:1.13.0"])
         self.assertIn("runtime_outside_path", preparation["applicability"]["signals"])
         self.assertIn("no more than once per source per day", preparation["recommendation"]["summary"])
+
+    def test_1_13_to_1_14_delta_surfaces_attested_and_manual_client_dispatch(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.13.0", "1.14.0")
+        by_id = {item["feature_id"]: item for item in candidates}
+        self.assertEqual(by_id["model-routing-interoperability"]["candidate_reasons"], ["material_change:1.14.0"])
+        self.assertEqual(by_id["ai-work-orchestration"]["candidate_reasons"], ["material_change:1.14.0"])
+        integration = by_id["ai-client-integration"]
+        self.assertEqual(integration["candidate_reasons"], ["introduced_in:1.14.0"])
+        self.assertIn("model_dispatch_attestation", integration["applicability"]["signals"])
+        self.assertIn("manual handoff", integration["recommendation"]["summary"])
 
 
 if __name__ == "__main__":
