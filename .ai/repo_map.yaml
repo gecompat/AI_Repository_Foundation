@@ -130,10 +130,13 @@ transfer:
     - foundation/schemas/capability-descriptor.schema.json
     - foundation/schemas/execution-plan.schema.json
     - foundation/schemas/execution-report.schema.json
+    - foundation/schemas/execution-checkpoint.schema.json
+    - foundation/schemas/approval-receipt.schema.json
     - foundation/schemas/validation-evidence.schema.json
     - foundation/schemas/gap-report.schema.json
     - foundation/schemas/provision-plan.schema.json
   optional_ai_work_capability: foundation/capabilities/ai-work/
+  optional_ai_executor_capability: foundation/capabilities/ai-executor/
   schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
   optional_github_registry_capability: foundation/capabilities/artifact-registry-github/

@@ -52,7 +52,26 @@ def parse_adapters(manifest: dict, raw: str) -> list[str]:
 
 
 def parse_capabilities(manifest: dict, raw: str) -> list[str]:
-    return parse_selection(manifest, raw, section="capabilities", default_key="default_capabilities")
+    selected = parse_selection(manifest, raw, section="capabilities", default_key="default_capabilities")
+    dependencies = manifest.get("capability_dependencies", {})
+    result: list[str] = []
+
+    def include(name: str, active: set[str]) -> None:
+        if name in active:
+            raise ValueError(f"cyclic capability dependency: {name}")
+        if name in result:
+            return
+        if name not in manifest.get("capabilities", {}):
+            raise ValueError(f"unknown capability dependency: {name}")
+        active.add(name)
+        for dependency in dependencies.get(name, []):
+            include(dependency, active)
+        active.remove(name)
+        result.append(name)
+
+    for name in selected:
+        include(name, set())
+    return result
 
 
 def transfer_entries(
@@ -136,6 +155,19 @@ def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
                     "endpoint, enable network access, allow remote models, disclose credentials, choose file roots, or invoke a "
                     "runtime. Keep endpoint/host configuration, payloads, resource-cost evidence, and adapter state outside version "
                     "control; allowlist only required environment names and data classes."
+                ),
+            }
+        )
+    if "ai-executor" in capabilities:
+        notices.append(
+            {
+                "code": "AI_EXECUTOR_RUNTIME_CONFIGURATION_REQUIRED",
+                "severity": "NOTICE",
+                "message": (
+                    "The ai-executor capability installs an optional reference executor without adapter bindings, handles, "
+                    "approvals, credentials, or execution authority. Keep all runtime configuration and checkpoints outside "
+                    "version control, use absolute shell-free adapter argv, and reconcile ambiguous non-idempotent external "
+                    "effects manually. Installing it does not make Python, any adapter, model, provider, or network mandatory."
                 ),
             }
         )

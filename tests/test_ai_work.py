@@ -83,6 +83,15 @@ class AIWorkPlannerTests(unittest.TestCase):
         self.assertEqual(result["steps"][0]["capability_id"], "deterministic")
         self.assertEqual(result["steps"][0]["alternatives"], ["model"])
 
+    def test_omitted_execution_extension_preserves_v1_descriptor_shape(self) -> None:
+        normalized = ai_work.validate_capability(capability("legacy"))
+        self.assertNotIn("execution", normalized)
+        extended = capability("extended", execution={})
+        self.assertEqual(
+            ai_work.validate_capability(extended)["execution"],
+            {"idempotency": "NONE", "resume": "RESTART"},
+        )
+
     def test_expired_and_failed_entries_are_isolated(self) -> None:
         expired = capability("expired")
         expired["health"] = {"state": "HEALTHY", "checked_at": "2026-09-07T11:00:00Z", "expires_at": "2026-09-07T11:30:00Z"}
@@ -134,6 +143,13 @@ class AIWorkPlannerTests(unittest.TestCase):
         self.assertEqual(result["status"], "EXECUTABLE")
         self.assertEqual([step["step_id"] for step in result["steps"]], ["work", "validate"])
         self.assertEqual(result["steps"][1]["depends_on"], ["work"])
+
+    def test_independent_validation_cannot_reuse_the_work_capability(self) -> None:
+        both = capability("same", kind="VALIDATOR", functions=["source.validate", "tests.run"])
+        validation = {"required_capabilities": ["tests.run"], "independent_required": True, "allow_human": False}
+        result = ai_work.plan(request(validation=validation), [both], at=AT)
+        self.assertEqual(result["status"], "UNAVAILABLE")
+        self.assertIn("INDEPENDENT_VALIDATION_UNAVAILABLE", result["reason_codes"])
 
     def test_risk_effects_create_one_grouped_checkpoint(self) -> None:
         auth = {
@@ -189,7 +205,7 @@ class AIWorkPlannerTests(unittest.TestCase):
         names = [
             "ai-work-request.schema.json", "capability-descriptor.schema.json", "execution-plan.schema.json",
             "execution-report.schema.json", "validation-evidence.schema.json", "gap-report.schema.json",
-            "provision-plan.schema.json",
+            "provision-plan.schema.json", "execution-checkpoint.schema.json", "approval-receipt.schema.json",
         ]
         for name in names:
             schema = json.loads((ROOT / "foundation" / "schemas" / name).read_text(encoding="utf-8"))

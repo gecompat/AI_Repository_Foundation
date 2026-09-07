@@ -90,7 +90,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.11.0")
+            self.assertEqual(catalog["ruleset_version"], "1.12.0")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
             self.assertIn("rule-context-cache", catalog["features"])
@@ -115,6 +115,8 @@ class InstallationModelTests(unittest.TestCase):
                 "capability-descriptor.schema.json",
                 "execution-plan.schema.json",
                 "execution-report.schema.json",
+                "execution-checkpoint.schema.json",
+                "approval-receipt.schema.json",
                 "validation-evidence.schema.json",
                 "gap-report.schema.json",
                 "provision-plan.schema.json",
@@ -136,6 +138,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertFalse((target / ".ai" / "foundation" / "model_router").exists())
             self.assertFalse((target / ".ai" / "foundation" / "ai_work").exists())
             self.assertFalse((target / ".ai" / "foundation" / "ai_runtime_adapters").exists())
+            self.assertFalse((target / ".ai" / "foundation" / "ai_executor").exists())
 
     def test_reference_clients_and_github_registry_capabilities_are_opt_in(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -182,6 +185,14 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((adapters / "AI_RUNTIME_ADAPTERS.md").is_file())
             self.assertTrue((adapters / "adapter_protocol.py").is_file())
             self.assertTrue((adapters / "reference_adapters.py").is_file())
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            self.assertEqual(self.install(target, "--capabilities", "ai-executor"), 0)
+            executor_dir = target / ".ai" / "foundation" / "ai_executor"
+            self.assertTrue((executor_dir / "AI_EXECUTOR.md").is_file())
+            self.assertTrue((executor_dir / "ai_executor.py").is_file())
+            self.assertIn("foundation-ai-executor-checkpoint/v1", (executor_dir / "ai_executor.py").read_text(encoding="utf-8"))
+            self.assertTrue((target / ".ai" / "foundation" / "ai_work" / "ai_work.py").is_file())
 
     def test_model_router_capability_surfaces_runtime_configuration_notice(self) -> None:
         notices = install_foundation.capability_notices(["model-router"])
@@ -204,6 +215,13 @@ class InstallationModelTests(unittest.TestCase):
         self.assertEqual(notices[0]["code"], "AI_RUNTIME_ADAPTER_CONFIGURATION_REQUIRED")
         self.assertIn("does not trust a loopback", notices[0]["message"])
         self.assertIn("outside version control", notices[0]["message"])
+
+    def test_ai_executor_requires_external_runtime_configuration(self) -> None:
+        notices = install_foundation.capability_notices(["ai-executor"])
+        self.assertEqual(len(notices), 1)
+        self.assertEqual(notices[0]["code"], "AI_EXECUTOR_RUNTIME_CONFIGURATION_REQUIRED")
+        self.assertIn("outside version control", notices[0]["message"])
+        self.assertIn("non-idempotent", notices[0]["message"])
 
     def test_github_registry_capability_surfaces_non_blocking_protection_recommendation(self) -> None:
         notices = install_foundation.capability_notices(["artifact-registry-github"])
@@ -368,7 +386,7 @@ class InstallationModelTests(unittest.TestCase):
         apply = bootstrap.compatibility_args(["target"])
         self.assertIn("--apply", apply)
 
-    def test_manifest_sources_exist_targets_unique_and_version_is_v1_11(self) -> None:
+    def test_manifest_sources_exist_targets_unique_and_version_is_v1_12(self) -> None:
         rows = list(self.manifest["core"])
         for adapter_rows in self.manifest["adapters"].values():
             rows.extend(adapter_rows)
@@ -379,7 +397,7 @@ class InstallationModelTests(unittest.TestCase):
         for row in rows:
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.11.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.12.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

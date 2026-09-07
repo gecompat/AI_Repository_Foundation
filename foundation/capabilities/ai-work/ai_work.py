@@ -163,11 +163,20 @@ def validate_request(raw: Any) -> dict[str, Any]:
         if floor > 1:
             raise WorkError("quality.minimum_success_probability must not exceed 1")
         normalized_quality["minimum_success_probability"] = float(floor)
-    limits = require_fields(value["limits"], set(), set(RESOURCE_LIMITS.values()) | {"deadline", "max_cost_usd", "timeout_seconds"}, "limits")
+    limits = require_fields(
+        value["limits"],
+        set(),
+        set(RESOURCE_LIMITS.values()) | {"deadline", "max_cost_usd", "timeout_seconds", "max_attempts"},
+        "limits",
+    )
     normalized_limits: dict[str, Any] = {}
     for field, raw_number in limits.items():
         if field == "deadline":
             normalized_limits[field] = isoformat(parse_datetime(raw_number, "limits.deadline"))
+        elif field == "max_attempts":
+            if isinstance(raw_number, bool) or not isinstance(raw_number, int) or raw_number < 1:
+                raise WorkError("limits.max_attempts must be a positive integer")
+            normalized_limits[field] = raw_number
         else:
             normalized_limits[field] = float(number(raw_number, f"limits.{field}"))
     validation = require_fields(
@@ -179,7 +188,7 @@ def validate_request(raw: Any) -> dict[str, Any]:
     validation_required = strings(validation["required_capabilities"], "validation.required_capabilities")
     if not isinstance(validation["independent_required"], bool) or not isinstance(validation["allow_human"], bool):
         raise WorkError("validation flags must be boolean")
-    return {
+    normalized = {
         **value,
         "effects": sorted(effects),
         "input_handles": handles,
@@ -199,6 +208,7 @@ def validate_request(raw: Any) -> dict[str, Any]:
             "allow_human": validation["allow_human"],
         },
     }
+    return normalized
 
 
 def validate_capability(raw: Any) -> dict[str, Any]:
@@ -207,7 +217,7 @@ def validate_capability(raw: Any) -> dict[str, Any]:
         "required_authorities", "health", "functions", "data_classes_allowed", "deterministic",
         "provenance", "quality", "resources", "cost_model",
     }
-    value = require_fields(raw, fields, fields, "capability descriptor")
+    value = require_fields(raw, fields, fields | {"execution"}, "capability descriptor")
     if value["schema_version"] != 1 or value["contract"] != CONTRACT:
         raise WorkError(f"capability descriptor must use {CONTRACT}")
     for field in ("capability_id", "protocol"):
@@ -260,7 +270,17 @@ def validate_capability(raw: Any) -> dict[str, Any]:
         normalized_cost["estimated_cost"] = float(number(cost["estimated_cost"], "capability.cost_model.estimated_cost"))
     if cost["provenance"] == "UNKNOWN" and "estimated_cost" in cost:
         raise WorkError("unknown cost provenance cannot carry an estimated monetary cost")
-    return {
+    execution = require_fields(
+        value.get("execution", {}),
+        set(),
+        {"idempotency", "resume"},
+        "capability.execution",
+    )
+    if execution.get("idempotency", "NONE") not in {"NONE", "IDEMPOTENT_REPLAY"}:
+        raise WorkError("capability execution.idempotency is invalid")
+    if execution.get("resume", "RESTART") not in {"RESTART", "QUERY", "UNSUPPORTED"}:
+        raise WorkError("capability execution.resume is invalid")
+    normalized = {
         **value,
         "required_authorities": authorities,
         "functions": functions,
@@ -271,6 +291,12 @@ def validate_capability(raw: Any) -> dict[str, Any]:
         "resources": normalized_resources,
         "cost_model": normalized_cost,
     }
+    if "execution" in value:
+        normalized["execution"] = {
+            "idempotency": execution.get("idempotency", "NONE"),
+            "resume": execution.get("resume", "RESTART"),
+        }
+    return normalized
 
 
 def canonical_json(value: Any) -> str:
@@ -391,6 +417,8 @@ def plan(request_raw: Any, capabilities_raw: Any, *, at: datetime | None = None)
         and validation_required <= set(item["functions"])
         and not eligibility[item["capability_id"]]
     ] if validation_required else []
+    if request["validation"]["independent_required"] and workers:
+        validators = [item for item in validators if item["capability_id"] != workers[0]["capability_id"]]
     validators.sort(key=lambda item: _rank(request, item))
 
     if status == "EXECUTABLE" and not workers:
@@ -405,10 +433,7 @@ def plan(request_raw: Any, capabilities_raw: Any, *, at: datetime | None = None)
         reason_codes.extend(sorted(policy_reasons) or ["REQUIRED_CAPABILITY_UNAVAILABLE"])
     if status == "EXECUTABLE" and validation_required and not validators:
         status = "MANUAL_REQUIRED" if request["validation"]["allow_human"] else "UNAVAILABLE"
-        reason_codes.append("REQUIRED_VALIDATOR_UNAVAILABLE")
-    if status == "EXECUTABLE" and request["validation"]["independent_required"] and validators and len(validators) < 1:
-        status = "MANUAL_REQUIRED" if request["validation"]["allow_human"] else "UNAVAILABLE"
-        reason_codes.append("INDEPENDENT_VALIDATION_UNAVAILABLE")
+        reason_codes.append("INDEPENDENT_VALIDATION_UNAVAILABLE" if request["validation"]["independent_required"] else "REQUIRED_VALIDATOR_UNAVAILABLE")
 
     steps: list[dict[str, Any]] = []
     approval_points: list[dict[str, Any]] = []

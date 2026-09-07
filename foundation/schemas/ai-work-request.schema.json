@@ -22,6 +22,7 @@
         "max_disk_mb": {"minimum": 0, "type": "number"},
         "max_energy_wh": {"minimum": 0, "type": "number"},
         "max_gpu_seconds": {"minimum": 0, "type": "number"},
+        "max_attempts": {"minimum": 1, "type": "integer"},
         "max_network_mb": {"minimum": 0, "type": "number"},
         "max_ram_mb": {"minimum": 0, "type": "number"},
         "max_vram_mb": {"minimum": 0, "type": "number"},

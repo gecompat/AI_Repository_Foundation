@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.11.0
+foundation_ruleset_version: 1.12.0
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -43,6 +43,8 @@ authority:
     - .ai/foundation/schemas/capability-descriptor.schema.json
     - .ai/foundation/schemas/execution-plan.schema.json
     - .ai/foundation/schemas/execution-report.schema.json
+    - .ai/foundation/schemas/execution-checkpoint.schema.json
+    - .ai/foundation/schemas/approval-receipt.schema.json
     - .ai/foundation/schemas/validation-evidence.schema.json
     - .ai/foundation/schemas/gap-report.schema.json
     - .ai/foundation/schemas/provision-plan.schema.json
@@ -215,9 +217,13 @@ ai_work_contract:
   gap_report_schema: .ai/foundation/schemas/gap-report.schema.json
   provision_plan_schema: .ai/foundation/schemas/provision-plan.schema.json
   adapter_protocol_schema: .ai/foundation/schemas/ai-adapter-protocol.schema.json
-  resource_cost_evidence_schema: .ai/foundation/schemas/resource-cost-evidence.schema.json
-  adapter_protocol: foundation-ai-adapter-jsonl/v1
-  payload_transport: content_handles_outside_control_plane
+    resource_cost_evidence_schema: .ai/foundation/schemas/resource-cost-evidence.schema.json
+    execution_checkpoint_schema: .ai/foundation/schemas/execution-checkpoint.schema.json
+    approval_receipt_schema: .ai/foundation/schemas/approval-receipt.schema.json
+    adapter_protocol: foundation-ai-adapter-jsonl/v1
+    reference_executor: optional_capability
+    executor_capability: ai-executor
+    payload_transport: content_handles_outside_control_plane
   payload_persistence_default: prohibited
   statuses: EXECUTABLE_MANUAL_REQUIRED_UNAVAILABLE_BLOCKED
   capability_failures: isolated

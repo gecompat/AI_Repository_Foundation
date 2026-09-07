@@ -4,9 +4,11 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.11.0 is a local candidate on `feature/ai-runtime-adapters`. It preserves router v1, adds router v2 provider-fragment/boundary/resource semantics, closes complete-chain and paired-evaluation follow-ups, and adds the optional neutral runtime-adapter protocol/references. `WI-0004`, `WI-0020`, `WI-0021`, `WI-0023`, and `WI-0025` are complete by the local gate. `WI-0024`, `WI-0026`–`WI-0029` remain for executor, provisioning/evidence refresh, client dispatch/manual handoff, failure/dual-runtime acceptance, and final source self-hosting.
+Foundation 1.12.0 is a local candidate on `feature/ai-work-executor`. It adds the optional content-free resumable executor, exact-plan grouped approvals, idempotency-aware crash recovery, bounded fallback/cancellation/limits, output-hash checks, and required validation evidence while retaining the decision-only planner and keeping every runtime optional. `WI-0024` is complete by the local gate. `WI-0026`–`WI-0029` remain for provisioning/evidence refresh, client dispatch/manual handoff, failure/dual-runtime acceptance, and final source self-hosting.
 
-The 2026-09-07 v1.11 local gate passed transfer/feature guards against `origin/main`, registry validation/backlog projection, full Foundation validation, JSON/compile/diff hygiene, focused install/router/adapter/upgrade tests, and all 176 tests on Windows after the single test-fixture placement correction. The validator retains only its two pre-existing non-blocking self-scan warnings. Resource-cost evidence is locally reusable and limits automated refresh per source to once per 24 hours; AI-assisted research remains optional and untrusted until source verification/project configuration.
+The 2026-09-07 v1.12 local gate passed transfer/feature guards against `origin/main`, registry validation/backlog projection, full Foundation validation, JSON/compile/diff hygiene, focused planner/executor/install/upgrade tests, and all 190 tests on Windows. The validator retains only its two pre-existing non-blocking self-scan warnings. Runtime state and payload paths remain external; ambiguous non-idempotent external effects require manual reconciliation rather than blind replay.
+
+The previous v1.11 local gate passed all 176 tests. Resource-cost evidence is locally reusable and limits automated refresh per source to once per 24 hours; AI-assisted research remains optional and untrusted until source verification/project configuration.
 
 PR #21 implementation head `cea0d14e525ccb837cfd6d66cbefe0e9355230ed` passed Foundation Artifact Registry run `34130851451` and Foundation CI run `34130851510`.
 
@@ -94,12 +96,6 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
-- `WI-0020`: complete-chain Cost-of-Success routing and full context-budget enforcement.
-- `WI-0021`: complete bounded evaluation planning and paired outcome settlement.
-- `WI-0022`: runtime-neutral AI work and capability contracts.
-- `WI-0023`: isolated catalogs and Ollama/OpenAI-compatible/command adapters.
-- `WI-0024`: resumable execution and risk-gated validation.
-- `WI-0025`: complete success-cost optimization across money and host resources.
 - `WI-0026`: bounded provisioning and host preparation.
 - `WI-0027`: client integration, gap reporting, and governed local adapter synthesis.
 - `WI-0028`: cross-platform degradation and Windows dual-runtime acceptance.
@@ -107,7 +103,6 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 - `WI-0001`: fresh-agent continuation validation.
 - `WI-0002`: manifest hashes/cross-version installed provenance.
 - `WI-0003`: evaluate packaged release artifact.
-- `WI-0004`: optional adapter modules.
 
 ## Open constraints
 

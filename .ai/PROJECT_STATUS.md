@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-07
-Foundation version: 1.11.0 candidate
+Foundation version: 1.12.0 candidate
 
 ## Implemented baseline
 
@@ -120,8 +120,18 @@ Foundation version: 1.11.0 candidate
 - the optional neutral JSONL adapter capability provides separated Ollama-local/cloud, OpenAI-compatible HTTP, and shell-free command/stdio references without making Python, a runtime, a provider, MCP, or network access mandatory;
 - resource money requires unexpired measured/configured evidence with a source; otherwise resource pressure is only a tie-breaker. The portable evidence contract permits local reuse and limits automated refresh of a source to once per 24 hours or less often according to its TTL.
 
+## v1.12.0 candidate — WI-0024
+
+- the optional `ai-executor` revalidates the exact request/catalog/plan, invokes only absolute shell-free adapter bindings, verifies output-handle hashes, and keeps content-free integrity-checked checkpoints outside Git;
+- stable operation keys, persisted `PREPARED`/`IN_PROGRESS` transitions, idempotency attestations, and manual reconciliation prevent blind repetition of ambiguous non-idempotent external effects;
+- exact-plan grouped approval receipts bind the plan hash, approval point, required authority, and validity window without granting any broader permission;
+- attempt, deadline, timeout, money, cumulative CPU/GPU/disk/network/energy, peak RAM/VRAM, cancellation, fallback, and actual-overrun behavior is bounded and reported truthfully;
+- every required validation scope needs passing evidence, independent validation cannot reuse the work capability, and failed/missing/inconclusive/malformed evidence does not pass;
+- capability execution metadata and request attempt limits are optional v1 extensions; descriptors that omit them retain their original normalized shape.
+
 ## Validation evidence
 
+- v1.12.0 local completion gate on 2026-09-07: transfer and semantic feature guards against `origin/main`, registry validation/backlog projection, full Foundation validator, JSON/compile/diff hygiene, focused planner/executor/install/upgrade tests, and all 190 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
 - PR #21 implementation head `cea0d14e525ccb837cfd6d66cbefe0e9355230ed`: Foundation Artifact Registry run `34130851451` and Foundation CI run `34130851510`, success.
 - v1.11.0 local completion gate on 2026-09-07: transfer and semantic feature guards against `origin/main`, central registry validation/backlog projection, full Foundation validator, JSON/compile/diff hygiene, focused adapter/router/install/upgrade tests, and all 176 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
 - PR #20 squash-merged as `3cf4239dca60ed766ac47d135f57f7802e719348`; the exact merge commit passed post-merge Foundation CI run `34125163370`.
@@ -147,4 +157,4 @@ Foundation version: 1.11.0 candidate
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, WI-0020, WI-0021, WI-0022, WI-0023, and WI-0025 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion; WI-0024 and WI-0026–WI-0029 continue the AI-work implementation program.
+WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, WI-0020, WI-0021, WI-0022, WI-0023, WI-0024, and WI-0025 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion; WI-0026–WI-0029 continue the AI-work implementation program.

@@ -1,12 +1,13 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.11.0",
+  "ruleset_version": "1.12.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
   "description": "Explicit whitelist of reusable core rules/provenance plus explicitly selected optional capability files for new or existing repositories.",
   "default_adapters": ["github-copilot", "claude-code", "gemini"],
   "default_capabilities": [],
+  "capability_dependencies": {"ai-executor": ["ai-work"]},
   "transfer_coverage_contract": {
     "version_authority": "foundation/manifest.json#ruleset_version",
     "version_mirrors": [
@@ -160,6 +161,8 @@
       ".ai/foundation/schemas/capability-descriptor.schema.json",
       ".ai/foundation/schemas/execution-plan.schema.json",
       ".ai/foundation/schemas/execution-report.schema.json",
+      ".ai/foundation/schemas/execution-checkpoint.schema.json",
+      ".ai/foundation/schemas/approval-receipt.schema.json",
       ".ai/foundation/schemas/validation-evidence.schema.json",
       ".ai/foundation/schemas/gap-report.schema.json",
       ".ai/foundation/schemas/provision-plan.schema.json"
@@ -173,6 +176,7 @@
     "runtime_state": "outside_version_control",
     "python_required": false,
     "reference_planner": "optional_capability",
+    "reference_executor": "optional_capability",
     "adapter_protocol": "foundation-ai-adapter-jsonl/v1",
     "adapter_protocol_schema_target": ".ai/foundation/schemas/ai-adapter-protocol.schema.json",
     "resource_cost_evidence_schema_target": ".ai/foundation/schemas/resource-cost-evidence.schema.json"
@@ -244,6 +248,8 @@
     {"source": "foundation/schemas/capability-descriptor.schema.json", "target": ".ai/foundation/schemas/capability-descriptor.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/execution-plan.schema.json", "target": ".ai/foundation/schemas/execution-plan.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/execution-report.schema.json", "target": ".ai/foundation/schemas/execution-report.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/execution-checkpoint.schema.json", "target": ".ai/foundation/schemas/execution-checkpoint.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/approval-receipt.schema.json", "target": ".ai/foundation/schemas/approval-receipt.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/validation-evidence.schema.json", "target": ".ai/foundation/schemas/validation-evidence.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/gap-report.schema.json", "target": ".ai/foundation/schemas/gap-report.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/provision-plan.schema.json", "target": ".ai/foundation/schemas/provision-plan.schema.json", "kind": "schema", "merge": "review_if_exists"},
@@ -285,6 +291,10 @@
       {"source": "foundation/capabilities/ai-work/ai_work.py", "target": ".ai/foundation/ai_work/ai_work.py", "kind": "ai-work-planner", "merge": "review_if_exists"},
       {"source": "foundation/capabilities/ai-work/work-request.example.json", "target": ".ai/foundation/ai_work/work-request.example.json", "kind": "ai-work-example", "merge": "review_if_exists"},
       {"source": "foundation/capabilities/ai-work/capabilities.example.json", "target": ".ai/foundation/ai_work/capabilities.example.json", "kind": "ai-work-example", "merge": "review_if_exists"}
+    ],
+    "ai-executor": [
+      {"source": "foundation/capabilities/ai-executor/AI_EXECUTOR.md", "target": ".ai/foundation/ai_executor/AI_EXECUTOR.md", "kind": "ai-executor-documentation", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/ai-executor/ai_executor.py", "target": ".ai/foundation/ai_executor/ai_executor.py", "kind": "ai-executor-reference", "merge": "review_if_exists"}
     ],
     "model-router": [
       {"source": "foundation/capabilities/model-router/MODEL_ROUTER.md", "target": ".ai/foundation/model_router/MODEL_ROUTER.md", "kind": "model-router-documentation", "merge": "review_if_exists"},

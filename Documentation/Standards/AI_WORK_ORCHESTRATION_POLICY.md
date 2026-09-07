@@ -56,7 +56,11 @@ Reversible drafts and intermediate work may proceed within the authorization env
 
 Human approval is grouped at risk boundaries rather than requested after every operation. It is required before irreversible publication or mutation, sensitive data transmission, unplanned spend, high-impact action, privilege expansion, or acceptance without required evidence. Approval applies only to the described checkpoint and does not grant broader future authority.
 
-Retries require changed inputs, a different capability, or new evidence. A resumable executor must use stable operation/idempotency keys so restart cannot duplicate external effects.
+Retries require changed inputs, a different capability, or new evidence. A resumable executor must use stable operation/idempotency keys so restart cannot duplicate external effects. `PREPARED` must mean invocation has not begun; an `IN_PROGRESS` external operation after a crash is ambiguous. It may be replayed only when the capability explicitly attests idempotent replay using the same operation key, otherwise execution stops for reconciliation. Foundation never claims exactly-once delivery without target-system evidence.
+
+An optional executor revalidates the exact request, capability catalog, plan hash, expiry, handles, and approvals before invoking an adapter. Approval receipts are bound to the complete plan hash, exact grouped approval point, required authority, and validity window. Cancellation is cooperative at bounded adapter-call boundaries; a timeout or cancellation request is not evidence that an uncooperative external system reversed an operation.
+
+Actual money and cumulative resource use count even when an attempt later fails. RAM and VRAM are peak limits; CPU/GPU time, disk, network, and energy are cumulative. Adapter-reported output hashes must be checked against output-handle bytes where the reference transport exposes files. Every required validation scope needs passing evidence; failed, missing, malformed, duplicate, non-independent, inconclusive, or unavailable evidence is not a pass.
 
 ## Persistence and reporting
 

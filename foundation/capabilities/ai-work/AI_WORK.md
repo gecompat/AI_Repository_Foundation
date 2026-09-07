@@ -30,3 +30,5 @@ Input and output fields are handles only. The planner does not dereference them.
 ## Runtime evidence boundary
 
 The included examples contain only synthetic deterministic capabilities. They prove contract mechanics, not the presence, trust boundary, quality, cost, or fitness of any installed runtime. Provider adapters, execution, provisioning, and client configuration are separate optional layers.
+
+Capability descriptors may optionally declare `execution.idempotency` and `execution.resume`. Omitting that object preserves the original v1 representation and is treated as no idempotency attestation plus restart semantics. Work requests may optionally bound `limits.max_attempts`. These fields do not turn the planner into an executor.
