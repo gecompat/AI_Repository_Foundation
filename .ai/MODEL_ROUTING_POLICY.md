@@ -29,7 +29,7 @@ The Foundation tiers provide a portable semantic abstraction. The target project
 
 ## Dynamic routing contract
 
-When a target selects dynamic routing, use a provider-neutral request/decision contract. The request describes the task class, Foundation tier, authorization envelope, required capabilities, context/output estimates, quality floor, budget, and optional session affinity. The decision records the selected provider/model, expected cost and success, reasoning effort, fallback chain, pricing epoch, expiry, and auditable exclusion reasons.
+When a target selects dynamic routing, use a provider-neutral request/decision contract. `foundation-model-router/v1` remains compatible. New orchestration should use `foundation-model-router/v2`, which adds data classification, execution boundaries, independently refreshed provider fragments, health evidence, quality/resource provenance, and hard resource/latency limits. The decision records the selected provider/model, expected cost and success, reasoning effort, fallback chain, pricing epoch, expiry, execution boundary, resource evidence, fragment source, and auditable exclusion reasons.
 
 Apply privacy, authorization, capability, context, quality, price-freshness, and budget constraints before comparing economics. `LOCAL` means deterministic local processing and must not silently authorize a remote model. Concrete providers, model identifiers, capabilities, availability, quotas, and prices are runtime facts and are not hard-coded into this policy.
 
@@ -43,13 +43,15 @@ cost_of_success = (expected_chain_spend + expected_switching_cost
                   + expected_latency * latency_value
 ```
 
-Success estimates may combine explicit project quality priors with aggregate observed outcomes. A fallback is useful only when it materially improves chain success and remains inside the request's expected-spend bound. Session/cache affinity may reduce switching cost, but it is conditional and never overrides safety, capability, quality, freshness, or budget constraints.
+Success estimates may combine explicit project quality priors with aggregate observed outcomes. A fallback is admitted only when the resulting prefix improves expected cost of success by at least the greater of USD `0.000000000001` and `0.1%` of the preceding prefix objective, and the complete chain remains inside the expected-spend bound. The bounded reference router exhaustively evaluates every ordered chain up to `max_fallbacks + 1`; when that declared search would exceed its safety bound it returns `CHAIN_SEARCH_BOUND_EXCEEDED` rather than claiming a heuristic optimum. Context eligibility reserves both input context and expected output tokens. Session/cache affinity may reduce switching cost, but it is conditional and never overrides safety, capability, quality, freshness, or budget constraints.
+
+Model resource estimates under a hard limit require measured or configured provenance. A project may provide a per-attempt USD resource cost only with measured/configured provenance and a documented source; that value then participates in complete-chain expected spend. Without a defensible monetary conversion, no money value is invented: normalized resource pressure is only an explainable tie-breaker after the monetary cost-of-success objective. Host-local models retain `ECONOMICAL`, `BALANCED`, or `FRONTIER` tiers with an explicit `HOST` boundary; `LOCAL` always means no generative model is required.
 
 ## Price epochs, discovery, and evaluation
 
 Remote catalogs and prices require source timestamps and expiry. A routing decision carries the applicable `pricing_epoch` and expires no later than the next price boundary of any eligible candidate; a rate change therefore invalidates cached rankings even when the previously selected model's own price is unchanged. If live refresh fails, retain an unexpired last-known-good catalog or fail closed—never invent a current price.
 
-Newly discovered models start `UNASSESSED`. They may become eligible only through an explicitly allowed, bounded evaluation plan with task set, sample count, spend ceiling, stopping rules, and atomic reservation where concurrent evaluators could overspend. Graduation requires the project's minimum evidence; discovery alone is not a quality claim.
+Newly discovered models start `UNASSESSED`. They may become eligible only through an explicitly allowed, bounded evaluation plan with task set, sample count, spend ceiling, stopping rules, and atomic reservation where concurrent evaluators could overspend. Candidate and incumbent arms receive distinct linked reservations. Actual spend is settled to its own arm, and only a completely settled valid pair counts toward candidate graduation. Expired/incomplete pairs do not become evidence. Graduation requires the project's minimum evidence; discovery alone is not a quality claim.
 
 ## Runtime state and graceful degradation
 

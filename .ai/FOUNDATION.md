@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.10.0
+- version: 1.11.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -28,7 +28,7 @@ Status: AUTHORITATIVE
 - validation_scope_contract: Foundation validator = `FOUNDATION_INTEGRITY`; target repository retains `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL`
 - portable_text_equivalence: UTF-8 CRLF/LF-only Git working-tree differences are equivalent for Foundation install/drift checks; true text/binary differences remain detectable
 - rule_context_cache_contract: native instruction discovery per run; session-local semantic analyses keyed by validated scope/source dependencies; optional local records contain fingerprints/dependency metadata only and fail closed on scope, instruction, topology, source-set, schema, generator, corruption, or uncertainty changes
-- model_routing_contract: provider-neutral `foundation-model-router/v1`; constraints before economics; minimum expected cost of success; price-epoch expiry; conditional affinity; bounded new-model evaluation; runtime state outside version control
+- model_routing_contract: compatible `foundation-model-router/v1` plus v2 boundaries/resources/isolated fragments; complete-chain expected cost of success; price-epoch expiry; conditional affinity; paired bounded evaluation; runtime state outside version control
 - ai_work_contract: runtime-neutral `foundation-ai-work/v1`; payload handles; isolated optional capabilities; authority intersection; truthful degradation; risk-gated validation; runtime state outside version control
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
@@ -41,7 +41,7 @@ Status: AUTHORITATIVE
 - target_github_merge_protection: recommended when relevant, never silently imposed by Foundation transfer
 - python_runtime_required: false
 - powershell_reference_client: supported first-class for the v1 compatibility profile
-- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`
+- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`
 - target_project_license: never replaced or modified by installation
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none
@@ -99,6 +99,8 @@ The optional `rule-context-cache` capability supplies a dependency-free referenc
 ## Dynamic cost-aware model routing
 
 Foundation 1.9 expands the portable routing tiers with the provider-neutral `foundation-model-router/v1` request, decision, catalog, snapshot, and profile contracts. Privacy, authorization, capabilities, context, quality, price freshness, and budget are hard filters before economics. Eligible routes minimize expected cost of success, including predicted success, attempt/fallback spend, failure cost, latency value, and conditional session/cache affinity.
+
+Foundation 1.11 preserves those v1 calls and adds router v2 execution/data boundaries, hard resource/latency limits, independently expiring provider fragments, and provider-specific last-known-good state. Complete bounded fallback chains are optimized as a whole. Only sourced, unexpired measured/configured resource money joins cost-of-success; otherwise resource pressure is a tie-breaker. `foundation-resource-cost-evidence/v1` supports local offline reuse, source TTLs, hashes, and automated refresh no more than once per 24 hours per source.
 
 Concrete model identifiers, providers, capabilities, availability, and prices remain expiring runtime facts. Decisions carry a pricing epoch and expire at relevant rate boundaries. Newly discovered models remain `UNASSESSED` until an explicitly allowed, bounded evaluation reaches the project evidence threshold; discovery is never treated as quality evidence.
 

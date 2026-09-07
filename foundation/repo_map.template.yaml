@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.10.0
+foundation_ruleset_version: 1.11.0
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -36,6 +36,9 @@ authority:
     - .ai/foundation/schemas/model-router-catalog.schema.json
     - .ai/foundation/schemas/model-routing-snapshot.schema.json
     - .ai/foundation/schemas/model-router-profiles.schema.json
+    - .ai/foundation/schemas/model-routing-request-v2.schema.json
+    - .ai/foundation/schemas/model-routing-decision-v2.schema.json
+    - .ai/foundation/schemas/model-router-catalog-fragment-v2.schema.json
     - .ai/foundation/schemas/ai-work-request.schema.json
     - .ai/foundation/schemas/capability-descriptor.schema.json
     - .ai/foundation/schemas/execution-plan.schema.json
@@ -43,6 +46,8 @@ authority:
     - .ai/foundation/schemas/validation-evidence.schema.json
     - .ai/foundation/schemas/gap-report.schema.json
     - .ai/foundation/schemas/provision-plan.schema.json
+    - .ai/foundation/schemas/ai-adapter-protocol.schema.json
+    - .ai/foundation/schemas/resource-cost-evidence.schema.json
 provenance:
   foundation_notice: .ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md
   target_root_license_behavior: independent_and_untouched
@@ -177,13 +182,20 @@ model_routing_contract:
   catalog_schema: .ai/foundation/schemas/model-router-catalog.schema.json
   snapshot_schema: .ai/foundation/schemas/model-routing-snapshot.schema.json
   profiles_schema: .ai/foundation/schemas/model-router-profiles.schema.json
+  request_v2_schema: .ai/foundation/schemas/model-routing-request-v2.schema.json
+  decision_v2_schema: .ai/foundation/schemas/model-routing-decision-v2.schema.json
+  catalog_fragment_v2_schema: .ai/foundation/schemas/model-router-catalog-fragment-v2.schema.json
   foundation_tiers: LOCAL_ECONOMICAL_BALANCED_FRONTIER
   target_policy_may_be_more_detailed: true
   semantic_mapping_when_overlapping: required
   concrete_models_are_runtime_facts: true
-  profile: foundation-model-router/v1
+  profile: foundation-model-router/v2
+  compatible_profiles: foundation-model-router/v1_foundation-model-router/v2
   constraint_order: privacy_authorization_capability_context_quality_freshness_budget_before_cost
-  objective: minimum_expected_cost_of_success
+  objective: minimum_complete_chain_expected_cost_of_success
+  resource_money_requires_evidence: true
+  resource_pressure_without_money: tie_breaker_only
+  provider_catalog_refresh: isolated_per_provider_with_unexpired_last_known_good
   price_epoch_and_expiry: required
   session_affinity: conditional
   new_model_default: UNASSESSED
@@ -202,6 +214,9 @@ ai_work_contract:
   validation_evidence_schema: .ai/foundation/schemas/validation-evidence.schema.json
   gap_report_schema: .ai/foundation/schemas/gap-report.schema.json
   provision_plan_schema: .ai/foundation/schemas/provision-plan.schema.json
+  adapter_protocol_schema: .ai/foundation/schemas/ai-adapter-protocol.schema.json
+  resource_cost_evidence_schema: .ai/foundation/schemas/resource-cost-evidence.schema.json
+  adapter_protocol: foundation-ai-adapter-jsonl/v1
   payload_transport: content_handles_outside_control_plane
   payload_persistence_default: prohibited
   statuses: EXECUTABLE_MANUAL_REQUIRED_UNAVAILABLE_BLOCKED
@@ -210,6 +225,7 @@ ai_work_contract:
   runtime_state: outside_version_control
   python_required: false
   optional_reference_capability: ai-work
+  optional_adapter_capability: ai-runtime-adapters
 override_contract:
   required: minimum_floor_project_may_be_stricter
   default: project_may_override_intentionally
