@@ -26,6 +26,7 @@ jobs:
           python -m unittest -v
           tests.test_ai_system_independence
           tests.test_ai_work
+          tests.test_ai_work_self_hosting
           tests.test_ai_runtime_adapters
           tests.test_model_router
           tests.test_model_router_v2

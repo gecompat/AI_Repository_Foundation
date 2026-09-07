@@ -49,6 +49,7 @@ authority:
     - .ai/HANDOVER.md
   runtime_empirical_evidence:
     - Documentation/Quality/AI_SYSTEM_INDEPENDENCE_ACCEPTANCE.md
+    - Documentation/Quality/AI_WORK_SELF_HOSTING_EVIDENCE.md
 state:
   status: .ai/PROJECT_STATUS.md
   handover: .ai/HANDOVER.md
