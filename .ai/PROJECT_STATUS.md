@@ -24,7 +24,7 @@ Foundation version: 1.15.0 candidate
 - the receipt stores only source/target identifiers, hashes, version/ref metadata, selections, integration state, and reasons; it grants no authority and proves neither semantic correctness nor project validation;
 - focused provenance/installation/transfer/upgrade tests and the complete 240-test suite pass locally on Windows;
 - a new Codex CLI agent with no prior conversation context planned and applied a core-only transfer to a disposable synthetic repository, preserved all project-owned rules and protected files, recorded 57 current baselines plus one intentional `AGENTS.md` override, passed the installed-target validator with zero warnings/errors, and correctly explained continuation from repository state alone;
-- required PR checks remain pending before `WI-0001`/`WI-0002` completion.
+- PR #28 implementation head `391ba0db2775deef1c5ddcdfe7d842d557b77662` passed Foundation CI run `34153838489` on macOS, Windows, and the required Linux `validate` gate; Foundation Artifact Registry run `34153838498` also passed. `WI-0001` and `WI-0002` are complete.
 
 ## Foundation source self-hosting — WI-0029
 
@@ -212,4 +212,4 @@ Foundation version: 1.15.0 candidate
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context is `validated` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`; the disposable target's separate project-manual-validation status correctly remained pending.
 
-WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0029 are complete. WI-0001 and WI-0002 await only the required PR-head checks.
+WI-0001, WI-0002, WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0029 are complete. `WI-0003` remains the only proposed work item.

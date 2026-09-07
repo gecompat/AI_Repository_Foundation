@@ -20,6 +20,7 @@ The stricter fresh-agent continuation criterion was executed on 2026-09-07: afte
 - Independent target checks: root discovery passed; the synthetic CSV contract passed with columns `account,debit,credit`, two rows, and debit/credit totals of 10; `README.md`, `LICENSE`, `docs/PROJECT_RULES.md`, and `sample.csv` matched their initial commit bytes; `git diff --check` passed.
 - Continuation explanation: the fresh agent correctly described target purpose, rule locations/precedence, normal-operation authority, additional gates, tier semantics, manual model-selection fallback, all four drift classifications, and the distinction between Foundation integrity and still-pending target manual validation.
 - The Foundation source remained clean and unchanged. The disposable target was not committed.
+- PR #28 implementation head `391ba0db2775deef1c5ddcdfe7d842d557b77662` passed Foundation CI run `34153838489` on macOS, Windows, and the required Linux validation gate; Foundation Artifact Registry run `34153838498` also passed.
 
 ## Objective
 
