@@ -15,7 +15,7 @@ Foundation version: 1.14.0
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
 
-## Foundation source self-hosting candidate — WI-0029
+## Foundation source self-hosting — WI-0029
 
 - the authoritative project-only profile covers software development, sourced research, documentation, structured data, and open project-defined work without naming a required provider, client, model, runtime, or host path;
 - the existing `foundation.validate` capability remains a shell-free mapping to the transfer, feature, registry, backlog, Foundation-validator, and complete unit-test gates;
@@ -23,7 +23,8 @@ Foundation version: 1.14.0
 - the executed request has only `LOCAL_READ` and `filesystem:read`, a `PROCESS` boundary, zero network and monetary limits, no model binding, and no repository/external write, data transfer, credential, synthesis, push, PR, publication, spend, or approval authority;
 - checkpoint/report evidence contains content-free hashes/status/cost/resource metadata and one attempt without host paths, payloads, prompts, responses, environment values, credentials, or requested/actual model claims; resume does not repeat the completed invocation;
 - the same profile with no optional capability returns its configured truthful `MANUAL_REQUIRED` state;
-- the local candidate gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, diff hygiene, the focused 97-test cross-platform contract selection, and all 231 tests on Windows; Windows/macOS GitHub-runner evidence remains pending until the candidate PR runs.
+- the local candidate gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, diff hygiene, the focused 97-test cross-platform contract selection, and all 231 tests on Windows;
+- PR #26 head `487471b6155d19edc9d9a0bdd222b00e0cc40b26` passed Foundation CI run `34148146132`: macOS and Windows contract jobs plus the required Linux `validate` gate. Foundation Artifact Registry run `34148145993` also passed. `WI-0029` is done.
 
 ## System-independence acceptance — WI-0028
 
@@ -200,4 +201,4 @@ Foundation version: 1.14.0
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context remains `pending manual validation` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
 
-WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0028 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion; WI-0029 is the final AI-work implementation item.
+WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0029 are complete. WI-0001 remains in progress only for the separate fresh-agent continuation criterion.

@@ -4,7 +4,7 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.14.0 was squash-merged by PR #24 as `a52a5c3c0e5c100c06b039318b1e3eecf3263314`; its post-merge Foundation CI run `34145275461` passed. PR #25 was squash-merged as `a50b843a58b17368ed600350d6ae0eb9dc031f81`; post-merge Foundation CI run `34147315393` passed the macOS, Windows, and Linux gates. The current `feature/ai-work-self-hosting` branch closes `WI-0029` by exercising the Foundation source profile through the real planner/adapter/executor path without expanding authority.
+Foundation 1.14.0 was squash-merged by PR #24 as `a52a5c3c0e5c100c06b039318b1e3eecf3263314`; its post-merge Foundation CI run `34145275461` passed. PR #25 was squash-merged as `a50b843a58b17368ed600350d6ae0eb9dc031f81`; post-merge Foundation CI run `34147315393` passed the macOS, Windows, and Linux gates. PR #26 now contains completed `WI-0029`, closing the registered `WI-0020`–`WI-0029` AI-work program with a real source-profile planner/adapter/executor path that does not expand authority.
 
 The manual fallback is deliberate: a router recommendation cannot force every chat host to switch models. `MANUAL_DISPATCH_REQUIRED` emits a content-free record plus an external prompt file containing tier/capability/acceptance/validation instructions. A concrete model is named only from fresh privacy-eligible evidence. The selected/actual model still requires matching host execution or response metadata; an accepted parameter, model list, user-visible subagent label, or recommendation alone remains `REQUESTED_NOT_ATTESTED`.
 
@@ -12,7 +12,7 @@ The v1.14 implementation head `a0e0d439c53bc9277aca3a36ca862a3c563e7642` passed 
 
 The `WI-0028` focused 91-test contract/degradation gate and complete 229-test suite pass locally on Windows, together with transfer/feature, registry/backlog, and full Foundation validation gates. PR #25 head `b7878347cb1fe7866ae99bdb55729974d8fa8ca3` passed Foundation CI run `34147019605` on macOS, Windows, and the required Linux `validate` gate; registry-integrity run `34147019778` passed. Separate live acceptance used only loopback and already-installed artifacts: Ollama-local completed one bounded request without leaving a model loaded, and LM Studio completed one bounded OpenAI-compatible request before the test stopped and verified the server it had started. No credential file, download, paid/remote request, or response content was used or retained.
 
-The `WI-0029` candidate uses the project-only profile to plan and execute one deterministic `LOCAL_READ` operation via the neutral JSONL command adapter and optional executor. All configuration, handles, output, and checkpoints are external temporary state; the report is content-free, has no model claim, and resume does not repeat the completed operation. With the optional catalog absent, the same profile returns `MANUAL_REQUIRED`. The focused 97-test platform selection and complete 231-test suite pass locally on Windows, together with all deterministic Foundation gates; PR runner evidence remains pending before the work item is closed.
+The `WI-0029` source profile plans and executes one deterministic `LOCAL_READ` operation via the neutral JSONL command adapter and optional executor. All configuration, handles, output, and checkpoints are external temporary state; the report is content-free, has no model claim, and resume does not repeat the completed operation. With the optional catalog absent, the same profile returns `MANUAL_REQUIRED`. The focused 97-test platform selection and complete 231-test suite pass locally on Windows, together with all deterministic Foundation gates. PR #26 head `487471b6155d19edc9d9a0bdd222b00e0cc40b26` passed Foundation CI run `34148146132` on macOS, Windows, and the required Linux `validate` gate; registry-integrity run `34148145993` passed. `WI-0029` is done.
 
 The provisioner accepts only exact credential-free file/HTTPS sources and reference install commands declaring network denial. It cannot itself enforce an operating-system network sandbox, so only audited offline installers are admissible; stronger implementations may add sandboxing. Failed source refreshes are also throttled for 24 hours, preventing an unavailable endpoint from creating a retry loop. No live download, paid call, or productive runtime interruption was used for the deterministic tests.
 
@@ -108,7 +108,6 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
-- `WI-0029`: Foundation source-project self-hosting.
 - `WI-0001`: fresh-agent continuation validation.
 - `WI-0002`: manifest hashes/cross-version installed provenance.
 - `WI-0003`: evaluate packaged release artifact.
