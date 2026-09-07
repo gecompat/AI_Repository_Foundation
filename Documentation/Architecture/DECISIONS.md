@@ -179,3 +179,11 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Decision: Use a provider-neutral decision core that filters safety/capability/quality/context/freshness constraints before minimizing expected cost of success; keep concrete models/prices in expiring runtime catalogs, introduce new models through bounded evaluation, store runtime evidence outside version control, and expose the same contract through MCP, CLI, launcher, and snapshot fallbacks.
 - Consequences: Foundation 1.9 adds an opt-in `model-router` capability and Ollama Cloud adapter while preserving portable tier semantics and allowing stronger target routers or other implementation languages.
 - Full record: `decisions/DEC-0019-dynamic-cost-aware-model-routing.md`.
+
+## DEC-0020 — AI work orchestration uses capability discovery and isolated optional execution
+
+- Status: Accepted
+- Date: 2026-09-07
+- Decision: Add a runtime-neutral capability and work-planning control plane while keeping every executable planner, adapter, executor, provisioner, and client integration optional. Preserve router v1 and the deterministic meaning of `LOCAL`; isolate provider failures; intersect operations with actual authority; and use risk-gated validation without treating generated adapters or model agreement as permission or proof.
+- Consequences: Foundation can coordinate software, research, documentation, data, media, and future AI-assisted work across available systems while remaining valid with no AI runtime at all. Implementation is staged through `WI-0020`–`WI-0029`, including source-project self-hosting without versioned runtime state.
+- Full record: `decisions/DEC-0020-capability-oriented-ai-work-orchestration.md`.
