@@ -47,6 +47,8 @@ authority:
   generated_evidence:
     - .ai/PROJECT_STATUS.md
     - .ai/HANDOVER.md
+  runtime_empirical_evidence:
+    - Documentation/Quality/AI_SYSTEM_INDEPENDENCE_ACCEPTANCE.md
 state:
   status: .ai/PROJECT_STATUS.md
   handover: .ai/HANDOVER.md

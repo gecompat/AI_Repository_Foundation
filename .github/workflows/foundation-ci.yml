@@ -9,7 +9,30 @@ permissions:
   contents: read
 
 jobs:
+  platform-contracts:
+    name: platform-contracts (${{ matrix.os }})
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [windows-latest, macos-latest]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Run runtime-neutral AI contract and degradation tests
+        run: >-
+          python -m unittest -v
+          tests.test_ai_system_independence
+          tests.test_ai_work
+          tests.test_ai_runtime_adapters
+          tests.test_model_router
+          tests.test_model_router_v2
+          tests.test_ai_client_integration
+
   validate:
+    needs: platform-contracts
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4

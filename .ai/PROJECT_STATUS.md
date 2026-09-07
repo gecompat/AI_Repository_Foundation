@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-07
-Foundation version: 1.14.0 candidate
+Foundation version: 1.14.0
 
 ## Implemented baseline
 
@@ -14,6 +14,17 @@ Foundation version: 1.14.0 candidate
 - source-side transfer completeness/version guard and negative regression tests;
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
+
+## System-independence acceptance candidate — WI-0028
+
+- a new component-failure matrix covers no optional runtime, missing process, dead/timeout endpoint, malformed response, expired catalog material, absent credentials, exhausted budget, and missing validator while preserving unrelated healthy capabilities;
+- the rights/privacy matrix covers read-only, local write, absent push/PR authority, explicitly authorized branch/PR work, prohibited publication, and confidential remote processing with and without exact data-class authority;
+- representative software, sourced-research, documentation, structured-data, and project-specific workflows require complete work plus independent validation plans or return a truthful manual/unavailable state;
+- default transfer remains free of executable AI payloads, so readable rules/schemas and manual transfer do not depend on Python, MCP, Ollama, a provider, network, executor, provisioner, validator, or repository remote;
+- Foundation CI retains its required Linux `validate` context and now gates it on the same runtime-neutral contract suite on Windows and macOS;
+- bounded Windows runtime evidence independently passed an already-present Ollama-local path and an already-present LM Studio OpenAI-compatible path, retained no response content, made no download/paid call, and stopped only the LM Studio service started by the check;
+- manual model selection remains the deliberate fallback when a host cannot dispatch automatically: the handoff recommends an evidenced tier/model and external prompt, but selection/execution remains unattested until trusted host metadata proves the actual model.
+- the local candidate gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, diff hygiene, the focused 91-test cross-platform contract selection, and all 229 tests on Windows; Windows/macOS GitHub-runner evidence remains pending until the candidate PR runs.
 
 ## v1.14.0 candidate — WI-0027
 
