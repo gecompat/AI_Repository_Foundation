@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.12.0
+Ruleset version: 1.13.0
 
 This directory contains reusable governance rules, machine-readable schemas, the semantic feature catalog, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -29,7 +29,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - upgrade schemas: `schemas/feature-catalog.schema.json`, `schemas/upgrade-assessment.schema.json`
 - rule-context cache record schema: `schemas/rule-context-cache.schema.json`
 - model-routing schemas: v1 request/decision/catalog/snapshot/profiles plus `schemas/model-routing-request-v2.schema.json`, `schemas/model-routing-decision-v2.schema.json`, and `schemas/model-router-catalog-fragment-v2.schema.json`
-- AI work schemas: `schemas/ai-work-request.schema.json`, `schemas/capability-descriptor.schema.json`, `schemas/execution-plan.schema.json`, `schemas/execution-report.schema.json`, `schemas/execution-checkpoint.schema.json`, `schemas/approval-receipt.schema.json`, `schemas/validation-evidence.schema.json`, `schemas/gap-report.schema.json`, `schemas/provision-plan.schema.json`, `schemas/ai-adapter-protocol.schema.json`, and `schemas/resource-cost-evidence.schema.json`
+- AI work schemas: `schemas/ai-work-request.schema.json`, `schemas/capability-descriptor.schema.json`, `schemas/execution-plan.schema.json`, `schemas/execution-report.schema.json`, `schemas/execution-checkpoint.schema.json`, `schemas/approval-receipt.schema.json`, `schemas/validation-evidence.schema.json`, `schemas/gap-report.schema.json`, `schemas/provision-plan.schema.json`, `schemas/provision-request.schema.json`, `schemas/provision-approval.schema.json`, `schemas/provision-report.schema.json`, `schemas/runtime-inventory.schema.json`, `schemas/ai-adapter-protocol.schema.json`, and `schemas/resource-cost-evidence.schema.json`
 - authorization and working behavior: `WORKING_RULES.md`
 - model/resource selection and target-policy mapping: `MODEL_ROUTING_POLICY.md`
 - validation, status vocabulary, portable LF/CRLF drift semantics, infrastructure availability, and manual test plans: `VALIDATION_POLICY.md`
@@ -103,7 +103,7 @@ The optional `model-router` capability keeps `foundation-model-router/v1` compat
 
 Apply privacy, authorization, capability, health/freshness, validation, time, money, and resource limits before ranking. One failing or expired component excludes only that component. Return `EXECUTABLE`, `MANUAL_REQUIRED`, `UNAVAILABLE`, or `BLOCKED` truthfully. Deterministic tools precede models when they sufficiently and verifiably perform the work. Human approval is grouped at irreversible, sensitive, unbudgeted, high-impact, privilege-expanding, or insufficient-evidence boundaries.
 
-The optional `ai-work` capability is a decision-only Python reference planner. The separately selectable `ai-runtime-adapters` capability implements the content-free JSONL/stdio protocol for Ollama local/cloud, OpenAI-compatible HTTP, and shell-free command clients. The `ai-executor` capability optionally adds exact-plan revalidation, grouped approval receipts, content-free checkpoints, bounded alternatives, idempotency-aware recovery, measured limits, and validation evidence. Python, MCP, Ollama, models, providers, adapters, executors, and provisioners remain optional; rules and schemas stay valid without all of them. Runtime state, payloads, credentials, host paths, and live inventories stay outside version control.
+The optional `ai-work` capability is a decision-only Python reference planner. The separately selectable `ai-runtime-adapters` capability implements the content-free JSONL/stdio protocol for Ollama local/cloud, OpenAI-compatible HTTP, and shell-free command clients. The `ai-executor` capability optionally adds exact-plan revalidation, grouped approval receipts, content-free checkpoints, bounded alternatives, idempotency-aware recovery, measured limits, and validation evidence. The optional `ai-provisioning` capability diagnoses and inventories runtimes, creates expiring content-addressed provision plans, executes only exactly approved bounded downloads/offline installation, verifies results, and refreshes isolated cost evidence no more than once per source per day. Python, MCP, Ollama, models, providers, adapters, executors, and provisioners remain optional; rules and schemas stay valid without all of them. Runtime state, payloads, credentials, host paths, and live inventories stay outside version control.
 
 ## Repository continuity boundary
 

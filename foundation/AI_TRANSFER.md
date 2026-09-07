@@ -220,6 +220,24 @@ After installation:
 
 Runtime catalogs, aggregate outcomes, session hashes, evaluation reservations, launchers, and snapshots stay outside version control. The capability does not invoke a model itself and does not make client-specific routing policy authoritative.
 
+## System-independent AI work and host preparation
+
+The core `foundation-ai-work/v1` schemas and `AI_WORK_ORCHESTRATION_POLICY.md` apply without any executable AI component. Select `ai-work`, `ai-runtime-adapters`, `ai-executor`, and `ai-provisioning` independently and only when their optional reference behavior is useful. Their dependency declarations install required contract code but grant no runtime authority.
+
+The optional `ai-provisioning` capability can diagnose configured runtimes outside `PATH`, inventory each runtime independently, create an expiring hash-bound `ProvisionPlan`, execute a matching approved bounded download/offline install, verify the result, and maintain isolated cost-evidence cache entries. It is one implementation of the language-neutral contract; Python, Ollama, LM Studio, any cloud, and any specific model remain optional.
+
+Before selecting or using it:
+
+1. choose external non-versioned state and target locations;
+2. configure only trusted exact runtime definitions and recipe sources with license/use evidence;
+3. keep download, disk, memory, network destination, environment, cost, and expiry bounds explicit;
+4. approve the complete plan hash once, never an open-ended provisioning permission;
+5. permit only audited offline install commands in the reference implementation and use stronger sandboxing when offline behavior cannot be established;
+6. treat `FAILED` and ambiguous non-idempotent checkpoints as requiring reconciliation and a newly approved changed plan;
+7. configure cost research from independently verified primary/project sources, at most once per source per 24 hours including failures, and preserve routing without AI/network when evidence is cached or unavailable.
+
+Do not transfer external definitions, plans, approvals, inventories, downloads, checkpoints, host paths, cost observations, or credentials into the target repository. The capability documentation includes a full manual procedure for environments without Python.
+
 ## Required attribution
 
 Every Foundation rules transfer includes `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md` with the complete Foundation MIT notice.
@@ -250,7 +268,7 @@ Do not replace richer target policies with simplified Foundation vocabulary.
 3. If upgrading from an older version, compute and classify the complete semantic feature delta; surface recommendations/decisions/conflicts, including repository continuity when relevant.
 4. Read semantic integration policy plus feature-specific policies required by applicable candidates, including central-registry and repository-continuity policy when relevant.
 5. Inspect target governance, identifiers, Registration Authority/storage profile, adapters, repo maps, validation, CI availability dependencies, model routing, privacy/license constraints.
-6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities, including `rule-context-cache` only when local deterministic cache planning is wanted and `model-router` only when its remote/runtime boundaries are authorized.
+6. Select `core`, requested adapters, and only explicitly requested/project-selected optional capabilities, including `rule-context-cache` only when local deterministic cache planning is wanted, `model-router` only when its remote/runtime boundaries are authorized, and `ai-provisioning` only when bounded host preparation is authorized.
 7. Build deterministic file states (`CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, `CONFLICT`) using portable UTF-8 LF/CRLF equivalence; do not manufacture `.gitattributes` work for an EOL-only difference.
 8. Preserve equivalent, stronger, selectable-override, and complementary target behavior; resolve true required conflicts and target-internal conflicts separately.
 9. Apply identifier adoption, Registration Authority, and optional v2 migration rules without silent migration/replacement.

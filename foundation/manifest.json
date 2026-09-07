@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.12.0",
+  "ruleset_version": "1.13.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
   "description": "Explicit whitelist of reusable core rules/provenance plus explicitly selected optional capability files for new or existing repositories.",
   "default_adapters": ["github-copilot", "claude-code", "gemini"],
   "default_capabilities": [],
-  "capability_dependencies": {"ai-executor": ["ai-work"]},
+  "capability_dependencies": {"ai-executor": ["ai-work"], "ai-provisioning": ["ai-work"]},
   "transfer_coverage_contract": {
     "version_authority": "foundation/manifest.json#ruleset_version",
     "version_mirrors": [
@@ -165,7 +165,11 @@
       ".ai/foundation/schemas/approval-receipt.schema.json",
       ".ai/foundation/schemas/validation-evidence.schema.json",
       ".ai/foundation/schemas/gap-report.schema.json",
-      ".ai/foundation/schemas/provision-plan.schema.json"
+      ".ai/foundation/schemas/provision-plan.schema.json",
+      ".ai/foundation/schemas/runtime-inventory.schema.json",
+      ".ai/foundation/schemas/provision-request.schema.json",
+      ".ai/foundation/schemas/provision-approval.schema.json",
+      ".ai/foundation/schemas/provision-report.schema.json"
     ],
     "payload_transport": "content_handles_outside_control_plane",
     "payload_persistence_default": "prohibited",
@@ -179,7 +183,17 @@
     "reference_executor": "optional_capability",
     "adapter_protocol": "foundation-ai-adapter-jsonl/v1",
     "adapter_protocol_schema_target": ".ai/foundation/schemas/ai-adapter-protocol.schema.json",
-    "resource_cost_evidence_schema_target": ".ai/foundation/schemas/resource-cost-evidence.schema.json"
+    "resource_cost_evidence_schema_target": ".ai/foundation/schemas/resource-cost-evidence.schema.json",
+    "host_preparation": {
+      "profile": "foundation-ai-host-preparation/v1",
+      "commands": ["doctor", "inventory", "plan-provision", "provision", "verify", "refresh-cost-evidence"],
+      "reference_implementation": "optional_capability",
+      "runtime_discovery": "path_and_explicit_locations",
+      "plan_approval": "exact_hash_and_expiry",
+      "reference_install_network": "denied",
+      "failed_or_ambiguous_retry": "new_plan_required",
+      "cost_refresh_minimum_seconds": 86400
+    }
   },
   "model_routing_contract": {
     "schema_targets": [
@@ -253,6 +267,10 @@
     {"source": "foundation/schemas/validation-evidence.schema.json", "target": ".ai/foundation/schemas/validation-evidence.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/gap-report.schema.json", "target": ".ai/foundation/schemas/gap-report.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/provision-plan.schema.json", "target": ".ai/foundation/schemas/provision-plan.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/runtime-inventory.schema.json", "target": ".ai/foundation/schemas/runtime-inventory.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/provision-request.schema.json", "target": ".ai/foundation/schemas/provision-request.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/provision-approval.schema.json", "target": ".ai/foundation/schemas/provision-approval.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/provision-report.schema.json", "target": ".ai/foundation/schemas/provision-report.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/ai-adapter-protocol.schema.json", "target": ".ai/foundation/schemas/ai-adapter-protocol.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/resource-cost-evidence.schema.json", "target": ".ai/foundation/schemas/resource-cost-evidence.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/model-routing-request-v2.schema.json", "target": ".ai/foundation/schemas/model-routing-request-v2.schema.json", "kind": "schema", "merge": "review_if_exists"},
@@ -295,6 +313,10 @@
     "ai-executor": [
       {"source": "foundation/capabilities/ai-executor/AI_EXECUTOR.md", "target": ".ai/foundation/ai_executor/AI_EXECUTOR.md", "kind": "ai-executor-documentation", "merge": "review_if_exists"},
       {"source": "foundation/capabilities/ai-executor/ai_executor.py", "target": ".ai/foundation/ai_executor/ai_executor.py", "kind": "ai-executor-reference", "merge": "review_if_exists"}
+    ],
+    "ai-provisioning": [
+      {"source": "foundation/capabilities/ai-provisioning/AI_PROVISIONING.md", "target": ".ai/foundation/ai_provisioning/AI_PROVISIONING.md", "kind": "ai-provisioning-documentation", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/ai-provisioning/host_preparation.py", "target": ".ai/foundation/ai_provisioning/host_preparation.py", "kind": "ai-host-preparation-reference", "merge": "review_if_exists"}
     ],
     "model-router": [
       {"source": "foundation/capabilities/model-router/MODEL_ROUTER.md", "target": ".ai/foundation/model_router/MODEL_ROUTER.md", "kind": "model-router-documentation", "merge": "review_if_exists"},

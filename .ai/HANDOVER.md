@@ -4,7 +4,11 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.12.0 is a local candidate on `feature/ai-work-executor`. It adds the optional content-free resumable executor, exact-plan grouped approvals, idempotency-aware crash recovery, bounded fallback/cancellation/limits, output-hash checks, and required validation evidence while retaining the decision-only planner and keeping every runtime optional. `WI-0024` is complete by the local gate. `WI-0026`–`WI-0029` remain for provisioning/evidence refresh, client dispatch/manual handoff, failure/dual-runtime acceptance, and final source self-hosting.
+Foundation 1.13.0 is a local candidate on `feature/ai-provisioning`. It adds optional isolated host diagnosis/inventory, exact expiring provision plans and approvals, bounded offline installation/verification, terminal failure reconciliation, a complete manual path, and independently throttled reusable cost evidence while keeping every runtime optional. `WI-0026` is complete by focused local tests. `WI-0027`–`WI-0029` remain for client dispatch/manual model handoff, failure/dual-runtime acceptance, and final source self-hosting.
+
+The provisioner accepts only exact credential-free file/HTTPS sources and reference install commands declaring network denial. It cannot itself enforce an operating-system network sandbox, so only audited offline installers are admissible; stronger implementations may add sandboxing. Failed source refreshes are also throttled for 24 hours, preventing an unavailable endpoint from creating a retry loop. No live download, paid call, or productive runtime interruption was used for the deterministic tests.
+
+The v1.13 local gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, JSON/compile/diff hygiene, focused provisioning/install/upgrade tests, and all 207 tests on Windows. A separate read-only live check found Ollama 0.33.3 outside `PATH` and the LM Studio CLI on `PATH`; both diagnosis and inventory completed. Cloud-tagged Ollama artifacts were `REMOTE`, and locally listed artifacts stayed `UNKNOWN` until a later execution probe attests their boundary. No runtime evidence was committed.
 
 The 2026-09-07 v1.12 local gate passed transfer/feature guards against `origin/main`, registry validation/backlog projection, full Foundation validation, JSON/compile/diff hygiene, focused planner/executor/install/upgrade tests, and all 190 tests on Windows. The validator retains only its two pre-existing non-blocking self-scan warnings. Runtime state and payload paths remain external; ambiguous non-idempotent external effects require manual reconciliation rather than blind replay.
 
@@ -96,7 +100,6 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
-- `WI-0026`: bounded provisioning and host preparation.
 - `WI-0027`: client integration, gap reporting, and governed local adapter synthesis.
 - `WI-0028`: cross-platform degradation and Windows dual-runtime acceptance.
 - `WI-0029`: Foundation source-project self-hosting.

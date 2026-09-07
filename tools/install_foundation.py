@@ -171,6 +171,20 @@ def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
                 ),
             }
         )
+    if "ai-provisioning" in capabilities:
+        notices.append(
+            {
+                "code": "AI_PROVISIONING_EXACT_APPROVAL_REQUIRED",
+                "severity": "NOTICE",
+                "message": (
+                    "The ai-provisioning capability installs optional reference code only. Keep definitions, inventories, "
+                    "plans, approvals, downloads, cost evidence, targets, and checkpoints outside version control. A download "
+                    "or offline install requires an exact unexpired plan and matching approval; failed or ambiguous work must "
+                    "be reconciled under a new plan. Installing it grants no network, credential, spend, install, or repository "
+                    "authority and does not make Python or any runtime mandatory."
+                ),
+            }
+        )
     return notices
 
 

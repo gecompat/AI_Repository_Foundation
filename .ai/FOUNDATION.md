@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.12.0
+- version: 1.13.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -41,7 +41,7 @@ Status: AUTHORITATIVE
 - target_github_merge_protection: recommended when relevant, never silently imposed by Foundation transfer
 - python_runtime_required: false
 - powershell_reference_client: supported first-class for the v1 compatibility profile
-- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`; `ai-executor`
+- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`; `ai-executor`; `ai-provisioning`
 - target_project_license: never replaced or modified by installation
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none
@@ -105,6 +105,8 @@ Foundation 1.11 preserves those v1 calls and adds router v2 execution/data bound
 Concrete model identifiers, providers, capabilities, availability, and prices remain expiring runtime facts. Decisions carry a pricing epoch and expire at relevant rate boundaries. Newly discovered models remain `UNASSESSED` until an explicitly allowed, bounded evaluation reaches the project evidence threshold; discovery is never treated as quality evidence.
 
 The optional `model-router` capability provides a dependency-free Python core and CLI, an Ollama Cloud discovery/pricing adapter, a local newline-delimited JSON-RPC stdio MCP server, a shell-free launcher, and expiring snapshots. Runtime catalogs, aggregate outcomes, hashed session references, evaluation reservations, launchers, and snapshots stay outside Git under atomic locking. Credentials are read from the execution environment and never stored. Visual Studio and GitHub Copilot receive separate MCP examples because their configuration shapes differ; Codex and all other clients can always use the CLI/launcher/snapshot fallback.
+
+Foundation 1.13 adds optional bounded host preparation without making provisioning a prerequisite. Runtime inventory, provision request/plan/approval/report, exact source/license/hash/resource limits, offline installation, terminal failure recovery, and per-source at-most-daily cost-evidence refresh are portable contracts. The `ai-provisioning` Python reference is opt-in; all state, targets, inventories, approvals, downloads, and observed prices remain outside Git. Missing Python, network, runtimes, providers, or the provisioner leaves the Foundation rules valid and yields a deterministic alternative or truthful unavailable/manual status.
 
 For existing repositories, semantic integration preserves target-owned governance. Foundation `REQUIRED` rules are minimum floors; stricter target rules are compatible. Existing target policy vocabularies do not need to be rewritten into Foundation terms when a semantic mapping is sufficient.
 
