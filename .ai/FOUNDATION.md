@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.11.0
+- version: 1.12.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -29,7 +29,7 @@ Status: AUTHORITATIVE
 - portable_text_equivalence: UTF-8 CRLF/LF-only Git working-tree differences are equivalent for Foundation install/drift checks; true text/binary differences remain detectable
 - rule_context_cache_contract: native instruction discovery per run; session-local semantic analyses keyed by validated scope/source dependencies; optional local records contain fingerprints/dependency metadata only and fail closed on scope, instruction, topology, source-set, schema, generator, corruption, or uncertainty changes
 - model_routing_contract: compatible `foundation-model-router/v1` plus v2 boundaries/resources/isolated fragments; complete-chain expected cost of success; price-epoch expiry; conditional affinity; paired bounded evaluation; runtime state outside version control
-- ai_work_contract: runtime-neutral `foundation-ai-work/v1`; payload handles; isolated optional capabilities; authority intersection; truthful degradation; risk-gated validation; runtime state outside version control
+- ai_work_contract: runtime-neutral `foundation-ai-work/v1`; payload handles; isolated optional capabilities; authority intersection; truthful degradation; risk-gated validation; optional content-free resumable execution; runtime state outside version control
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
@@ -41,7 +41,7 @@ Status: AUTHORITATIVE
 - target_github_merge_protection: recommended when relevant, never silently imposed by Foundation transfer
 - python_runtime_required: false
 - powershell_reference_client: supported first-class for the v1 compatibility profile
-- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`
+- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`; `ai-executor`
 - target_project_license: never replaced or modified by installation
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none

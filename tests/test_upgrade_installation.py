@@ -48,7 +48,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.11.0")
+        self.assertEqual(manifest["ruleset_version"], "1.12.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -98,6 +98,13 @@ class UpgradeInstallationTests(unittest.TestCase):
             by_id["ai-runtime-adapters"]["candidate_reasons"],
             ["introduced_in:1.11.0"],
         )
+
+    def test_1_11_to_1_12_delta_surfaces_resumable_executor(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.11.0", "1.12.0")
+        by_id = {item["feature_id"]: item for item in candidates}
+        self.assertEqual(by_id["ai-work-orchestration"]["candidate_reasons"], ["material_change:1.12.0"])
+        self.assertEqual(by_id["ai-work-execution"]["candidate_reasons"], ["introduced_in:1.12.0"])
 
 
 if __name__ == "__main__":

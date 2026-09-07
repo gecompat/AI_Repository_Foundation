@@ -2,6 +2,24 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.12.0] - 2026-09-07
+
+### Added
+
+- optional `ai-executor` reference capability for exact-plan revalidation, shell-free adapter dispatch, bounded alternatives, plan-scoped cancellation, and resumable content-free checkpoints outside version control;
+- `foundation-ai-executor-checkpoint/v1` and `foundation-ai-approval/v1` schemas for integrity-checked runtime state and exact-plan grouped risk approval receipts;
+- deterministic regressions for completed-plan resume, fallback isolation, approval scope/authority, ambiguous external outcomes, idempotent replay, cancellation, output hashing, measured overruns, external state location, and independent validation evidence.
+
+### Changed
+
+- `CapabilityDescriptor.execution` optionally records idempotency/resume semantics while omitted fields preserve router/planner v1 consumers; `WorkRequest.limits.max_attempts` optionally bounds all attempts;
+- execution accounts actual spend and cumulative resources even for attempts that later fail, treats RAM/VRAM as peak limits, verifies output-handle hashes, and requires passing evidence for every validation scope;
+- the AI work policy now defines crash ambiguity, exact approval binding, cooperative cancellation, bounded timeouts, and the limit of exactly-once claims.
+
+### Migration
+
+The rules and schemas remain usable without Python or any executable component. Select `ai-executor` only when an optional Python executor is wanted and configure adapters, handles, approvals, credentials, and state outside the repository. A crash during a non-idempotent external effect requires manual reconciliation; installation grants no permission to invoke, transfer data, spend, publish, push, or create a pull request.
+
 ## [1.11.0] - 2026-09-07
 
 ### Added

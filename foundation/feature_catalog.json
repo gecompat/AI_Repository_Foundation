@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.11.0",
+  "ruleset_version": "1.12.0",
   "assessment_classifications": ["NOT_APPLICABLE", "ALREADY_EQUIVALENT", "PROJECT_STRONGER", "APPLY_DEFAULT", "RECOMMENDED", "DECISION_REQUIRED", "CONFLICT"],
   "features": {
     "foundation-baseline": {
@@ -123,8 +123,8 @@
     "ai-work-orchestration": {
       "title": "System-independent AI work planning with optional isolated capabilities",
       "introduced_in": "1.10.0",
-      "change_history": [],
-      "transfer_sources": ["foundation/AGENTS.template.md", "foundation/FOUNDATION_RULESET.template.md", "foundation/feature_catalog.json", "foundation/repo_map.template.yaml", "Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md", "foundation/schemas/ai-work-request.schema.json", "foundation/schemas/capability-descriptor.schema.json", "foundation/schemas/execution-plan.schema.json", "foundation/schemas/execution-report.schema.json", "foundation/schemas/validation-evidence.schema.json", "foundation/schemas/gap-report.schema.json", "foundation/schemas/provision-plan.schema.json", "foundation/capabilities/ai-work/AI_WORK.md", "foundation/capabilities/ai-work/ai_work.py", "foundation/capabilities/ai-work/work-request.example.json", "foundation/capabilities/ai-work/capabilities.example.json"],
+      "change_history": [{"version": "1.12.0", "impact": "MATERIAL", "summary": "Adds optional execution semantics to capability descriptors, bounded attempts to work requests, extended execution reports, grouped approval receipts, and content-free resumable checkpoints."}],
+      "transfer_sources": ["foundation/AGENTS.template.md", "foundation/FOUNDATION_RULESET.template.md", "foundation/feature_catalog.json", "foundation/repo_map.template.yaml", "Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md", "foundation/schemas/ai-work-request.schema.json", "foundation/schemas/capability-descriptor.schema.json", "foundation/schemas/execution-plan.schema.json", "foundation/schemas/execution-report.schema.json", "foundation/schemas/execution-checkpoint.schema.json", "foundation/schemas/approval-receipt.schema.json", "foundation/schemas/validation-evidence.schema.json", "foundation/schemas/gap-report.schema.json", "foundation/schemas/provision-plan.schema.json", "foundation/capabilities/ai-work/AI_WORK.md", "foundation/capabilities/ai-work/ai_work.py", "foundation/capabilities/ai-work/work-request.example.json", "foundation/capabilities/ai-work/capabilities.example.json"],
       "dependencies": ["authorization-envelope", "privacy-classification", "layered-validation"],
       "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["ai_assisted_development", "ai_assisted_research", "ai_assisted_documentation", "multiple_ai_or_tool_runtimes", "runtime_failure_isolation", "bounded_ai_execution"], "questions": ["Which task, data, risk, resource, and validation constraints are project authority?", "Which deterministic tools, models, retrieval sources, renderers, validators, services, or human checkpoints are available?", "May an optional reference planner be installed without making its runtime mandatory?", "Which operations require a grouped approval checkpoint?"]},
       "recommendation": {"when_applicable": "RECOMMENDED", "summary": "Adopt the runtime-neutral control-plane contracts and truthful degradation states; install the optional planner only when useful, keep payload/runtime data outside Git, and never infer authority from capability discovery.", "decision_required_when": ["authorizing non-public remote processing", "authorizing spend or irreversible external effects", "enabling local adapter synthesis"]}
@@ -137,6 +137,15 @@
       "dependencies": ["ai-work-orchestration", "model-routing-interoperability"],
       "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["ollama_local", "ollama_cloud", "openai_compatible_runtime", "lm_studio", "llama_cpp", "localai", "vllm", "command_ai_client", "multiple_provider_catalogs"], "questions": ["Which runtime endpoint and execution boundary are independently established?", "Which data classes, file roots, environment names, network access, and remote model use are authorized?", "Should the optional Python references be installed or an equivalent language-neutral adapter retained?"]},
       "recommendation": {"when_applicable": "RECOMMENDED", "summary": "Use the content-free JSONL protocol and independently expiring provider fragments; select only needed adapters and preserve stricter endpoint, credential, and payload controls.", "decision_required_when": ["authorizing network access or remote model invocation", "allowlisting a credential environment name", "asserting a loopback endpoint is host-local"]}
+    },
+    "ai-work-execution": {
+      "title": "Optional resumable AI work execution with risk-gated evidence",
+      "introduced_in": "1.12.0",
+      "change_history": [],
+      "transfer_sources": ["foundation/feature_catalog.json", "Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md", "foundation/schemas/ai-work-request.schema.json", "foundation/schemas/capability-descriptor.schema.json", "foundation/schemas/execution-report.schema.json", "foundation/schemas/execution-checkpoint.schema.json", "foundation/schemas/approval-receipt.schema.json", "foundation/schemas/validation-evidence.schema.json", "foundation/capabilities/ai-executor/AI_EXECUTOR.md", "foundation/capabilities/ai-executor/ai_executor.py"],
+      "dependencies": ["ai-work-orchestration", "ai-runtime-adapters"],
+      "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["bounded_ai_execution", "resumable_work", "fallback_execution", "external_effect_idempotency", "grouped_risk_approval"], "questions": ["May content-free executor checkpoints be stored outside version control?", "Which adapter operations attest idempotent replay with the same operation key?", "Which authorities may issue exact-plan grouped approval receipts?", "Which money/resource limits and validation scopes are hard constraints?"]},
+      "recommendation": {"when_applicable": "RECOMMENDED", "summary": "Use an optional executor only with exact-plan revalidation, external runtime state, bounded shell-free adapter calls, measured limits, scoped evidence, and manual reconciliation of ambiguous non-idempotent external effects.", "decision_required_when": ["selecting the runtime state location", "authorizing external effects or spend", "trusting an idempotency attestation", "selecting approval authorities"]}
     }
   }
 }
