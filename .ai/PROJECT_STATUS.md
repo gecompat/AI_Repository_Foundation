@@ -122,6 +122,7 @@ Foundation version: 1.11.0 candidate
 
 ## Validation evidence
 
+- PR #21 implementation head `cea0d14e525ccb837cfd6d66cbefe0e9355230ed`: Foundation Artifact Registry run `34130851451` and Foundation CI run `34130851510`, success.
 - v1.11.0 local completion gate on 2026-09-07: transfer and semantic feature guards against `origin/main`, central registry validation/backlog projection, full Foundation validator, JSON/compile/diff hygiene, focused adapter/router/install/upgrade tests, and all 176 tests succeeded on Windows; validator output retained only its two pre-existing non-blocking self-scan warnings.
 - PR #20 squash-merged as `3cf4239dca60ed766ac47d135f57f7802e719348`; the exact merge commit passed post-merge Foundation CI run `34125163370`.
 - PR #20 contract implementation head `f770e01c95314ccee60fa9b0d556bdd8d4cf2faf`: Foundation Artifact Registry run `34124924485` and Foundation CI run `34124924493`, success.
