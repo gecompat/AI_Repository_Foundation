@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.9.0
+foundation_ruleset_version: 1.10.0
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -12,6 +12,7 @@ authority:
     - .ai/foundation/UPGRADE_APPLICABILITY_POLICY.md
     - .ai/foundation/REPOSITORY_CONTINUITY_POLICY.md
     - .ai/foundation/RULE_CONTEXT_CACHE_POLICY.md
+    - .ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md
     - .ai/foundation/feature_catalog.json
     - .ai/foundation/WORKING_RULES.md
     - .ai/foundation/MODEL_ROUTING_POLICY.md
@@ -35,6 +36,13 @@ authority:
     - .ai/foundation/schemas/model-router-catalog.schema.json
     - .ai/foundation/schemas/model-routing-snapshot.schema.json
     - .ai/foundation/schemas/model-router-profiles.schema.json
+    - .ai/foundation/schemas/ai-work-request.schema.json
+    - .ai/foundation/schemas/capability-descriptor.schema.json
+    - .ai/foundation/schemas/execution-plan.schema.json
+    - .ai/foundation/schemas/execution-report.schema.json
+    - .ai/foundation/schemas/validation-evidence.schema.json
+    - .ai/foundation/schemas/gap-report.schema.json
+    - .ai/foundation/schemas/provision-plan.schema.json
 provenance:
   foundation_notice: .ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md
   target_root_license_behavior: independent_and_untouched
@@ -184,6 +192,24 @@ model_routing_contract:
   credential_storage: prohibited
   graceful_degradation: MCP_CLI_LAUNCHER_OR_SNAPSHOT_PORTABLE_TIER_ONLY
   optional_reference_capability: model-router
+ai_work_contract:
+  policy: .ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md
+  profile: foundation-ai-work/v1
+  request_schema: .ai/foundation/schemas/ai-work-request.schema.json
+  capability_schema: .ai/foundation/schemas/capability-descriptor.schema.json
+  plan_schema: .ai/foundation/schemas/execution-plan.schema.json
+  report_schema: .ai/foundation/schemas/execution-report.schema.json
+  validation_evidence_schema: .ai/foundation/schemas/validation-evidence.schema.json
+  gap_report_schema: .ai/foundation/schemas/gap-report.schema.json
+  provision_plan_schema: .ai/foundation/schemas/provision-plan.schema.json
+  payload_transport: content_handles_outside_control_plane
+  payload_persistence_default: prohibited
+  statuses: EXECUTABLE_MANUAL_REQUIRED_UNAVAILABLE_BLOCKED
+  capability_failures: isolated
+  authority_expansion: prohibited
+  runtime_state: outside_version_control
+  python_required: false
+  optional_reference_capability: ai-work
 override_contract:
   required: minimum_floor_project_may_be_stricter
   default: project_may_override_intentionally

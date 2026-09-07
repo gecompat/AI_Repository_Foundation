@@ -2,6 +2,24 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.10.0] - 2026-09-07
+
+### Added
+
+- runtime-neutral `foundation-ai-work/v1` contracts for work requests, capability descriptors, execution plans/reports, validation evidence, gap reports, and bounded provisioning plans;
+- authoritative orchestration policy covering payload/control-plane separation, capability health and boundary evidence, authority intersection, risk-gated validation, isolated failure, external runtime state, and truthful manual/unavailable/blocked degradation;
+- an opt-in dependency-free `ai-work` reference planner that filters hard constraints, prefers an adequate deterministic capability, emits grouped approval points, and never invokes or provisions a runtime;
+- deterministic tests for missing runtimes, isolated failures, privacy and authority denial, resource/cost uncertainty, validation DAGs, grouped risk gates, adapter-synthesis authorization, content minimization, and CLI failure behavior.
+
+### Changed
+
+- the semantic feature catalog and transfer metadata now expose general AI-assisted development, research, documentation, data, media, and project-defined work independently of any model, provider, transport, IDE, or implementation language;
+- Foundation rules remain valid when every optional component is absent, while selected projects may use the reference planner without granting it execution, network, repository, publication, or spend authority.
+
+### Migration
+
+Existing targets may adopt the core policy and schemas without installing a runtime. Select the optional `ai-work` capability only when the Python reference planner is useful. Keep payloads, credentials, host paths, live catalogs, plans/reports, and runtime evidence outside Git unless an explicit target rule authorizes narrower retention. Preserve compatible target orchestration and map richer data/risk/task vocabularies semantically.
+
 ## [1.9.0] - 2026-09-07
 
 ### Added

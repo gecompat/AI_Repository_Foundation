@@ -1,0 +1,65 @@
+{
+  "contract": "foundation-ai-work/v1",
+  "data_defaults": {
+    "data_class": "INTERNAL",
+    "payload_persistence": "PROHIBITED",
+    "remote_data_classes": []
+  },
+  "degradation": {
+    "no_capability": "MANUAL_REQUIRED",
+    "no_executor": "PLAN_ONLY",
+    "no_network": "USE_HEALTHY_NON_NETWORK_CAPABILITIES_OR_MANUAL",
+    "no_validator": "UNAVAILABLE_OR_MANUAL_REQUIRED",
+    "provider_failure": "EXCLUDE_PROVIDER_FRAGMENT_ONLY"
+  },
+  "project": "AI_Repository_Foundation",
+  "provider_requirements": [],
+  "runtime_inventory_location": "OUTSIDE_REPOSITORY",
+  "schema_version": 1,
+  "task_profiles": {
+    "data.structured": {
+      "effects": ["LOCAL_READ", "LOCAL_WRITE"],
+      "required_capabilities": ["structured-data.transform"],
+      "risk": "MODERATE",
+      "validation_capabilities": ["structured-data.validate"]
+    },
+    "documentation.author": {
+      "effects": ["LOCAL_READ", "LOCAL_WRITE"],
+      "required_capabilities": ["documentation.author"],
+      "risk": "LOW",
+      "validation_capabilities": ["documentation.check"]
+    },
+    "project.custom": {
+      "effects": ["LOCAL_READ"],
+      "required_capabilities": ["project.declared"],
+      "risk": "MODERATE",
+      "validation_capabilities": []
+    },
+    "research.sourced": {
+      "effects": ["LOCAL_READ", "DATA_TRANSFER"],
+      "required_capabilities": ["research.retrieve", "research.synthesize"],
+      "risk": "MODERATE",
+      "validation_capabilities": ["sources.verify"]
+    },
+    "software.change": {
+      "effects": ["LOCAL_READ", "LOCAL_WRITE"],
+      "required_capabilities": ["repository.inspect", "repository.edit"],
+      "risk": "MODERATE",
+      "validation_capabilities": ["foundation.validate"]
+    }
+  },
+  "validation_capabilities": {
+    "foundation.validate": {
+      "commands": [
+        ["python", "tools/transfer_manifest_guard.py"],
+        ["python", "tools/feature_catalog_guard.py"],
+        ["python", "foundation/capabilities/artifact-registry-github/registry_semantic.py", "validate", "--registry", ".ai/identity/registry.json"],
+        ["python", "foundation/capabilities/artifact-registry-github/registry_semantic.py", "backlog", "--registry", ".ai/identity/registry.json", "--output", ".ai/BACKLOG.md", "--check"],
+        ["python", "tools/foundation_validator.py", "--profile", "full"],
+        ["python", "-m", "unittest", "discover", "-s", "tests", "-v"]
+      ],
+      "execution_boundary": "PROCESS",
+      "shell_evaluation": false
+    }
+  }
+}

@@ -4,7 +4,11 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.9.0 is integrated in `origin/main` as `49c73f3cc2ba4031b83ab343038a16ba2e03bbb4` under completed `WI-0019` and accepted `DEC-0019`. It provides provider-neutral dynamic routing schemas/policy plus an opt-in model-router capability with Ollama Cloud runtime discovery, Cost-of-Success selection, bounded evaluation, outside-repository state, CLI, local stdio MCP, launcher, and snapshot degradation paths. Concrete model names and prices remain runtime data.
+Foundation 1.10.0 is a local candidate on `feature/ai-work-contracts`. It adds the runtime-neutral `foundation-ai-work/v1` control plane, seven public schemas, an optional decision-only planner, and an initial provider-free Foundation source-project profile. `WI-0022` is complete by the local gate; `WI-0029` is in progress because later adapter/executor and runtime acceptance evidence are still required.
+
+The 2026-09-07 v1.10 contract gate is green: transfer/feature guards against `3b260c612b318aeeaac08feac724e3c73e770b9c`, registry/backlog checks, full Foundation validator, JSON/compile/diff hygiene, focused contract/install/upgrade/self-hosting tests, and all 146 tests passed on Windows. The validator has only its two pre-existing non-blocking self-scan warnings.
+
+PR #19 was squash-merged as `3b260c612b318aeeaac08feac724e3c73e770b9c`; that exact merge commit passed post-merge Foundation CI run `34121914451`.
 
 The 2026-09-07 candidate local gate is green: transfer/feature guards, registry/backlog checks, full Foundation validator, diff hygiene, Python compilation, all Foundation JSON parsing, and all 125 tests passed on Windows. The validator has only its two pre-existing non-blocking self-scan warnings. The live public Ollama price-page compatibility check parsed 19 base rows, 2 peak rows, and the documented weekday 12:00–18:00 UTC window. Authenticated inventory and real task quality are deliberately not claimed without target credentials/workloads.
 
@@ -12,7 +16,7 @@ PR #17 final head `7abcc9d5bcf0d3acc6ea5de1a46277de74d4a7cb` passed Foundation C
 
 The 2026-09-07 post-merge audit found two bounded follow-ups while confirming the rest of the requested model-routing scope. `WI-0020` covers full-chain Cost-of-Success optimization and output-aware context bounds. `WI-0021` covers explicit evaluation task/sample/stopping plans plus complete paired-arm reservation settlement and auditable outcome linkage. Both are proposed follow-ups to the implemented `WI-0019` baseline rather than a reversal of its completed status.
 
-Accepted `DEC-0020` and registered `WI-0022`–`WI-0029` define the staged system-independent AI work program. The design keeps rules and contracts usable without an AI runtime, treats Ollama/MCP/Python/providers as optional capabilities, isolates failures, adds an optional risk-gated executor and bounded provisioner, and ends with cross-system degradation plus Foundation source-project self-hosting. `WI-0022` is the active first implementation item.
+Accepted `DEC-0020` and registered `WI-0022`–`WI-0029` define the staged system-independent AI work program. The design keeps rules and contracts usable without an AI runtime, treats Ollama/MCP/Python/providers as optional capabilities, isolates failures, adds an optional risk-gated executor and bounded provisioner, and ends with cross-system degradation plus Foundation source-project self-hosting. `WI-0022` is complete on the candidate branch; isolated adapters are the next implementation stage.
 
 PR #19 head `5a0cb7a49e59bd6e5876f2a48391b0e921c7be05` passed Foundation Artifact Registry run `34121700368` and Foundation CI run `34121700457` for the program-registration baseline.
 

@@ -8,6 +8,8 @@ authority:
     - .ai/WORKING_RULES.md
     - .ai/MODEL_ROUTING_POLICY.md
     - .ai/VALIDATION_POLICY.md
+    - .ai/AI_WORK_PROFILE.md
+    - .ai/ai-work/profile.json
     - .ai/FOUNDATION.md
     - .ai/identity/registry.json
     - Documentation/Architecture/DECISIONS.md
@@ -31,6 +33,7 @@ authority:
     - Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md
     - Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md
     - Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md
+    - Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md
     - Documentation/Quality/GITHUB_BRANCH_PROTECTION.md
     - Documentation/Quality/GITHUB_BREAK_GLASS.md
     - foundation/feature_catalog.json
@@ -121,6 +124,16 @@ transfer:
     - foundation/schemas/model-routing-snapshot.schema.json
     - foundation/schemas/model-router-profiles.schema.json
   optional_model_router_capability: foundation/capabilities/model-router/
+  ai_work_policy: Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md
+  ai_work_schemas:
+    - foundation/schemas/ai-work-request.schema.json
+    - foundation/schemas/capability-descriptor.schema.json
+    - foundation/schemas/execution-plan.schema.json
+    - foundation/schemas/execution-report.schema.json
+    - foundation/schemas/validation-evidence.schema.json
+    - foundation/schemas/gap-report.schema.json
+    - foundation/schemas/provision-plan.schema.json
+  optional_ai_work_capability: foundation/capabilities/ai-work/
   schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
   optional_github_registry_capability: foundation/capabilities/artifact-registry-github/
@@ -138,3 +151,4 @@ installation:
   optional_registration_clients: python tools/install_foundation.py TARGET --capabilities artifact-registration-clients
   optional_github_registry: python tools/install_foundation.py TARGET --capabilities artifact-registry-github
   optional_model_router: python tools/install_foundation.py TARGET --capabilities model-router
+  optional_ai_work_planner: python tools/install_foundation.py TARGET --capabilities ai-work
