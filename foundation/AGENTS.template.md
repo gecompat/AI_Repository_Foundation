@@ -21,5 +21,7 @@ When the optional `model-router` capability is present and the task requires a c
 
 For AI-assisted development, research, documentation, data, media, or project-defined work that may use interchangeable tools or services, follow `.ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md`. Treat every runtime as optional, keep payloads separate from the control plane, apply privacy/authority/health/validation/resource constraints before ranking, and report manual, unavailable, or blocked work truthfully. The optional `ai-work` planner may assist but is never required and never grants execution authority.
 
+Do not claim that a requested model or subagent actually ran unless an explicitly trusted host/adapter issuer provides execution or response metadata attesting the actual model; an evidence label or model self-report alone is insufficient. If automatic dispatch is unavailable or cannot be attested, use an expiring privacy-safe manual handoff when available: recommend the portable tier/capabilities and, only from fresh eligible runtime evidence, a concrete model for the user to select. Keep prompt content outside control-plane records and mark the result `MANUAL_DISPATCH_REQUIRED` until execution evidence exists.
+
 Chat history, memory, prior scratchpads, and vendor-specific project prompts are not durable project truth.
 <!-- AI_REPOSITORY_FOUNDATION:END -->

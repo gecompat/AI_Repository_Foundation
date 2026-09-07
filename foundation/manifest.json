@@ -1,13 +1,13 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.13.0",
+  "ruleset_version": "1.14.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_license": "MIT",
   "target_root_license_behavior": "never_modify_or_replace",
   "description": "Explicit whitelist of reusable core rules/provenance plus explicitly selected optional capability files for new or existing repositories.",
   "default_adapters": ["github-copilot", "claude-code", "gemini"],
   "default_capabilities": [],
-  "capability_dependencies": {"ai-executor": ["ai-work"], "ai-provisioning": ["ai-work"]},
+  "capability_dependencies": {"ai-executor": ["ai-work"], "ai-provisioning": ["ai-work"], "ai-client-integration": ["ai-work", "ai-runtime-adapters", "model-router"]},
   "transfer_coverage_contract": {
     "version_authority": "foundation/manifest.json#ruleset_version",
     "version_mirrors": [
@@ -169,7 +169,11 @@
       ".ai/foundation/schemas/runtime-inventory.schema.json",
       ".ai/foundation/schemas/provision-request.schema.json",
       ".ai/foundation/schemas/provision-approval.schema.json",
-      ".ai/foundation/schemas/provision-report.schema.json"
+      ".ai/foundation/schemas/provision-report.schema.json",
+      ".ai/foundation/schemas/client-integration-plan.schema.json",
+      ".ai/foundation/schemas/manual-handoff.schema.json",
+      ".ai/foundation/schemas/dispatch-receipt.schema.json",
+      ".ai/foundation/schemas/adapter-synthesis-report.schema.json"
     ],
     "payload_transport": "content_handles_outside_control_plane",
     "payload_persistence_default": "prohibited",
@@ -194,6 +198,21 @@
       "failed_or_ambiguous_retry": "new_plan_required",
       "cost_refresh_minimum_seconds": 86400
     }
+  },
+  "ai_client_integration_contract": {
+    "profile": "foundation-ai-client-integration/v1",
+    "lifecycle": ["detect", "plan", "apply", "verify", "rollback"],
+    "supported_reference_clients": ["CODEX", "VISUAL_STUDIO", "GITHUB_COPILOT", "GENERIC"],
+    "configuration_merge": "semantic_namespaced_entry_only",
+    "configuration_backup": "exact_external_content_addressed",
+    "dispatch_attestation": "requested_and_actual_model_from_explicitly_trusted_host_execution_or_response_metadata",
+    "unattested_status": "REQUESTED_NOT_ATTESTED",
+    "manual_fallback_status": "MANUAL_DISPATCH_REQUIRED",
+    "payload_transport": "external_content_handle",
+    "gap_report_default": "local_or_stdout_only",
+    "adapter_synthesis": "explicit_authority_external_least_privilege_quarantined_until_conformance",
+    "runtime_state": "outside_version_control",
+    "reference_implementation": "optional_capability"
   },
   "model_routing_contract": {
     "schema_targets": [
@@ -223,7 +242,7 @@
     "bounded_evaluation_required": true,
     "runtime_state": "outside_version_control",
     "credential_storage": "prohibited",
-    "graceful_degradation": ["MCP", "CLI", "LAUNCHER_OR_SNAPSHOT", "PORTABLE_TIER_ONLY"],
+    "graceful_degradation": ["MCP", "CLI", "LAUNCHER_OR_SNAPSHOT", "MANUAL_HANDOFF", "PORTABLE_TIER_ONLY"],
     "reference_implementation": "optional_capability"
   },
   "attribution": {
@@ -276,6 +295,10 @@
     {"source": "foundation/schemas/model-routing-request-v2.schema.json", "target": ".ai/foundation/schemas/model-routing-request-v2.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/model-routing-decision-v2.schema.json", "target": ".ai/foundation/schemas/model-routing-decision-v2.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": "foundation/schemas/model-router-catalog-fragment-v2.schema.json", "target": ".ai/foundation/schemas/model-router-catalog-fragment-v2.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/client-integration-plan.schema.json", "target": ".ai/foundation/schemas/client-integration-plan.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/manual-handoff.schema.json", "target": ".ai/foundation/schemas/manual-handoff.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/dispatch-receipt.schema.json", "target": ".ai/foundation/schemas/dispatch-receipt.schema.json", "kind": "schema", "merge": "review_if_exists"},
+    {"source": "foundation/schemas/adapter-synthesis-report.schema.json", "target": ".ai/foundation/schemas/adapter-synthesis-report.schema.json", "kind": "schema", "merge": "review_if_exists"},
     {"source": ".ai/WORKING_RULES.md", "target": ".ai/foundation/WORKING_RULES.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/MODEL_ROUTING_POLICY.md", "target": ".ai/foundation/MODEL_ROUTING_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
     {"source": ".ai/VALIDATION_POLICY.md", "target": ".ai/foundation/VALIDATION_POLICY.md", "kind": "rule", "merge": "review_if_exists"},
@@ -317,6 +340,10 @@
     "ai-provisioning": [
       {"source": "foundation/capabilities/ai-provisioning/AI_PROVISIONING.md", "target": ".ai/foundation/ai_provisioning/AI_PROVISIONING.md", "kind": "ai-provisioning-documentation", "merge": "review_if_exists"},
       {"source": "foundation/capabilities/ai-provisioning/host_preparation.py", "target": ".ai/foundation/ai_provisioning/host_preparation.py", "kind": "ai-host-preparation-reference", "merge": "review_if_exists"}
+    ],
+    "ai-client-integration": [
+      {"source": "foundation/capabilities/ai-client-integration/AI_CLIENT_INTEGRATION.md", "target": ".ai/foundation/ai_client_integration/AI_CLIENT_INTEGRATION.md", "kind": "ai-client-integration-documentation", "merge": "review_if_exists"},
+      {"source": "foundation/capabilities/ai-client-integration/client_integration.py", "target": ".ai/foundation/ai_client_integration/client_integration.py", "kind": "ai-client-integration-reference", "merge": "review_if_exists"}
     ],
     "model-router": [
       {"source": "foundation/capabilities/model-router/MODEL_ROUTER.md", "target": ".ai/foundation/model_router/MODEL_ROUTER.md", "kind": "model-router-documentation", "merge": "review_if_exists"},

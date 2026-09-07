@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.13.0
+foundation_ruleset_version: 1.14.0
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -54,6 +54,10 @@ authority:
     - .ai/foundation/schemas/runtime-inventory.schema.json
     - .ai/foundation/schemas/ai-adapter-protocol.schema.json
     - .ai/foundation/schemas/resource-cost-evidence.schema.json
+    - .ai/foundation/schemas/client-integration-plan.schema.json
+    - .ai/foundation/schemas/manual-handoff.schema.json
+    - .ai/foundation/schemas/dispatch-receipt.schema.json
+    - .ai/foundation/schemas/adapter-synthesis-report.schema.json
 provenance:
   foundation_notice: .ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md
   target_root_license_behavior: independent_and_untouched
@@ -208,7 +212,7 @@ model_routing_contract:
   bounded_evaluation: required
   runtime_state: outside_version_control
   credential_storage: prohibited
-  graceful_degradation: MCP_CLI_LAUNCHER_OR_SNAPSHOT_PORTABLE_TIER_ONLY
+  graceful_degradation: MCP_CLI_LAUNCHER_OR_SNAPSHOT_MANUAL_HANDOFF_PORTABLE_TIER_ONLY
   optional_reference_capability: model-router
 ai_work_contract:
   policy: .ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md
@@ -243,6 +247,19 @@ ai_work_contract:
   python_required: false
   optional_reference_capability: ai-work
   optional_adapter_capability: ai-runtime-adapters
+ai_client_integration_contract:
+  profile: foundation-ai-client-integration/v1
+  plan_schema: .ai/foundation/schemas/client-integration-plan.schema.json
+  manual_handoff_schema: .ai/foundation/schemas/manual-handoff.schema.json
+  dispatch_receipt_schema: .ai/foundation/schemas/dispatch-receipt.schema.json
+  adapter_synthesis_report_schema: .ai/foundation/schemas/adapter-synthesis-report.schema.json
+  lifecycle: detect_plan_apply_verify_rollback
+  dispatch_attestation: requested_and_actual_model_from_explicitly_trusted_host_execution_or_response_metadata
+  unattested_status: REQUESTED_NOT_ATTESTED
+  manual_fallback_status: MANUAL_DISPATCH_REQUIRED
+  payload_transport: external_content_handle
+  runtime_state: outside_version_control
+  optional_reference_capability: ai-client-integration
 override_contract:
   required: minimum_floor_project_may_be_stricter
   default: project_may_override_intentionally

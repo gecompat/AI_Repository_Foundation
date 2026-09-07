@@ -208,7 +208,22 @@ MODEL_ROUTING_CONTRACT = {
     "bounded_evaluation_required": True,
     "runtime_state": "outside_version_control",
     "credential_storage": "prohibited",
-    "graceful_degradation": ["MCP", "CLI", "LAUNCHER_OR_SNAPSHOT", "PORTABLE_TIER_ONLY"],
+    "graceful_degradation": ["MCP", "CLI", "LAUNCHER_OR_SNAPSHOT", "MANUAL_HANDOFF", "PORTABLE_TIER_ONLY"],
+    "reference_implementation": "optional_capability",
+}
+AI_CLIENT_INTEGRATION_CONTRACT = {
+    "profile": "foundation-ai-client-integration/v1",
+    "lifecycle": ["detect", "plan", "apply", "verify", "rollback"],
+    "supported_reference_clients": ["CODEX", "VISUAL_STUDIO", "GITHUB_COPILOT", "GENERIC"],
+    "configuration_merge": "semantic_namespaced_entry_only",
+    "configuration_backup": "exact_external_content_addressed",
+    "dispatch_attestation": "requested_and_actual_model_from_explicitly_trusted_host_execution_or_response_metadata",
+    "unattested_status": "REQUESTED_NOT_ATTESTED",
+    "manual_fallback_status": "MANUAL_DISPATCH_REQUIRED",
+    "payload_transport": "external_content_handle",
+    "gap_report_default": "local_or_stdout_only",
+    "adapter_synthesis": "explicit_authority_external_least_privilege_quarantined_until_conformance",
+    "runtime_state": "outside_version_control",
     "reference_implementation": "optional_capability",
 }
 VALIDATION_MAP_MARKERS = [
@@ -415,6 +430,14 @@ def validate_manifest(manifest: dict) -> None:
         for key, expected in MODEL_ROUTING_CONTRACT.items():
             if model_contract.get(key) != expected:
                 add("ERROR", "MODEL_ROUTING_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
+
+    client_contract = manifest.get("ai_client_integration_contract")
+    if not isinstance(client_contract, dict):
+        add("BLOCKING", "AI_CLIENT_INTEGRATION_CONTRACT", "foundation/manifest.json", "ai_client_integration_contract is required")
+    else:
+        for key, expected in AI_CLIENT_INTEGRATION_CONTRACT.items():
+            if client_contract.get(key) != expected:
+                add("ERROR", "AI_CLIENT_INTEGRATION_CONTRACT", "foundation/manifest.json", f"{key} must be {expected!r}")
 
     targets: set[str] = set()
     rows = list(manifest.get("core", []))

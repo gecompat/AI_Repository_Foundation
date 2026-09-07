@@ -4,7 +4,11 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.13.0 is a local candidate on `feature/ai-provisioning`. It adds optional isolated host diagnosis/inventory, exact expiring provision plans and approvals, bounded offline installation/verification, terminal failure reconciliation, a complete manual path, and independently throttled reusable cost evidence while keeping every runtime optional. `WI-0026` is complete by focused local tests. `WI-0027`–`WI-0029` remain for client dispatch/manual model handoff, failure/dual-runtime acceptance, and final source self-hosting.
+Foundation 1.14.0 is a local candidate on `feature/ai-client-integration`. It adds optional semantic client integration, actual-model dispatch receipts, an expiring privacy-safe manual-selection fallback, local/stdout capability-gap handling, and explicitly authorized quarantined adapter synthesis while keeping every client/runtime optional. `WI-0027` is complete by the local gate; `WI-0028`–`WI-0029` remain for failure/dual-runtime acceptance and final source self-hosting.
+
+The manual fallback is deliberate: a router recommendation cannot force every chat host to switch models. `MANUAL_DISPATCH_REQUIRED` emits a content-free record plus an external prompt file containing tier/capability/acceptance/validation instructions. A concrete model is named only from fresh privacy-eligible evidence. The selected/actual model still requires matching host execution or response metadata; an accepted parameter, model list, user-visible subagent label, or recommendation alone remains `REQUESTED_NOT_ATTESTED`.
+
+The v1.14 local gate passed transfer/feature guards, registry/backlog checks, full Foundation validation, JSON/compile/diff hygiene, focused client/install/upgrade/self-hosting tests, and all 222 tests on Windows. The validator retains only its two pre-existing non-blocking self-scan warnings. No client configuration, runtime, network service, model, credential, or repository external to this branch was mutated during deterministic acceptance.
 
 The provisioner accepts only exact credential-free file/HTTPS sources and reference install commands declaring network denial. It cannot itself enforce an operating-system network sandbox, so only audited offline installers are admissible; stronger implementations may add sandboxing. Failed source refreshes are also throttled for 24 hours, preventing an unavailable endpoint from creating a retry loop. No live download, paid call, or productive runtime interruption was used for the deterministic tests.
 
