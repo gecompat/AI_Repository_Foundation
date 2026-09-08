@@ -2,12 +2,16 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
-## [Unreleased]
+## [1.17.1] - 2026-09-09
 
 ### Project tooling
 
 - evaluated and implemented a deterministic, offline-verifiable Foundation source distribution containing only the manifest, manifest-whitelisted payload, minimum installer runtime, and generated content index;
 - preserved exact package source provenance after extraction while keeping semantic integration and opt-in capability selection authoritative.
+
+### Compatibility
+
+- moved source and transferable GitHub workflows to `actions/checkout@v7` and `actions/setup-python@v7`, removing the deprecated Node-20 action-runtime dependency while preserving Python 3.12 and existing permissions/check semantics.
 
 ## [1.17.0] - 2026-09-09
 

@@ -2,7 +2,14 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-09
-Foundation version: 1.17.0
+Foundation version: 1.17.1 candidate
+
+## Foundation 1.17.1 — WI-0032
+
+- official current GitHub Action documentation and post-merge runtime warnings establish that the prior checkout/setup generations depend on deprecated Node 20, while v7 uses Node 24;
+- source CI and the optional transferable artifact-registry workflow now use `actions/checkout@v7` and `actions/setup-python@v7` without changing permissions, Python 3.12, required check names, registry semantics, or Foundation runtime requirements;
+- the central-artifact-registry feature records the compatibility change so upgrades from 1.17.0 surface it instead of silently retaining the deprecated workflow;
+- all 276 tests and transfer, feature, registry, backlog, full Foundation, manifest-hash, JSON, compile, and diff gates pass locally on Windows; protected pull-request evidence remains pending.
 
 ## Packaged source distribution — WI-0003
 
@@ -242,4 +249,4 @@ Foundation version: 1.17.0
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context is `validated` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`; the disposable target's separate project-manual-validation status correctly remained pending.
 
-WI-0001–WI-0031 are complete. `WI-0003` closes the last previously proposed project work item without changing the transferable Foundation 1.17 ruleset.
+WI-0001–WI-0031 are complete. `WI-0032` is the active bounded CI-runtime compatibility update discovered from post-merge evidence.

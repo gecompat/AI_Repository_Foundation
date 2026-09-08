@@ -138,6 +138,19 @@ class CentralArtifactRegistryTests(unittest.TestCase):
         self.assertIn("foundation/capabilities/artifact-registry-github/artifact-registry-integrity.yml", sources)
         self.assertEqual(manifest["registration_contract"]["default_registry_profile"], "foundation-artifact-registry/v2")
 
+    def test_source_and_transferable_workflows_use_node24_action_generations(self) -> None:
+        workflow_paths = [
+            ROOT / ".github" / "workflows" / "foundation-ci.yml",
+            ROOT / ".github" / "workflows" / "artifact-registry.yml",
+            ROOT / "foundation" / "capabilities" / "artifact-registry-github" / "artifact-registry-integrity.yml",
+        ]
+        for path in workflow_paths:
+            workflow = path.read_text(encoding="utf-8")
+            self.assertIn("actions/checkout@v7", workflow, path.as_posix())
+            self.assertIn("actions/setup-python@v7", workflow, path.as_posix())
+            self.assertNotIn("actions/checkout@v4", workflow, path.as_posix())
+            self.assertNotIn("actions/setup-python@v5", workflow, path.as_posix())
+
 
 if __name__ == "__main__":
     unittest.main()

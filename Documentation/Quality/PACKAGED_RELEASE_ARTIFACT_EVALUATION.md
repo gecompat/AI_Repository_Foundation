@@ -39,8 +39,8 @@ The embedded index binds the ruleset version, exact source commit, commit epoch,
 From a clean exact Foundation checkout:
 
 ```text
-python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.0.zip
-python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.0.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.0.zip.sha256
+python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip
+python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip.sha256
 ```
 
 After authorized transfer, verify first, extract into an empty staging directory, inspect the plan, and then use the bundled installer:
