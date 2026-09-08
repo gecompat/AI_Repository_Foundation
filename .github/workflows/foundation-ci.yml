@@ -31,6 +31,7 @@ jobs:
           tests.test_model_router
           tests.test_model_router_v2
           tests.test_ai_client_integration
+          tests.test_release_package
 
   validate:
     needs: platform-contracts

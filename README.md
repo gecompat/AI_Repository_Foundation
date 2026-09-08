@@ -55,6 +55,17 @@ python tools/install_foundation.py TARGET --capabilities artifact-registration-c
 
 This does not make Python the target runtime; the installer is only one Foundation transfer path.
 
+### Optional offline release package
+
+For a single-file offline or air-gapped handoff, a clean exact Git checkout can build a deterministic universal source distribution:
+
+```text
+python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.0.zip
+python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.0.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.0.zip.sha256
+```
+
+The archive contains only the manifest, all manifest-whitelisted selectable sources, the minimum installer files, and a generated content index. It excludes Foundation project state and every local runtime or credential. Verify it before extraction into an empty staging directory, then run the bundled installer against the target. The package does not replace semantic integration, confer authority, or prove publisher authenticity; obtain its SHA-256 through an independently trusted channel when authenticity matters. See `Documentation/Quality/PACKAGED_RELEASE_ARTIFACT_EVALUATION.md`.
+
 To install the optional deterministic Rule Context Cache planner:
 
 ```text
