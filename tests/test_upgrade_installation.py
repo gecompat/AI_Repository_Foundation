@@ -59,7 +59,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.17.0")
+        self.assertEqual(manifest["ruleset_version"], "1.17.1")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -161,6 +161,12 @@ class UpgradeInstallationTests(unittest.TestCase):
         by_id = {item["feature_id"]: item for item in candidates}
         self.assertEqual(by_id["ai-work-orchestration"]["candidate_reasons"], ["material_change:1.17.0"])
         self.assertEqual(by_id["model-routing-interoperability"]["candidate_reasons"], ["material_change:1.17.0"])
+
+    def test_1_17_0_to_1_17_1_delta_surfaces_node24_registry_workflow(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.17.0", "1.17.1")
+        self.assertEqual([item["feature_id"] for item in candidates], ["central-artifact-registry"])
+        self.assertEqual(candidates[0]["candidate_reasons"], ["material_change:1.17.1"])
 
 
 if __name__ == "__main__":

@@ -90,7 +90,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.17.0")
+            self.assertEqual(catalog["ruleset_version"], "1.17.1")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
             self.assertIn("rule-context-cache", catalog["features"])
@@ -476,7 +476,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
             self.assertRegex(row["source_sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.17.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.17.1")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

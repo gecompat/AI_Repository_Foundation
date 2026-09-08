@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.17.0",
+  "ruleset_version": "1.17.1",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_repository": "https://github.com/gecompat/AI_Repository_Foundation",
   "source_license": "MIT",
@@ -291,7 +291,7 @@
   },
   "core": [
     {"source": "foundation/AGENTS.template.md", "target": "AGENTS.md", "kind": "entrypoint", "merge": "ai_merge_if_exists", "source_sha256": "333b949f64861c89b4f0016464a89634ab09f69778d34a561f92c59b29aeada9"},
-    {"source": "foundation/FOUNDATION_RULESET.template.md", "target": ".ai/foundation/FOUNDATION_RULESET.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "239e4bf544f11276e761dc55d8073deacc80aa743fa3e03728032e9a8609fd5d"},
+    {"source": "foundation/FOUNDATION_RULESET.template.md", "target": ".ai/foundation/FOUNDATION_RULESET.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "d2766a74fb8af318dcb4f93e7f647f44636aa1d905763976de7cc4ddf58bc5da"},
     {"source": "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md", "target": ".ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md", "kind": "attribution", "merge": "review_if_exists", "source_sha256": "9c4ba8b69893eb2d079e9c1daf076ec3622d5290d4ce89970f8456c2ef1c80e1"},
     {"source": ".ai/PROJECT_RULES.md", "target": ".ai/foundation/PROJECT_RULES.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "545b98dc937ef18ea4530ac49c7ad8d273e2ad6b80c7c39595481d55f8c4f85c"},
     {"source": "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md", "target": ".ai/foundation/SEMANTIC_INTEGRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "281bfaae334bd069a337192dcc7b108d3819ff0a9fe9249765d3c882ae809530"},
@@ -302,7 +302,7 @@
     {"source": "Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md", "target": ".ai/foundation/REPOSITORY_CONTINUITY_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "14ce40adbc929b7d21c1c12429ca6038204197450f582972ee4ffa38fbd19687"},
     {"source": "Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md", "target": ".ai/foundation/RULE_CONTEXT_CACHE_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "8e0a0dbe5141a7eb43ce0050508c6a2af7532ca221d30c785fd70c3ea4208346"},
     {"source": "Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md", "target": ".ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "07e7969484eeb2accda19277b9eb9fc0f23de4f4f8b01b9b550b9325f4e4fea0"},
-    {"source": "foundation/feature_catalog.json", "target": ".ai/foundation/feature_catalog.json", "kind": "feature-catalog", "merge": "review_if_exists", "source_sha256": "5a4aef936fc1ca5d2f5e51e4440f994d9c2f4494ecbbff167891a8c11d63729a"},
+    {"source": "foundation/feature_catalog.json", "target": ".ai/foundation/feature_catalog.json", "kind": "feature-catalog", "merge": "review_if_exists", "source_sha256": "088c008274fa7577e22938b9a8e4a07c2e32ecda3cd50ea33fd2dc0c52a72557"},
     {"source": "foundation/schemas/artifact-record.schema.json", "target": ".ai/foundation/schemas/artifact-record.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "6c9c158f8be3514dc9e8ac95e3daf8fb383ce89de102f0174f1bf967659476e5"},
     {"source": "foundation/schemas/artifact-registry.schema.json", "target": ".ai/foundation/schemas/artifact-registry.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "2671d68b967886803dc1c2b05889ab62890e51c2c3b985a1c43e643dba4a0ee2"},
     {"source": "foundation/schemas/artifact-registry-v2.schema.json", "target": ".ai/foundation/schemas/artifact-registry-v2.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "8b8083ca367ebee5fb69090bb643fec7fbd7fcc62881dadd08ffdfcc0e8086bf"},
@@ -354,7 +354,7 @@
     {"source": "Documentation/Standards/THIRD_PARTY_AND_LICENSING.md", "target": ".ai/foundation/THIRD_PARTY_AND_LICENSING.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "0ec5bd1bcc2c7137c4e18d5df7d4f392541d715a401bf987160d96306baefc92"},
     {"source": "Documentation/Standards/SOURCE_AND_EVIDENCE_POLICY.md", "target": ".ai/foundation/SOURCE_AND_EVIDENCE_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "3823e497489b286adb78c00c8403354837d7f8d030e48b1ee2e81b105c2ce459"},
     {"source": "Documentation/Standards/DEPENDENCY_POLICY.md", "target": ".ai/foundation/DEPENDENCY_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "c42696b3d0b12e5bfbfc92251f05fcb5820db61d49a2ee96de578289ae02f256"},
-    {"source": "foundation/repo_map.template.yaml", "target": ".ai/foundation/repo_map.yaml", "kind": "rule-index", "merge": "review_if_exists", "source_sha256": "a1e743185b3bcba72915a58242e9dec0511044c4b19a21a6c486b0f13d7f6d6c"}
+    {"source": "foundation/repo_map.template.yaml", "target": ".ai/foundation/repo_map.yaml", "kind": "rule-index", "merge": "review_if_exists", "source_sha256": "a8a63899ca3187d0aad1351485e70386180c747615f60070795945d4a47a74af"}
   ],
   "adapters": {
     "github-copilot": [{"source": ".github/copilot-instructions.md", "target": ".github/copilot-instructions.md", "kind": "adapter", "merge": "ai_merge_if_exists", "source_sha256": "5d7beb368a2eacd4fe50fafdb4ea30982fd9f03d77a3b34e3fe0f4da4cb40f63"}],
@@ -368,7 +368,7 @@
     ],
     "artifact-registry-github": [
       {"source": "foundation/capabilities/artifact-registry-github/registry_semantic.py", "target": ".ai/foundation/artifact_registry_github/registry_semantic.py", "kind": "registry-merge-client", "merge": "review_if_exists", "source_sha256": "27508e405494461341d42152cdb7de4458ed8cdd9a912f29c5901d491b630ef4"},
-      {"source": "foundation/capabilities/artifact-registry-github/artifact-registry-integrity.yml", "target": ".github/workflows/artifact-registry-integrity.yml", "kind": "github-workflow", "merge": "review_if_exists", "source_sha256": "aee8fadbf3c6d5183017d5b67c5b9cc7e0f7fc12e81eea7dec9555d1ace1a1e7"}
+      {"source": "foundation/capabilities/artifact-registry-github/artifact-registry-integrity.yml", "target": ".github/workflows/artifact-registry-integrity.yml", "kind": "github-workflow", "merge": "review_if_exists", "source_sha256": "a0d5a82c2b67304472506e84c872d28d7ab54335c43a6861e1ad89ed5048fa11"}
     ],
     "rule-context-cache": [
       {"source": "foundation/capabilities/rule-context-cache/rule_context_cache.py", "target": ".ai/foundation/rule_context_cache/rule_context_cache.py", "kind": "rule-context-cache-planner", "merge": "review_if_exists", "source_sha256": "77ace825963862fd387ef37ac3b105abc95c652049fbf72855e205ab0455295b"}

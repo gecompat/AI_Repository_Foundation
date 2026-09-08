@@ -4,6 +4,8 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
+Foundation 1.17.1 is the validated `WI-0032` compatibility update discovered from the 1.17 post-merge run. Official current action documentation identifies v7 as the Node-24 generation, and GitHub warned that the previous checkout/setup action generations depend on deprecated Node 20. Source CI and the transferable artifact-registry workflow now use `actions/checkout@v7` and `actions/setup-python@v7` while retaining Python 3.12, permissions, check names, and registry semantics. The upgrade catalog surfaces the change from 1.17.0. All 276 tests and deterministic local gates passed on Windows. PR #32 validated implementation head `23c45b4061d70de3a18298fa0e91bb2211be55a6` passed Foundation CI run `34288966540` on macOS, Windows, and Linux plus registry-integrity run `34288966571` without the prior Node-20 annotations.
+
 Foundation 1.17 is the merged `WI-0031` implementation under `DEC-0020`. The optional end-to-end facade composes live isolated catalogs, external source-backed model evidence, router v2, content-handle invocation, deterministic validation, bounded fallback, and content-free reporting. Missing evidence yields a manual handoff; `LOCAL` invokes no model; requested/actual mismatches require exact fresh provider documentation or signed metadata. Evidence sources are shell-free, bounded, last-known-good capable, and attempted at most once per source per 24 hours. Content-free input-bound checkpoints prevent terminal replay and stop interrupted/timeout results for reconciliation before any new catalog or invocation. All 269 tests and local deterministic gates passed on Windows. A real read-only MCP acceptance saw both configured Ollama local/cloud catalogs and correctly returned `MANUAL_REQUIRED` without invoking a model because no profile evidence is configured. The `foundation-ai-orchestrator` MCP is globally registered for Codex with no credential or evidence-source argument. PR #30 was squash-merged as `f19461402d00fc3d8bf1541654672c1e5ec4f1f6`; its exact post-merge Foundation CI run `34285246184` passed.
 
 `WI-0003`, the last proposed project work item, now has a bounded implementation: a deterministic universal source ZIP plus SHA-256 sidecar for offline/air-gapped delivery. It contains exactly the manifest, all manifest-whitelisted selectable sources, the minimum installer runtime, and a generated content index. Verification rejects unsafe, extra, missing, or changed content; extracted no-Git installation preserves the package's validated source commit. The package remains a delivery convenience rather than a signature, authority, or replacement for semantic installation. All 274 tests passed locally. A clean-commit 103-entry package was built and verified outside the repository. PR #31 validated head `625ac11f4cd6f2c8b2dc8f713e87031e2c496a9e` passed Foundation CI run `34287113769` on macOS, Windows, and Linux plus registry-integrity run `34287113759`.
@@ -116,7 +118,7 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
-No registered work item remains open after `WI-0003`; create new work only from new evidence or requirements rather than inventing backlog.
+No registered work item remains open after `WI-0032`; create new work only from new evidence or requirements.
 
 ## Open constraints
 
