@@ -10,7 +10,7 @@ Foundation version: 1.17.0
 - `tools/package_foundation.py` builds a clean-commit, deterministic ZIP plus SHA-256 sidecar and verifies exact allowlisting, embedded index integrity, safe paths, exact/portable content hashes, and manifest agreement;
 - the universal package contains every selectable manifest source plus only the minimum installer runtime and generated index; it excludes Foundation project state, Git data, tests, credentials, models, and runtime state;
 - an extracted verified package remains installable without Git and preserves the exact package source commit in target installation provenance only while the complete package index is self-consistent;
-- focused deterministic package tests pass locally; complete local and pull-request evidence is recorded in the canonical work item after the final gates.
+- all 274 tests and deterministic local gates pass; a clean-commit 103-entry package was built and verified outside the repository; PR #31 head `ee504c28de8cd73b54481737917ed146b2b51807` passed Foundation CI run `34286932700` on macOS, Windows, and Linux plus registry-integrity run `34286932732`.
 
 ## Implemented baseline
 
