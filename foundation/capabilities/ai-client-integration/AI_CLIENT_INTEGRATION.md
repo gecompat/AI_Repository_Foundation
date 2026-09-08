@@ -27,6 +27,61 @@ Reference paths are intentionally distinct:
 
 Use an absolute executable in applied configuration. Installing this capability does not start a server, enable MCP, alter an IDE, select a model, or grant remote transfer.
 
+## Native Visual Studio Code role and subagent model plans
+
+Current VS Code supports a `model` string or prioritized model list in `.github/agents/*.agent.md`, an explicit model parameter on a subagent call, agent-level subagent restrictions, and separate settings for plan, implementation, utility, and small-utility models. The documented subagent precedence is explicit invocation model, custom-agent `model`, then the parent model. The host may still reject a request above the main model's allowed cost tier. These are preferred native dispatch capabilities when present; MCP invocation and manual handoff remain independent fallbacks.
+
+The read-only command below consumes an external, expiring model inventory, a fresh `foundation-client-model-routing-capability/v1` descriptor, and target-owned role bindings. It emits `foundation-vscode-model-routing-plan/v1` with only currently observed model names, a hash binding it to the capability observation, an exact settings patch using documented keys, custom-agent frontmatter, subagent parameters, unavailable bindings, and host constraints. It never edits `.vscode/settings.json` or `.github/agents`, and it never treats the requested model as actual execution evidence.
+
+```text
+python .ai/foundation/ai_client_integration/client_integration.py plan-vscode-models --request EXTERNAL_RUNTIME_REQUEST.json
+```
+
+The supported built-in setting surfaces are `chat.planAgent.defaultModel`, `github.copilot.chat.implementAgent.model`, `chat.utilityModel`, and `chat.utilitySmallModel`. Research, terminal, review, documentation, or arbitrary project roles use `CUSTOM_AGENT` or an explicit `SUBAGENT_PARAMETER`; the Foundation does not invent undocumented per-role JSON settings. Concrete model names remain external runtime facts and are rejected when absent from the supplied fresh inventory. Applying any returned patch still follows detect/plan/apply/verify/rollback with explicit configuration/repository authority.
+
+Primary VS Code references (observed 2026-09-08):
+
+- https://code.visualstudio.com/docs/agent-customization/custom-agents
+- https://code.visualstudio.com/docs/agents/run/subagents
+- https://code.visualstudio.com/docs/agents/run/planning
+- https://code.visualstudio.com/docs/agent-customization/language-models
+
+## Other native client model-routing surfaces
+
+VS Code is not unique. Current official client documentation shows several distinct native mechanisms. The Foundation records these as expiring runtime observations under `foundation-client-model-routing-capability/v1`; it does not turn product-specific syntax into universal policy.
+
+| Client | Verified native surface | Foundation classification |
+| --- | --- | --- |
+| Codex | default subagent model/reasoning, custom role configuration files, and explicit spawn overrides | `AGENT_PROFILE` / `SUBAGENT_PARAMETER`; explicit spawn wins |
+| GitHub Copilot CLI | per-invocation/session model, custom-agent model/reasoning, and per-agent settings overrides | `INVOCATION_ARGUMENT` / `AGENT_PROFILE`; an unavailable choice may fall back to the session |
+| Claude Code | project/user/CLI subagent definitions with model, tools, permissions, MCP, effort, and limits | `AGENT_PROFILE`; model resolution has documented precedence |
+| Gemini CLI | project/user agent definitions with model and tools plus `agents.overrides` | `AGENT_PROFILE` / `ROLE_SETTING`; absent model inherits |
+| Continue | `config.yaml` model roles such as chat, autocomplete, edit, apply, embed, and rerank | `ROLE_SETTING` / `PER_TASK_CLASS` |
+| JetBrains AI Assistant | Core, Instant-helper, and AI-completion assignments; local and OpenAI-compatible providers | `ROLE_SETTING`; unsupported features can become unavailable or use a documented fallback |
+| Cursor | CLI/API model per invocation and chat/session selection | `INVOCATION_ARGUMENT` / `SESSION_SELECTION`; no universal per-task-role assumption |
+| Aider | main, weak, and editor model options via CLI, environment, or YAML | `ROLE_SETTING` / `INVOCATION_ARGUMENT`; limited fixed roles |
+
+The portable decision order is:
+
+1. consume a fresh, source-backed client capability descriptor and live model inventory;
+2. use the narrowest native role, agent, or invocation surface that can honor the route;
+3. require actual-model evidence when the host can silently inherit or fall back;
+4. otherwise use MCP/CLI/launcher; and
+5. emit an expiring manual-selection handoff when no automatic path is both supported and verifiable.
+
+`client-model-routing-capability.schema.json` describes the native surfaces, binding scope, authority, fallback semantics, actual-model evidence, provenance, and expiry without naming a vendor or model. Product adapters may translate a descriptor into exact settings only through `detect -> plan -> apply -> verify -> rollback`. A documentation claim alone never authorizes writing user or repository configuration.
+
+Primary product references (observed 2026-09-08):
+
+- Codex: https://developers.openai.com/codex/config-reference and https://developers.openai.com/codex/multi-agent
+- GitHub Copilot CLI and custom agents: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference and https://docs.github.com/en/copilot/reference/custom-agents-configuration
+- Claude Code: https://code.claude.com/docs/en/sub-agents
+- Gemini CLI: https://geminicli.com/docs/core/subagents/
+- Continue: https://docs.continue.dev/customize/model-roles/00-intro
+- JetBrains AI Assistant: https://www.jetbrains.com/help/ai-assistant/use-custom-models.html
+- Cursor: https://docs.cursor.com/en/cli/reference/parameters
+- Aider: https://aider.chat/docs/config/options.html
+
 ## Automatic model dispatch evidence
 
 A model recommendation and an actual model switch are different facts. A catalog, error-message model list, configuration, or requested subagent parameter can prove that a model name was considered or advertised; it does not prove which model executed the task.

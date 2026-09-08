@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import socket
 import subprocess
 import sys
 import tempfile
@@ -160,7 +161,11 @@ class HttpAdapter:
         except urllib.error.HTTPError as exc:
             error_class = "CREDENTIAL" if exc.code in {401, 403} else "PROTOCOL"
             raise AdapterError(error_class, f"HTTP_{exc.code}", "adapter endpoint returned an HTTP error", retryable=exc.code >= 500) from exc
-        except (urllib.error.URLError, TimeoutError) as exc:
+        except (TimeoutError, socket.timeout) as exc:
+            raise AdapterError("TIMEOUT", "HTTP_TIMEOUT", "adapter endpoint timed out", retryable=True) from exc
+        except urllib.error.URLError as exc:
+            if isinstance(exc.reason, (TimeoutError, socket.timeout)):
+                raise AdapterError("TIMEOUT", "HTTP_TIMEOUT", "adapter endpoint timed out", retryable=True) from exc
             raise AdapterError("AVAILABILITY", "ENDPOINT_UNAVAILABLE", "adapter endpoint is unavailable", retryable=True) from exc
         try:
             return json.loads(body)
@@ -210,9 +215,20 @@ class HttpAdapter:
         result = self._request(self.invoke_path, payload)
         body = canonical_json(result) + b"\n"
         atomic_write(output_path, body)
+        actual_model = result.get("model") if isinstance(result, dict) else None
+        if not isinstance(actual_model, str) or not actual_model:
+            actual_model = None
+        requested_model = arguments["model"]
         return {
             "status": "COMPLETED",
             "operation_id": arguments["operation_id"],
+            "requested_model": requested_model,
+            "actual_model": actual_model,
+            "dispatch_status": (
+                "REQUESTED_NOT_ATTESTED" if actual_model is None
+                else "ACTUAL_MODEL_ATTESTED" if actual_model == requested_model
+                else "ACTUAL_MODEL_DIFFERS"
+            ),
             "output_sha256": digest_bytes(body),
             "output_bytes": len(body),
         }

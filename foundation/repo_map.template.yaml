@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.15.0
+foundation_ruleset_version: 1.16.0
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -54,8 +54,11 @@ authority:
     - .ai/foundation/schemas/provision-report.schema.json
     - .ai/foundation/schemas/runtime-inventory.schema.json
     - .ai/foundation/schemas/ai-adapter-protocol.schema.json
+    - .ai/foundation/schemas/ai-runtime-configuration.schema.json
     - .ai/foundation/schemas/resource-cost-evidence.schema.json
     - .ai/foundation/schemas/client-integration-plan.schema.json
+    - .ai/foundation/schemas/client-model-routing-capability.schema.json
+    - .ai/foundation/schemas/vscode-model-routing-plan.schema.json
     - .ai/foundation/schemas/manual-handoff.schema.json
     - .ai/foundation/schemas/dispatch-receipt.schema.json
     - .ai/foundation/schemas/adapter-synthesis-report.schema.json
@@ -234,6 +237,12 @@ ai_work_contract:
   provision_report_schema: .ai/foundation/schemas/provision-report.schema.json
   runtime_inventory_schema: .ai/foundation/schemas/runtime-inventory.schema.json
   adapter_protocol_schema: .ai/foundation/schemas/ai-adapter-protocol.schema.json
+  runtime_configuration_schema: .ai/foundation/schemas/ai-runtime-configuration.schema.json
+  runtime_configuration_profile: foundation-ai-runtime-configuration/v1
+  runtime_configuration_lifecycle: detect_propose_edit_test_save_verify_rollback
+  missing_runtime_configuration: configuration_required_with_safe_proposals
+  runtime_credential_storage: references_only
+  runtime_model_selection: ROUTER_MANUAL_PINNED
   resource_cost_evidence_schema: .ai/foundation/schemas/resource-cost-evidence.schema.json
   execution_checkpoint_schema: .ai/foundation/schemas/execution-checkpoint.schema.json
   approval_receipt_schema: .ai/foundation/schemas/approval-receipt.schema.json
@@ -255,6 +264,9 @@ ai_work_contract:
 ai_client_integration_contract:
   profile: foundation-ai-client-integration/v1
   plan_schema: .ai/foundation/schemas/client-integration-plan.schema.json
+  native_model_capability_schema: .ai/foundation/schemas/client-model-routing-capability.schema.json
+  vscode_model_plan_schema: .ai/foundation/schemas/vscode-model-routing-plan.schema.json
+  native_model_routing: fresh_capability_first_then_mcp_cli_launcher_manual
   manual_handoff_schema: .ai/foundation/schemas/manual-handoff.schema.json
   dispatch_receipt_schema: .ai/foundation/schemas/dispatch-receipt.schema.json
   adapter_synthesis_report_schema: .ai/foundation/schemas/adapter-synthesis-report.schema.json

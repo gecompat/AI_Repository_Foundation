@@ -69,6 +69,14 @@ Initial governance, metadata, adapters, bootstrap skeleton, and validator skelet
 - optional `artifact-registry-github` capability for reference implementation and GitHub Actions;
 - Foundation source-project registry migrated to v2 and `.ai/BACKLOG.md` generated from it.
 
+## v1.16 — Interactive runtime configuration and native client routing
+
+- external multi-runtime host/IP/port configuration with safe first-run proposals and exact rollback;
+- unconfigured-safe runtime invocation MCP with isolated probe/catalog/invoke paths;
+- explicit local/cloud separation, credential references, model selection, and requested/actual evidence;
+- expiring provider-neutral client model-routing capabilities and read-only native VS Code role/subagent planning;
+- native client dispatch first, then MCP/CLI/launcher, then an expiring manual-selection handoff.
+
 ## Later
 
 - optional adapter/capability modules beyond current registration/registry clients;

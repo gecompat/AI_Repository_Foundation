@@ -134,9 +134,28 @@ class ReferenceAdapterTests(unittest.TestCase):
         )
         self.assertEqual(result["operation_id"], "op-http")
         self.assertNotIn("content", result)
+        self.assertEqual(result["dispatch_status"], "REQUESTED_NOT_ATTESTED")
+        self.assertIsNone(result["actual_model"])
         self.assertIn("generated", self.output_path.read_text(encoding="utf-8"))
         sent = adapter._request.call_args.args[1]
         self.assertEqual(sent["messages"][0]["content"], "private payload")
+
+    def test_ollama_invocation_attests_actual_model_without_returning_content(self) -> None:
+        adapter = reference_adapters.OllamaAdapter(self.http_config())
+        adapter._request = mock.Mock(return_value={"model": "local-model:latest", "message": {"content": "generated"}})
+        result = adapter.invoke(
+            {
+                "operation_id": "op-ollama",
+                "model": "local-model:latest",
+                "data_class": "PUBLIC",
+                "input_path": str(self.input_path),
+                "output_path": str(self.output_path),
+            }
+        )
+        self.assertEqual(result["requested_model"], "local-model:latest")
+        self.assertEqual(result["actual_model"], "local-model:latest")
+        self.assertEqual(result["dispatch_status"], "ACTUAL_MODEL_ATTESTED")
+        self.assertNotIn("content", result)
 
     def test_credentials_are_allowlisted_and_endpoint_errors_are_redacted(self) -> None:
         with self.assertRaisesRegex(reference_adapters.AdapterError, "not allowlisted"):
@@ -159,6 +178,19 @@ class ReferenceAdapterTests(unittest.TestCase):
                 with self.assertRaises(reference_adapters.AdapterError) as raised:
                     adapter.catalog({})
         self.assertNotIn("do-not-disclose", str(raised.exception))
+
+    def test_http_timeout_is_classified_separately_from_unavailability(self) -> None:
+        adapter = reference_adapters.OllamaAdapter(self.http_config())
+        with mock.patch.object(
+            adapter.opener,
+            "open",
+            side_effect=urllib.error.URLError(TimeoutError("timed out")),
+        ):
+            with self.assertRaises(reference_adapters.AdapterError) as raised:
+                adapter.catalog({})
+        self.assertEqual(raised.exception.error_class, "TIMEOUT")
+        self.assertEqual(raised.exception.code, "HTTP_TIMEOUT")
+        self.assertTrue(raised.exception.retryable)
 
     def test_remote_boundary_requires_data_class_authority(self) -> None:
         adapter = reference_adapters.OpenAICompatibleAdapter(

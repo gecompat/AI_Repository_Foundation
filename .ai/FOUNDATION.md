@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.15.0
+- version: 1.16.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -31,7 +31,8 @@ Status: AUTHORITATIVE
 - rule_context_cache_contract: native instruction discovery per run; session-local semantic analyses keyed by validated scope/source dependencies; optional local records contain fingerprints/dependency metadata only and fail closed on scope, instruction, topology, source-set, schema, generator, corruption, or uncertainty changes
 - model_routing_contract: compatible `foundation-model-router/v1` plus v2 boundaries/resources/isolated fragments; complete-chain expected cost of success; price-epoch expiry; conditional affinity; paired bounded evaluation; runtime state outside version control
 - ai_work_contract: runtime-neutral `foundation-ai-work/v1`; payload handles; isolated optional capabilities; authority intersection; truthful degradation; risk-gated validation; optional content-free resumable execution; runtime state outside version control
-- ai_client_integration_contract: semantic detect/plan/apply/verify/rollback; requested-versus-actual dispatch evidence; privacy-safe external manual handoff; quarantined governed adapter synthesis
+- ai_runtime_configuration_contract: external `foundation-ai-runtime-configuration/v1`; named host/IP/port connections; bounded first-run proposals; interactive edit/test/save/rollback; credential references only; unconfigured MCP remains available
+- ai_client_integration_contract: semantic detect/plan/apply/verify/rollback; expiring native client model-routing capabilities; read-only VS Code role/subagent plans; requested-versus-actual dispatch evidence; privacy-safe external manual handoff; quarantined governed adapter synthesis
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
@@ -111,6 +112,8 @@ The optional `model-router` capability provides a dependency-free Python core an
 Foundation 1.13 adds optional bounded host preparation without making provisioning a prerequisite. Runtime inventory, provision request/plan/approval/report, exact source/license/hash/resource limits, offline installation, terminal failure recovery, and per-source at-most-daily cost-evidence refresh are portable contracts. The `ai-provisioning` Python reference is opt-in; all state, targets, inventories, approvals, downloads, and observed prices remain outside Git. Missing Python, network, runtimes, providers, or the provisioner leaves the Foundation rules valid and yields a deterministic alternative or truthful unavailable/manual status.
 
 Foundation 1.14 adds optional client integration without trusting a requested model as execution evidence. Codex, Visual Studio, GitHub Copilot, and generic clients use capability-specific `detect -> plan -> apply -> verify -> rollback` flows that preserve unrelated configuration and keep exact backups outside Git. Matching host execution/response metadata is required for `ATTESTED`; otherwise the result remains `REQUESTED_NOT_ATTESTED`. When automatic dispatch is unavailable, an expiring `MANUAL_DISPATCH_REQUIRED` handoff separates prompt content from its control record and recommends a concrete model only from fresh privacy-eligible runtime evidence. Explicitly authorized local adapter synthesis copies reviewed sources into an external least-privilege quarantine and cannot be used before conformance passes.
+
+Foundation 1.16 adds an optional external runtime-connection assistant and stdio MCP bridge to `ai-runtime-adapters`. First use detects only bounded loopback defaults, proposes rather than silently saves, permits semantic editing/testing/rollback, and supports explicit hostname/IP/port endpoints. Absent or malformed connections remain isolated; an unconfigured MCP server returns `CONFIGURATION_REQUIRED`. Credential values never enter configuration or protocol output, model selection is explicit/router-supplied/pinned, and runtime response metadata keeps requested and actual model distinct.
 
 System-independence acceptance is project evidence rather than a new runtime prerequisite. The portable contract suite runs on Linux, Windows, and macOS without Ollama, MCP, a cloud account, or another optional capability. A separate bounded Windows check exercises already-present Ollama-local and OpenAI-compatible LM Studio paths without turning their products, models, endpoints, or observed performance into Foundation policy. The evidence and its limits are recorded in `Documentation/Quality/AI_SYSTEM_INDEPENDENCE_ACCEPTANCE.md`.
 
