@@ -15,7 +15,7 @@ Foundation version: 1.17.0 candidate
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
 
-## Foundation 1.17 candidate — WI-0031 / DEC-0020
+## Foundation 1.17 — WI-0031 / DEC-0020
 
 - optional end-to-end orchestration composes live failure-isolated catalogs, fresh external evidence, router v2, content-handle invocation, deterministic validation, bounded fallback, and content-free reporting;
 - catalog discovery proves availability only; automatic routing requires fresh source-backed model profiles and never invents price, quality, capability, context, resource, or latency facts;
@@ -24,7 +24,7 @@ Foundation version: 1.17.0 candidate
 - CLI and stdio MCP start safely without configuration, evidence, runtime, network, credentials, or providers; `LOCAL` still invokes no model and default transfer remains rules-only;
 - all 269 tests plus manifest, transfer, feature, registry, backlog, full Foundation, manifest-hash, JSON, compile, and diff gates pass locally on Windows;
 - real read-only stdio MCP acceptance discovered the separately configured `ollama-local` and `ollama-cloud` catalogs, invoked no model, and returned `MANUAL_REQUIRED` plus a manual-handoff action because source-backed profile evidence is intentionally absent; the MCP is registered globally for Codex without credentials or evidence-source configuration;
-- required PR checks and merge evidence will be recorded before `WI-0031` is closed.
+- PR #30 implementation head `b9a96c4ad2e2be86eca76bd07cc04236fcc9b2f9` passed Foundation CI run `34284895445` on macOS, Windows, and Linux plus registry-integrity run `34284895386`; `WI-0031` is done, subject to the final documentation-head checks and protected merge.
 
 ## Foundation 1.16 — WI-0030 / DEC-0020
 
@@ -234,4 +234,4 @@ Foundation version: 1.17.0 candidate
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context is `validated` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`; the disposable target's separate project-manual-validation status correctly remained pending.
 
-WI-0001, WI-0002, WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0030 are complete. `WI-0031` is in progress; `WI-0003` remains proposed.
+WI-0001, WI-0002, WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0031 are complete. `WI-0003` remains proposed.
