@@ -4,6 +4,8 @@ Status: AUTHORITATIVE
 
 Choose per work step, not per project. Safety, privacy, authorization, correctness, and validation outrank cost.
 
+Automatic end-to-end dispatch uses fresh source-backed model evidence in addition to a live catalog. Catalog presence alone does not establish quality, price, resource use, context, capability, or model aliases. When that evidence is missing, the correct fallback is an explicit manual model-selection prompt/handoff, not a fabricated automatic choice.
+
 - `LOCAL`: deterministic local processing; no generative model required.
 - `ECONOMICAL`: bounded, low-risk, clearly specified, cheaply verifiable work.
 - `BALANCED`: integrates multiple contracts, files, layers, or competing sources; diagnosis is not obvious.

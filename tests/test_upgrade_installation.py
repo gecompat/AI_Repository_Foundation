@@ -59,7 +59,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.16.0")
+        self.assertEqual(manifest["ruleset_version"], "1.17.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -153,6 +153,14 @@ class UpgradeInstallationTests(unittest.TestCase):
         self.assertIn("interactive_runtime_configuration", by_id["ai-runtime-adapters"]["applicability"]["signals"])
         self.assertEqual(by_id["ai-client-integration"]["candidate_reasons"], ["material_change:1.16.0"])
         self.assertIn("native_client_model_roles", by_id["ai-client-integration"]["applicability"]["signals"])
+
+    def test_1_16_to_1_17_delta_surfaces_end_to_end_evidence_routing(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.16.0", "1.17.0")
+        self.assertEqual([item["feature_id"] for item in candidates], ["ai-work-orchestration", "model-routing-interoperability"])
+        by_id = {item["feature_id"]: item for item in candidates}
+        self.assertEqual(by_id["ai-work-orchestration"]["candidate_reasons"], ["material_change:1.17.0"])
+        self.assertEqual(by_id["model-routing-interoperability"]["candidate_reasons"], ["material_change:1.17.0"])
 
 
 if __name__ == "__main__":

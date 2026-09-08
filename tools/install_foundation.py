@@ -352,6 +352,19 @@ def capability_notices(capabilities: list[str]) -> list[dict[str, str]]:
                 ),
             }
         )
+    if "ai-orchestrator" in capabilities:
+        notices.append(
+            {
+                "code": "AI_ORCHESTRATOR_EXTERNAL_EVIDENCE_REQUIRED",
+                "severity": "NOTICE",
+                "message": (
+                    "The ai-orchestrator capability installs optional reference code only. Keep runtime configuration, model "
+                    "evidence, source definitions, content handles, and state outside version control. Automatic routing requires "
+                    "fresh source-backed quality/cost evidence; otherwise use the truthful MANUAL_REQUIRED handoff. Installation "
+                    "grants no network, credential, data-transfer, spend, model, file, Git, push, pull-request, or publication authority."
+                ),
+            }
+        )
     return notices
 
 

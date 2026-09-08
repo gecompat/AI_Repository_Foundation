@@ -70,6 +70,16 @@ Runtime state lives outside version control. By default it contains only identif
 
 An `ExecutionReport` records attempts, validation, limits, costs/resources, constraints, and remaining actions without inventing success. A `GapReport` identifies a missing capability, tested alternatives, an optional least-privilege local remedy, and the authority needed to apply it. Without repository authority, gap reports remain local/stdout; they do not create issues, commits, branches, pushes, or pull requests.
 
+## End-to-end orchestration and model evidence
+
+An optional `foundation-ai-orchestration/v1` facade MAY compose runtime catalog discovery, `foundation-model-router/v2`, content-handle invocation, deterministic output validation, and the router's bounded fallback chain. Composition does not merge authority: every layer revalidates its own narrower boundary. The facade MUST remain unconfigured-safe and content-free, isolate each catalog and invocation failure, preserve requested/actual model distinction, and return a manual or unavailable status when any claim needed for safe automation is missing.
+
+A live catalog proves only the facts it directly observes, normally model identifier and endpoint availability. Automatic routing MUST NOT convert that observation into price, quality, context, resource, capability, or alias evidence. Such facts MAY be supplied by fresh external `foundation-model-runtime-evidence/v1` records with exact connection/model identity, provenance, locator, content hash, observation time, and expiry. Expired or invalid records are excluded independently.
+
+A different response-reported model identifier is not automatically an alias. Alias acceptance requires fresh provider documentation or provider-signed metadata identifying the exact requested and actual pair. Name similarity, suffix removal, a single successful response, client configuration, or model self-report is insufficient. Without strong alias evidence the generated output remains available through its handle, but orchestration stops as `MANUAL_REQUIRED` and does not pretend that the requested model executed.
+
+Evidence collection MAY be refresh-on-plan rather than scheduled. A configured source is an exact shell-free argv with a narrow environment allowlist, bounded output, timeout, and minimum interval of 86,400 seconds. Every attempt, successful or failed, advances the same limit; independent sources remain isolated. Only strict fresh output updates last-known-good external evidence. AI-assisted research is one optional source implementation, never a mandatory planning dependency or an authority shortcut.
+
 ## Runtime connection configuration and bootstrap
 
 Runtime connections MAY use the external `foundation-ai-runtime-configuration/v1` contract. It records named adapter connections, exact credential-free endpoint origins including hostname/IP and port, asserted execution boundary, network and data-class authority, content-handle roots, timeouts, remote-model policy, a credential reference, and model-selection behavior. The document is runtime state outside version control; it MUST NOT contain a credential value.

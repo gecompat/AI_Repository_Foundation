@@ -2,6 +2,21 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.17.0] - 2026-09-09
+
+### Added
+
+- optional `foundation-ai-orchestration/v1` end-to-end planning and execution facade over live isolated catalogs, router v2, content-handle runtime invocation, deterministic validation, and bounded fallbacks;
+- external `foundation-model-runtime-evidence/v1` profiles for source-backed, expiring quality, price, context, capability, resource, latency, and exact requested/actual alias evidence;
+- shell-free refresh-on-plan evidence sources with narrow environment allowlists, last-known-good reuse, bounded output/time, and a minimum 24-hour interval for successful and failed attempts;
+- an unconfigured-safe stdio MCP surface for status, plan, execute, and evidence refresh.
+
+### Safety and compatibility
+
+- live model discovery remains availability evidence only and never invents quality, price, capabilities, context, resource use, or aliases;
+- model identifier differences stop for manual verification unless fresh provider documentation or signed metadata attests the exact pair;
+- `LOCAL` still means deterministic work without a generative model; router v1 remains unchanged; default Foundation transfer remains rules-only with no runtime prerequisite.
+
 ## [1.16.0] - 2026-09-08
 
 ### Added
