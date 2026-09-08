@@ -1,6 +1,6 @@
 # GitHub Action runtime compatibility
 
-Status: CANDIDATE
+Status: VALIDATED
 
 Work item: `WI-0032`
 
@@ -27,4 +27,6 @@ Python remains 3.12. Workflow permissions, events, environment variables, requir
 
 ## Acceptance
 
-Static regressions require the Node-24 action generations in all three workflow sources and reject the deprecated pair. Transfer hashes, semantic feature delta, package allowlisting, installation, registry, and complete Foundation validation must remain green. Pull-request and exact post-merge runs must execute successfully on GitHub-hosted macOS, Windows, and Linux without the prior Node-20 annotations before `WI-0032` is complete.
+Static regressions require the Node-24 action generations in all three workflow sources and reject the deprecated pair. Transfer hashes, semantic feature delta, package allowlisting, installation, registry, and complete Foundation validation must remain green. Protected pull-request checks must execute successfully on GitHub-hosted macOS, Windows, and Linux without the prior Node-20 annotations before `WI-0032` is complete; an exact post-merge run remains the final integration confirmation.
+
+The 2026-09-09 local gate passed all 276 tests. PR #32 validated implementation head `23c45b4061d70de3a18298fa0e91bb2211be55a6` passed Foundation CI run `34288966540` on macOS, Windows, and Linux plus registry-integrity run `34288966571`; the successful run reported no Node-20 deprecation annotations.
