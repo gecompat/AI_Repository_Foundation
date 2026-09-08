@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-08
-Foundation version: 1.16.0 candidate
+Foundation version: 1.16.0 validated
 
 ## Implemented baseline
 
@@ -15,7 +15,7 @@ Foundation version: 1.16.0 candidate
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
 
-## Foundation 1.16 candidate — WI-0030 / DEC-0020
+## Foundation 1.16 — WI-0030 / DEC-0020
 
 - external named runtime connections support independent Ollama-local, Ollama-cloud, and OpenAI-compatible hostname/IP/port endpoints without making any runtime mandatory;
 - missing configuration yields safe bounded proposals and `CONFIGURATION_REQUIRED`; the interactive assistant supports edit/test/save/verify/exact rollback and never silently saves or asserts a boundary;
@@ -23,7 +23,8 @@ Foundation version: 1.16.0 candidate
 - a failure-isolated stdio MCP bridge exposes status, discovery, probe, catalog, and content-handle invocation with explicit model selection and remote authority;
 - native client routing is expressed by expiring source-backed capabilities; the VS Code reference produces read-only plans for documented role settings, custom agents, and subagent parameters using only fresh observed model names;
 - requested and actual model remain separate; silent host fallback cannot become attested merely because a configuration or model argument was accepted;
-- current focused runtime/client/upgrade tests are green; complete local, live bounded, PR, and post-merge evidence is pending before `WI-0030` becomes done.
+- all 257 tests and the manifest, transfer, feature, registry, backlog, full Foundation, JSON, compile, and diff gates passed locally on Windows;
+- bounded live stdio MCP acceptance selected existing local `qwen3.5:4b`, received matching actual-model attestation, and kept generated content outside the control response; PR #29 implementation head `b7d872a30f78357792232286e3739fac5024ef20` passed Foundation CI run `34273466764` on macOS, Windows, and Linux plus registry-integrity run `34273466770`; `WI-0030` is done.
 
 ## Foundation 1.15 candidate — WI-0002 / DEC-0021
 
