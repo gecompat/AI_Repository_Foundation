@@ -4,6 +4,7 @@
 from __future__ import annotations
 
 import argparse
+import hashlib
 import json
 import os
 import re
@@ -21,6 +22,7 @@ ROOT = Path(__file__).resolve().parents[1]
 MANIFEST_PATH = ROOT / "foundation" / "manifest.json"
 SHA256_RE = re.compile(r"^[0-9a-f]{64}$")
 PROVENANCE_CONTRACT = "foundation-installation-provenance/v1"
+RELEASE_PACKAGE_CONTRACT = "foundation-release-package/v1"
 
 
 @dataclass(frozen=True)
@@ -127,6 +129,58 @@ def parse_intentional_overrides(values: list[str]) -> dict[str, str]:
     return overrides
 
 
+def canonical_json(value: object) -> bytes:
+    return json.dumps(value, sort_keys=True, separators=(",", ":"), ensure_ascii=False).encode("utf-8")
+
+
+def packaged_source_commit() -> str | None:
+    """Recover source identity only from a completely self-consistent extracted package."""
+    index_path = ROOT / "foundation" / "release-package.json"
+    if not index_path.is_file():
+        return None
+    try:
+        index = json.loads(index_path.read_text(encoding="utf-8"))
+        package_id = index.pop("package_id")
+        if (
+            index.get("schema_version") != 1
+            or index.get("contract") != RELEASE_PACKAGE_CONTRACT
+            or index.get("ruleset_version") != load_manifest().get("ruleset_version")
+            or package_id != hashlib.sha256(canonical_json(index)).hexdigest()
+        ):
+            return None
+        commit = index.get("source_commit")
+        files = index.get("files")
+        if not isinstance(commit, str) or not re.fullmatch(r"[0-9a-f]{40}", commit) or not isinstance(files, list):
+            return None
+        expected_sources = {
+            "foundation/manifest.json",
+            "tools/content_equivalence.py",
+            "tools/install_foundation.py",
+        }
+        manifest = load_manifest()
+        expected_sources.update(row["source"] for row in manifest["core"])
+        for rows in manifest.get("adapters", {}).values():
+            expected_sources.update(row["source"] for row in rows)
+        for rows in manifest.get("capabilities", {}).values():
+            expected_sources.update(row["source"] for row in rows)
+        if {entry.get("path") for entry in files if isinstance(entry, dict)} != expected_sources:
+            return None
+        for entry in files:
+            if not isinstance(entry, dict) or set(entry) != {"path", "role", "sha256", "portable_sha256", "size_bytes"}:
+                return None
+            source = ROOT / entry["path"]
+            body = source.read_bytes()
+            if (
+                len(body) != entry["size_bytes"]
+                or hashlib.sha256(body).hexdigest() != entry["sha256"]
+                or portable_file_sha256(source) != entry["portable_sha256"]
+            ):
+                return None
+        return commit
+    except (OSError, KeyError, TypeError, ValueError, json.JSONDecodeError):
+        return None
+
+
 def source_commit() -> str | None:
     """Return an exact source commit only when the checkout has no local changes."""
     try:
@@ -138,7 +192,7 @@ def source_commit() -> str | None:
             text=True,
         )
         if status.stdout.strip():
-            return None
+            return packaged_source_commit()
         result = subprocess.run(
             ["git", "rev-parse", "HEAD"],
             cwd=ROOT,
@@ -147,9 +201,9 @@ def source_commit() -> str | None:
             text=True,
         )
     except (OSError, subprocess.CalledProcessError):
-        return None
+        return packaged_source_commit()
     commit = result.stdout.strip().lower()
-    return commit if re.fullmatch(r"[0-9a-f]{40}", commit) else None
+    return commit if re.fullmatch(r"[0-9a-f]{40}", commit) else packaged_source_commit()
 
 
 def provenance_target(manifest: dict, target: Path) -> Path:

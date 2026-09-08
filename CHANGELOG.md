@@ -2,6 +2,13 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [Unreleased]
+
+### Project tooling
+
+- evaluated and implemented a deterministic, offline-verifiable Foundation source distribution containing only the manifest, manifest-whitelisted payload, minimum installer runtime, and generated content index;
+- preserved exact package source provenance after extraction while keeping semantic integration and opt-in capability selection authoritative.
+
 ## [1.17.0] - 2026-09-09
 
 ### Added

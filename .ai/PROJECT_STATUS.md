@@ -2,7 +2,15 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-09
-Foundation version: 1.17.0 candidate
+Foundation version: 1.17.0
+
+## Packaged source distribution — WI-0003
+
+- a packaged artifact is justified for offline/air-gapped, immutable single-file delivery and independently retained release evidence, without replacing manifest, direct-AI, or installer semantics;
+- `tools/package_foundation.py` builds a clean-commit, deterministic ZIP plus SHA-256 sidecar and verifies exact allowlisting, embedded index integrity, safe paths, exact/portable content hashes, and manifest agreement;
+- the universal package contains every selectable manifest source plus only the minimum installer runtime and generated index; it excludes Foundation project state, Git data, tests, credentials, models, and runtime state;
+- an extracted verified package remains installable without Git and preserves the exact package source commit in target installation provenance only while the complete package index is self-consistent;
+- all 274 tests and deterministic local gates pass; a clean-commit 103-entry package was built and verified outside the repository; PR #31 validated head `625ac11f4cd6f2c8b2dc8f713e87031e2c496a9e` passed Foundation CI run `34287113769` on macOS, Windows, and Linux plus registry-integrity run `34287113759`.
 
 ## Implemented baseline
 
@@ -234,4 +242,4 @@ Foundation version: 1.17.0 candidate
 - source Ruleset migration/read-back on 2026-08-26: active IDs `21588442` and `21588444`; only CI user `48807214` has `pull_request` bypass; classic protection absent after replacement verification.
 - Fresh-agent post-transfer continuation without prior conversation context is `validated` under `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`; the disposable target's separate project-manual-validation status correctly remained pending.
 
-WI-0001, WI-0002, WI-0004, WI-0005, WI-0008, WI-0009, WI-0010, WI-0011, WI-0012, WI-0013, WI-0014, WI-0015, WI-0016, WI-0017, WI-0018, WI-0019, and WI-0020–WI-0031 are complete. `WI-0003` remains proposed.
+WI-0001–WI-0031 are complete. `WI-0003` closes the last previously proposed project work item without changing the transferable Foundation 1.17 ruleset.
