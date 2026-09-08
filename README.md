@@ -2,7 +2,7 @@
 
 A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and human-maintained technical and knowledge projects. Its goal is safe continuation without chat history, memory, personal prompts, or a specific vendor.
 
-## v1.15 integration, identity, provenance, AI-work, and dynamic capability-routing model
+## v1.16 integration, identity, provenance, AI-work, and dynamic capability-routing model
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
 
@@ -81,6 +81,19 @@ python tools/install_foundation.py TARGET --capabilities model-router --apply
 Its provider-neutral core chooses among currently eligible models by expected cost of success after privacy, authorization, capability, context, quality, price-freshness, and budget filtering. The Ollama Cloud adapter discovers the live model catalog and public prices at runtime; no current model names or prices are embedded in Foundation policy. New models remain `UNASSESSED` until an explicitly allowed, spend-bounded evaluation produces enough evidence.
 
 The capability exposes the same decision contract through a CLI and local stdio MCP server, with a shell-free launcher and expiring snapshot as lower integration layers. It includes separate MCP examples for Visual Studio and GitHub Copilot because their current configuration shapes differ. Runtime catalogs, outcome aggregates, hashed session affinity, evaluation reservations, launchers, snapshots, and provider credentials stay outside the repository. See `foundation/capabilities/model-router/MODEL_ROUTER.md` for setup and commands.
+
+To configure and invoke actual optional runtimes, install `ai-runtime-adapters` and start its assistant:
+
+```text
+python tools/install_foundation.py TARGET --capabilities ai-runtime-adapters --apply
+python TARGET/.ai/foundation/ai_runtime_adapters/runtime_configuration.py configure
+```
+
+On first use it checks only bounded loopback Ollama defaults read-only, proposes a connection, and asks for address, host/network/remote boundary, data classes, remote-model permission, model-selection mode, content-handle roots, timeout, and optional credential reference. Hostnames, IP addresses, and ports are supported. Nothing is saved until the review screen; existing entries can be edited, tested, and rolled back.
+
+The same capability provides `runtime_mcp.py`. It starts without configuration, reports `CONFIGURATION_REQUIRED` plus the wizard action, and isolates broken connections. Its tools probe/catalog runtimes and invoke an explicit/router-selected/pinned model while keeping prompts and generated content in external handles. The router remains decision-only; clients that can chain MCP tools pass its selected model to the runtime bridge, while other clients receive the manual model-choice handoff.
+
+Where a client natively supports task-role, custom-agent, subagent, per-invocation, or session model selection, `ai-client-integration` prefers that narrower path before MCP/CLI/launcher/manual fallback. The Foundation stores such support as an expiring, source-backed, vendor-neutral client capability instead of assuming one shared settings syntax. The VS Code reference planner recognizes only documented role settings and agent/subagent surfaces, consumes a fresh live model inventory, and writes no client configuration. GitHub Copilot CLI, Codex, Claude Code, Gemini CLI, Continue, JetBrains, Cursor, and Aider currently expose different subsets and fallback semantics; requested-versus-actual model evidence remains mandatory when silent inheritance or fallback is possible.
 
 ## Transfer completeness invariant
 

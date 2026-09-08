@@ -2,6 +2,25 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.16.0] - 2026-09-08
+
+### Added
+
+- external `foundation-ai-runtime-configuration/v1` named connections with hostname/IP/port endpoints, execution boundaries, credential references, data/remote-model authority, content roots, timeouts, and router/manual/pinned selection;
+- an optional question-and-answer setup assistant with bounded loopback detection, editable proposals, connection tests, atomic save, verify, and exact rollback;
+- an unconfigured-safe stdio MCP bridge for isolated runtime status, discovery, probe, catalog, and content-handle invocation;
+- provider-neutral `foundation-client-model-routing-capability/v1` descriptors and a read-only native VS Code role/subagent plan bound to fresh client evidence and model inventory.
+
+### Changed
+
+- Ollama-local, Ollama-cloud, and OpenAI-compatible connections are configured independently; loopback/product identity does not establish host trust, non-loopback discovery is never contacted implicitly, and one invalid connection does not hide healthy entries;
+- runtime invocation records requested and response-reported actual models separately and requires explicit remote authority for cloud-tagged Ollama models;
+- client integration now prefers evidenced native role/agent/subagent/invocation surfaces before MCP, CLI, launcher, or expiring manual handoff, while product keys and precedence remain adapter data rather than universal policy.
+
+### Migration
+
+No runtime, model, provider, MCP host, Python interpreter, network, or credential is required for Foundation integrity. Select the optional `ai-runtime-adapters` and `ai-client-integration` references only when useful, keep runtime configuration and content handles outside Git, and apply client changes only through the authorized detect/plan/apply/verify/rollback lifecycle.
+
 ## [1.15.0] - 2026-09-07
 
 ### Added

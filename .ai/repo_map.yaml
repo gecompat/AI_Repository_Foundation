@@ -143,11 +143,15 @@ transfer:
     - foundation/schemas/provision-approval.schema.json
     - foundation/schemas/provision-report.schema.json
     - foundation/schemas/runtime-inventory.schema.json
+    - foundation/schemas/ai-runtime-configuration.schema.json
     - foundation/schemas/client-integration-plan.schema.json
+    - foundation/schemas/client-model-routing-capability.schema.json
+    - foundation/schemas/vscode-model-routing-plan.schema.json
     - foundation/schemas/manual-handoff.schema.json
     - foundation/schemas/dispatch-receipt.schema.json
     - foundation/schemas/adapter-synthesis-report.schema.json
   optional_ai_work_capability: foundation/capabilities/ai-work/
+  optional_ai_runtime_adapters_capability: foundation/capabilities/ai-runtime-adapters/
   optional_ai_executor_capability: foundation/capabilities/ai-executor/
   optional_ai_provisioning_capability: foundation/capabilities/ai-provisioning/
   optional_ai_client_integration_capability: foundation/capabilities/ai-client-integration/

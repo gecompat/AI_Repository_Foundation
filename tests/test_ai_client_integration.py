@@ -324,13 +324,77 @@ class AIClientIntegrationTests(unittest.TestCase):
             integration.verify_synthesized(output, fixture, self.root / "fixture-output.txt")
 
     def test_public_schemas_are_strict_and_runtime_neutral(self) -> None:
-        for name in ("client-integration-plan.schema.json", "manual-handoff.schema.json", "dispatch-receipt.schema.json", "adapter-synthesis-report.schema.json"):
+        for name in ("client-integration-plan.schema.json", "client-model-routing-capability.schema.json", "manual-handoff.schema.json", "dispatch-receipt.schema.json", "adapter-synthesis-report.schema.json", "vscode-model-routing-plan.schema.json"):
             schema = json.loads((ROOT / "foundation" / "schemas" / name).read_text(encoding="utf-8"))
             self.assertFalse(schema["additionalProperties"])
             text = json.dumps(schema).lower()
             self.assertNotIn("ollama", text)
             self.assertNotIn("claude", text)
             self.assertNotIn("gpt-", text)
+
+    def test_vscode_native_role_plan_uses_only_fresh_available_models(self) -> None:
+        sources = [{"evidence_kind": "OFFICIAL_DOCUMENTATION", "locator": "https://example.invalid/client-docs", "observed_at": integration.isoformat(AT - timedelta(minutes=2))}]
+        def surface(surface_id, task_class, mode, target):
+            return {
+                "surface_id": surface_id,
+                "task_classes": [task_class],
+                "dispatch_mode": mode,
+                "selection_scope": "PER_TASK_CLASS" if mode == "ROLE_SETTING" else "PER_AGENT",
+                "binding_target": target,
+                "model_binding": "PRIORITY_LIST" if mode == "AGENT_PROFILE" else "SINGLE",
+                "automatic_dispatch": True,
+                "fallback_behavior": "INHERIT_PARENT",
+                "actual_model_evidence": ["NOT_AVAILABLE"],
+                "configuration_authority": "PROJECT_CONFIGURATION",
+                "repository_managed": True,
+            }
+        request = {
+            "schema_version": 1,
+            "contract": integration.VSCODE_ROUTING_REQUEST,
+            "request_id": "vscode-routing-1",
+            "model_inventory_observed_at": integration.isoformat(AT - timedelta(minutes=1)),
+            "model_inventory_expires_at": integration.isoformat(AT + timedelta(minutes=10)),
+            "available_models": ["fast-runtime-model", "deep-runtime-model"],
+            "client_capability": {
+                "schema_version": 1,
+                "contract": integration.CLIENT_MODEL_CAPABILITY,
+                "client_id": "vscode-test",
+                "client_kind": "VISUAL_STUDIO_CODE",
+                "observed_at": integration.isoformat(AT - timedelta(minutes=1)),
+                "expires_at": integration.isoformat(AT + timedelta(minutes=10)),
+                "sources": sources,
+                "surfaces": [
+                    surface("PLAN_SETTING", "software.planning", "ROLE_SETTING", "chat.planAgent.defaultModel"),
+                    surface("IMPLEMENT_SETTING", "software.implementation", "ROLE_SETTING", "github.copilot.chat.implementAgent.model"),
+                    surface("CUSTOM_AGENT", "research.sourced", "AGENT_PROFILE", ".github/agents/*.agent.md"),
+                    surface("SUBAGENT_PARAMETER", "terminal.validation", "SUBAGENT_PARAMETER", "agent.model"),
+                ],
+                "fallback_order": ["NATIVE_ROLE", "NATIVE_SUBAGENT", "MCP", "MANUAL"],
+            },
+            "roles": {
+                "planning": {"task_class": "software.planning", "surface": "PLAN_SETTING", "models": ["deep-runtime-model"], "tools": []},
+                "implementation": {"task_class": "software.implementation", "surface": "IMPLEMENT_SETTING", "models": ["deep-runtime-model"], "tools": []},
+                "research": {"task_class": "research.sourced", "surface": "CUSTOM_AGENT", "models": ["fast-runtime-model", "deep-runtime-model"], "tools": ["search", "web"]},
+                "terminal": {"task_class": "terminal.validation", "surface": "SUBAGENT_PARAMETER", "models": ["fast-runtime-model"], "tools": ["terminal"]},
+            },
+            "valid_for_seconds": 600,
+        }
+        plan = integration.plan_vscode_model_routing(request, at=AT)
+        self.assertEqual(plan["status"], "EXECUTABLE")
+        self.assertEqual(plan["native_changes"]["settings_patch"]["chat.planAgent.defaultModel"], "deep-runtime-model")
+        self.assertEqual(plan["native_changes"]["custom_agents"][0]["frontmatter"]["model"], ["fast-runtime-model", "deep-runtime-model"])
+        self.assertEqual(plan["native_changes"]["subagent_parameters"][0]["models"], ["fast-runtime-model"])
+        self.assertTrue(plan["host_constraints"]["actual_model_attestation_required"])
+        self.assertTrue(plan["client_capability_hash"].startswith("sha256:"))
+
+        request["roles"]["research"]["models"] = ["not-observed"]
+        unavailable = integration.plan_vscode_model_routing(request, at=AT)
+        self.assertEqual(unavailable["status"], "MANUAL_REQUIRED")
+        self.assertEqual(unavailable["unavailable_bindings"], ["research"])
+
+        request["client_capability"]["expires_at"] = integration.isoformat(AT)
+        with self.assertRaisesRegex(integration.IntegrationError, "must be refreshed"):
+            integration.plan_vscode_model_routing(request, at=AT)
 
 
 if __name__ == "__main__":

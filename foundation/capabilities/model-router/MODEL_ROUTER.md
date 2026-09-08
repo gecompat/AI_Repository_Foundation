@@ -6,6 +6,8 @@ This capability keeps `foundation-model-router/v1` compatible and adds the `foun
 
 It decides; it does not invoke a model. Model invocation remains owned by the selected client/provider integration. This keeps credentials out of router state and makes the same decision usable by Codex, Visual Studio with GitHub Copilot, the GitHub Copilot app/CLI, scripts, and clients without MCP.
 
+When the optional `ai-runtime-adapters` capability is also selected, its separate stdio MCP bridge can probe configured Ollama/OpenAI-compatible endpoints, expose their current catalogs, and invoke the exact model chosen here through external content handles. It also provides a question/answer configuration assistant. Neither capability depends on the other: routing still degrades to manual handoff, and the runtime bridge still permits explicit manual/pinned model selection.
+
 ## Safety and authority boundary
 
 Routing runs only after the project's privacy, authorization, and provider-eligibility rules. A remote model is excluded unless the request explicitly sets `allow_remote: true`. Capability, context-window, quality, cost, freshness, and prior-failure constraints are applied before cost optimization.

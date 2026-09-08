@@ -1,8 +1,8 @@
 # Project Status
 
 Status: GENERATED/EVIDENCE
-Last updated: 2026-09-07
-Foundation version: 1.15.0 candidate
+Last updated: 2026-09-08
+Foundation version: 1.16.0 candidate
 
 ## Implemented baseline
 
@@ -14,6 +14,16 @@ Foundation version: 1.15.0 candidate
 - source-side transfer completeness/version guard and negative regression tests;
 - source/installed Foundation version separation;
 - complete semantic upgrade feature applicability assessment.
+
+## Foundation 1.16 candidate — WI-0030 / DEC-0020
+
+- external named runtime connections support independent Ollama-local, Ollama-cloud, and OpenAI-compatible hostname/IP/port endpoints without making any runtime mandatory;
+- missing configuration yields safe bounded proposals and `CONFIGURATION_REQUIRED`; the interactive assistant supports edit/test/save/verify/exact rollback and never silently saves or asserts a boundary;
+- environment and dotenv credentials are references only, scoped to one adapter call, redacted from control-plane output, and unnecessary for local Ollama;
+- a failure-isolated stdio MCP bridge exposes status, discovery, probe, catalog, and content-handle invocation with explicit model selection and remote authority;
+- native client routing is expressed by expiring source-backed capabilities; the VS Code reference produces read-only plans for documented role settings, custom agents, and subagent parameters using only fresh observed model names;
+- requested and actual model remain separate; silent host fallback cannot become attested merely because a configuration or model argument was accepted;
+- current focused runtime/client/upgrade tests are green; complete local, live bounded, PR, and post-merge evidence is pending before `WI-0030` becomes done.
 
 ## Foundation 1.15 candidate — WI-0002 / DEC-0021
 

@@ -7,6 +7,7 @@ import argparse
 import hashlib
 import json
 import os
+import re
 import shutil
 import subprocess
 import sys
@@ -20,6 +21,9 @@ CONTRACT = "foundation-ai-client-integration/v1"
 MANUAL_CONTRACT = "foundation-manual-dispatch/v1"
 RECEIPT_CONTRACT = "foundation-model-dispatch-receipt/v1"
 SYNTHESIS_CONTRACT = "foundation-local-adapter-synthesis/v1"
+VSCODE_ROUTING_REQUEST = "foundation-vscode-model-routing-request/v1"
+VSCODE_ROUTING_PLAN = "foundation-vscode-model-routing-plan/v1"
+CLIENT_MODEL_CAPABILITY = "foundation-client-model-routing-capability/v1"
 ADAPTER_PROTOCOL = "foundation-ai-adapter-jsonl/v1"
 SHA256_PREFIX = "sha256:"
 CLIENT_KINDS = {"CODEX", "VISUAL_STUDIO", "GITHUB_COPILOT", "GENERIC"}
@@ -27,6 +31,20 @@ TRANSPORTS = {"MCP", "CLI", "LAUNCHER", "SNAPSHOT", "POLICY", "MANUAL"}
 TIERS = {"LOCAL", "ECONOMICAL", "BALANCED", "FRONTIER"}
 DATA_CLASSES = {"PUBLIC", "INTERNAL", "CONFIDENTIAL", "RESTRICTED"}
 RISK_LEVELS = {"LOW", "MEDIUM", "HIGH", "CRITICAL"}
+VSCODE_ROLE_SURFACES = {
+    "PLAN_SETTING": "chat.planAgent.defaultModel",
+    "IMPLEMENT_SETTING": "github.copilot.chat.implementAgent.model",
+    "UTILITY_SETTING": "chat.utilityModel",
+    "UTILITY_SMALL_SETTING": "chat.utilitySmallModel",
+}
+CLIENT_DISPATCH_MODES = {"ROLE_SETTING", "AGENT_PROFILE", "SUBAGENT_PARAMETER", "INVOCATION_ARGUMENT", "SESSION_SELECTION", "MANUAL_SELECTION"}
+CLIENT_SELECTION_SCOPES = {"PER_TASK_CLASS", "PER_AGENT", "PER_INVOCATION", "PER_SESSION", "MANUAL"}
+CLIENT_MODEL_BINDINGS = {"NONE", "SINGLE", "PRIORITY_LIST"}
+CLIENT_FALLBACK_BEHAVIORS = {"FAIL", "INHERIT_PARENT", "FALLBACK_SESSION", "SERVER_AUTO", "UNKNOWN"}
+CLIENT_MODEL_EVIDENCE = {"HOST_EXECUTION", "HOST_RESPONSE_METADATA", "TELEMETRY", "CLIENT_OUTPUT", "NOT_AVAILABLE"}
+CLIENT_CONFIGURATION_AUTHORITIES = {"NONE", "USER_CONFIGURATION", "PROJECT_CONFIGURATION", "REPOSITORY_WRITE", "HOST_MANAGED"}
+CLIENT_FALLBACK_PATHS = {"NATIVE_ROLE", "NATIVE_SUBAGENT", "NATIVE_INVOCATION", "MCP", "CLI", "LAUNCHER", "MANUAL"}
+CLIENT_SOURCE_EVIDENCE = {"OFFICIAL_DOCUMENTATION", "CLIENT_SCHEMA", "LIVE_PROBE", "CLIENT_OUTPUT"}
 
 
 class IntegrationError(RuntimeError):
@@ -806,6 +824,64 @@ def validate_synthesis_request(raw: Any) -> dict[str, Any]:
     return {**value, "output_directory": str(output), "command_config": config}
 
 
+def validate_client_model_capability(raw: Any, *, at: datetime | None = None) -> dict[str, Any]:
+    """Validate an expiring product-neutral description of native client routing surfaces."""
+    fields = {"schema_version", "contract", "client_id", "client_kind", "observed_at", "expires_at", "sources", "surfaces", "fallback_order"}
+    value = exact(raw, fields, "client model-routing capability")
+    if value["schema_version"] != 1 or value["contract"] != CLIENT_MODEL_CAPABILITY:
+        raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "client model-routing capability contract is invalid")
+    for field in ("client_id", "client_kind"):
+        if not isinstance(value[field], str) or not value[field]:
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", f"{field} must be non-empty")
+    current = (at or now()).astimezone(timezone.utc)
+    observed = parse_datetime(value["observed_at"], "observed_at")
+    expires = parse_datetime(value["expires_at"], "expires_at")
+    if observed > current or expires <= observed or expires <= current:
+        raise IntegrationError("CLIENT_MODEL_CAPABILITY_EXPIRED", "client model-routing capability must be refreshed", error_class="AVAILABILITY")
+    sources_raw = value["sources"]
+    if not isinstance(sources_raw, list) or not sources_raw:
+        raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "sources must be a non-empty array")
+    sources: list[dict[str, str]] = []
+    for index, raw_source in enumerate(sources_raw):
+        source = exact(raw_source, {"evidence_kind", "locator", "observed_at"}, f"sources[{index}]")
+        if source["evidence_kind"] not in CLIENT_SOURCE_EVIDENCE or not isinstance(source["locator"], str) or not source["locator"]:
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "client capability source is invalid")
+        source_at = parse_datetime(source["observed_at"], f"sources[{index}].observed_at")
+        if source_at > observed:
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "client capability source cannot postdate the observation")
+        sources.append(dict(source))
+    surfaces_raw = value["surfaces"]
+    if not isinstance(surfaces_raw, list) or not surfaces_raw:
+        raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "surfaces must be a non-empty array")
+    surfaces: list[dict[str, Any]] = []
+    seen: set[str] = set()
+    surface_fields = {"surface_id", "task_classes", "dispatch_mode", "selection_scope", "binding_target", "model_binding", "automatic_dispatch", "fallback_behavior", "actual_model_evidence", "configuration_authority", "repository_managed"}
+    for index, raw_surface in enumerate(surfaces_raw):
+        surface = exact(raw_surface, surface_fields, f"surfaces[{index}]")
+        surface_id = surface["surface_id"]
+        if not isinstance(surface_id, str) or not surface_id or surface_id in seen:
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "surface_id values must be unique and non-empty")
+        seen.add(surface_id)
+        task_classes = string_list(surface["task_classes"], f"surfaces[{index}].task_classes", nonempty=True)
+        binding_target = surface["binding_target"]
+        if not isinstance(binding_target, str) or not binding_target or "\n" in binding_target or "\r" in binding_target:
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "binding_target must be a non-empty single-line identifier")
+        evidence = string_list(surface["actual_model_evidence"], f"surfaces[{index}].actual_model_evidence", nonempty=True)
+        if surface["dispatch_mode"] not in CLIENT_DISPATCH_MODES or surface["selection_scope"] not in CLIENT_SELECTION_SCOPES:
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "dispatch mode or selection scope is invalid")
+        if surface["model_binding"] not in CLIENT_MODEL_BINDINGS or surface["fallback_behavior"] not in CLIENT_FALLBACK_BEHAVIORS:
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "model binding or fallback behavior is invalid")
+        if not set(evidence) <= CLIENT_MODEL_EVIDENCE or surface["configuration_authority"] not in CLIENT_CONFIGURATION_AUTHORITIES:
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "model evidence or configuration authority is invalid")
+        if not isinstance(surface["automatic_dispatch"], bool) or not isinstance(surface["repository_managed"], bool):
+            raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "client capability flags must be boolean")
+        surfaces.append({**surface, "task_classes": task_classes, "actual_model_evidence": evidence})
+    fallback_order = string_list(value["fallback_order"], "fallback_order", nonempty=True)
+    if not set(fallback_order) <= CLIENT_FALLBACK_PATHS:
+        raise IntegrationError("INVALID_CLIENT_MODEL_CAPABILITY", "fallback_order is invalid")
+    return {**value, "sources": sources, "surfaces": surfaces, "fallback_order": fallback_order}
+
+
 def synthesize_adapter(raw: Any, *, source_root: Path | None = None, at: datetime | None = None) -> dict[str, Any]:
     request = validate_synthesis_request(raw)
     output = Path(request["output_directory"])
@@ -920,6 +996,113 @@ def verify_synthesized(directory: Path, fixture_input: Path, fixture_output: Pat
     return report
 
 
+def plan_vscode_model_routing(raw: Any, *, at: datetime | None = None) -> dict[str, Any]:
+    """Create a runtime-only native VS Code role/model plan without editing client files."""
+    fields = {
+        "schema_version", "contract", "request_id", "model_inventory_observed_at", "model_inventory_expires_at",
+        "available_models", "client_capability", "roles", "valid_for_seconds",
+    }
+    value = exact(raw, fields, "VS Code model-routing request")
+    if value["schema_version"] != 1 or value["contract"] != VSCODE_ROUTING_REQUEST:
+        raise IntegrationError("INVALID_VSCODE_ROUTING_REQUEST", "VS Code model-routing request contract is invalid")
+    if not isinstance(value["request_id"], str) or not value["request_id"]:
+        raise IntegrationError("INVALID_VSCODE_ROUTING_REQUEST", "request_id must be non-empty")
+    current = (at or now()).astimezone(timezone.utc)
+    capability = validate_client_model_capability(value["client_capability"], at=current)
+    if capability["client_kind"] != "VISUAL_STUDIO_CODE":
+        raise IntegrationError("INVALID_VSCODE_ROUTING_REQUEST", "client capability is not for Visual Studio Code")
+    capability_surfaces = {item["surface_id"]: item for item in capability["surfaces"]}
+    observed = parse_datetime(value["model_inventory_observed_at"], "model_inventory_observed_at")
+    expires = parse_datetime(value["model_inventory_expires_at"], "model_inventory_expires_at")
+    if observed > current or expires <= observed or expires <= current:
+        raise IntegrationError("MODEL_INVENTORY_EXPIRED", "VS Code model inventory must be refreshed", error_class="AVAILABILITY")
+    available = string_list(value["available_models"], "available_models")
+    if not isinstance(value["valid_for_seconds"], int) or isinstance(value["valid_for_seconds"], bool) or not 1 <= value["valid_for_seconds"] <= 86400:
+        raise IntegrationError("INVALID_VSCODE_ROUTING_REQUEST", "valid_for_seconds is out of bounds")
+    roles = value["roles"]
+    if not isinstance(roles, dict) or not roles:
+        raise IntegrationError("INVALID_VSCODE_ROUTING_REQUEST", "roles must be a non-empty object")
+    settings: dict[str, str] = {}
+    agents: list[dict[str, Any]] = []
+    subagents: list[dict[str, Any]] = []
+    unavailable: list[str] = []
+    for role_id, raw_binding in sorted(roles.items()):
+        if not isinstance(role_id, str) or not re.fullmatch(r"[a-z0-9][a-z0-9._-]{0,63}", role_id):
+            raise IntegrationError("INVALID_VSCODE_ROLE", "VS Code role id is invalid")
+        binding = exact(raw_binding, {"task_class", "surface", "models", "tools"}, f"VS Code role {role_id}")
+        if not isinstance(binding["task_class"], str) or not binding["task_class"]:
+            raise IntegrationError("INVALID_VSCODE_ROLE", "role task_class must be non-empty")
+        requested_models = string_list(binding["models"], f"roles.{role_id}.models", nonempty=True)
+        eligible_models = [model for model in requested_models if model in available]
+        tools = string_list(binding["tools"], f"roles.{role_id}.tools")
+        surface = binding["surface"]
+        if surface not in set(VSCODE_ROLE_SURFACES) | {"CUSTOM_AGENT", "SUBAGENT_PARAMETER"}:
+            raise IntegrationError("INVALID_VSCODE_ROLE", "role surface is invalid")
+        observed_surface = capability_surfaces.get(surface)
+        if observed_surface is None or binding["task_class"] not in observed_surface["task_classes"] and "*" not in observed_surface["task_classes"]:
+            unavailable.append(role_id)
+            continue
+        if not eligible_models:
+            unavailable.append(role_id)
+            continue
+        if surface in VSCODE_ROLE_SURFACES:
+            target = VSCODE_ROLE_SURFACES[surface]
+            if observed_surface["dispatch_mode"] != "ROLE_SETTING" or observed_surface["binding_target"] != target:
+                raise IntegrationError("INVALID_VSCODE_ROLE", "observed VS Code role-setting surface does not match the documented binding")
+            settings[target] = eligible_models[0]
+        elif surface == "CUSTOM_AGENT":
+            if observed_surface["dispatch_mode"] != "AGENT_PROFILE":
+                raise IntegrationError("INVALID_VSCODE_ROLE", "custom-agent surface must use AGENT_PROFILE dispatch")
+            agents.append({
+                "role_id": role_id,
+                "task_class": binding["task_class"],
+                "file_name": f"foundation-{role_id}.agent.md",
+                "frontmatter": {
+                    "name": "Foundation " + role_id.replace("-", " ").title(),
+                    "description": f"Foundation role for {binding['task_class']}",
+                    "model": eligible_models,
+                    "tools": tools,
+                },
+            })
+        else:
+            if observed_surface["dispatch_mode"] != "SUBAGENT_PARAMETER":
+                raise IntegrationError("INVALID_VSCODE_ROLE", "subagent surface must use SUBAGENT_PARAMETER dispatch")
+            subagents.append({"role_id": role_id, "task_class": binding["task_class"], "models": eligible_models})
+    status = "MANUAL_REQUIRED" if unavailable else "EXECUTABLE"
+    native = {"settings_patch": settings, "custom_agents": agents, "subagent_parameters": subagents}
+    material = {
+        "request_id": value["request_id"],
+        "inventory_hash": digest({"observed_at": value["model_inventory_observed_at"], "expires_at": value["model_inventory_expires_at"], "models": available}),
+        "client_capability_hash": digest(capability),
+        "native_changes": native,
+        "unavailable_bindings": unavailable,
+        "created_at": isoformat(current),
+    }
+    plan = {
+        "schema_version": 1,
+        "contract": VSCODE_ROUTING_PLAN,
+        "client": "VISUAL_STUDIO_CODE",
+        "plan_id": digest(material),
+        "request_id": value["request_id"],
+        "client_capability_hash": digest(capability),
+        "created_at": isoformat(current),
+        "expires_at": isoformat(current + timedelta(seconds=value["valid_for_seconds"])),
+        "status": status,
+        "native_changes": native,
+        "unavailable_bindings": unavailable,
+        "host_constraints": {
+            "model_names_are_runtime_facts": True,
+            "main_model_cost_ceiling_remains_authoritative": True,
+            "actual_model_attestation_required": True,
+        },
+        "reason_codes": [
+            "NATIVE_VSCODE_ROLE_PLAN_READY" if status == "EXECUTABLE" else "ONE_OR_MORE_ROLE_MODELS_UNAVAILABLE",
+            "PLAN_ONLY_NO_CLIENT_CONFIGURATION_WRITTEN",
+        ],
+    }
+    return {**plan, "plan_hash": digest(plan)}
+
+
 def load_json(path: str) -> Any:
     try:
         return json.loads(Path(path).read_text(encoding="utf-8"))
@@ -957,6 +1140,8 @@ def main(argv: list[str] | None = None) -> int:
     conformance_parser.add_argument("--directory", required=True)
     conformance_parser.add_argument("--fixture-input", required=True)
     conformance_parser.add_argument("--fixture-output", required=True)
+    vscode_parser = sub.add_parser("plan-vscode-models")
+    vscode_parser.add_argument("--request", required=True)
     args = parser.parse_args(argv)
     try:
         if args.command == "detect":
@@ -978,6 +1163,8 @@ def main(argv: list[str] | None = None) -> int:
             return emit(verify_dispatch_receipt(load_json(args.handoff), load_json(args.receipt), trusted_issuers=set(args.trusted_issuer)))
         if args.command == "synthesize-adapter":
             return emit(synthesize_adapter(load_json(args.request)))
+        if args.command == "plan-vscode-models":
+            return emit(plan_vscode_model_routing(load_json(args.request)))
         return emit(verify_synthesized(Path(args.directory), Path(args.fixture_input), Path(args.fixture_output)))
     except IntegrationError as exc:
         print(json.dumps({"contract": CONTRACT, "status": "BLOCKED", "error": {"class": exc.error_class, "code": exc.code, "message": str(exc)}}, sort_keys=True), file=sys.stderr)

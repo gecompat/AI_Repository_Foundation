@@ -48,6 +48,8 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("cost_refresh_minimum_seconds: 86400", repo_map)
             self.assertIn("ai_client_integration_contract:", repo_map)
             self.assertIn("profile: foundation-ai-client-integration/v1", repo_map)
+            self.assertIn("native_model_capability_schema: .ai/foundation/schemas/client-model-routing-capability.schema.json", repo_map)
+            self.assertIn("vscode_model_plan_schema: .ai/foundation/schemas/vscode-model-routing-plan.schema.json", repo_map)
             self.assertIn("manual_fallback_status: MANUAL_DISPATCH_REQUIRED", repo_map)
             self.assertIn("unattested_status: REQUESTED_NOT_ATTESTED", repo_map)
             self.assertIn("installation_receipt: .ai/foundation/installation-provenance.json", repo_map)
@@ -57,7 +59,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.15.0")
+        self.assertEqual(manifest["ruleset_version"], "1.16.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -141,6 +143,16 @@ class UpgradeInstallationTests(unittest.TestCase):
         candidates = upgrade_applicability.candidate_features(catalog, "1.14.0", "1.15.0")
         self.assertEqual([item["feature_id"] for item in candidates], ["installed-foundation-provenance"])
         self.assertEqual(candidates[0]["candidate_reasons"], ["introduced_in:1.15.0"])
+
+    def test_1_15_to_1_16_delta_surfaces_runtime_configuration_and_mcp(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.15.0", "1.16.0")
+        self.assertEqual([item["feature_id"] for item in candidates], ["ai-client-integration", "ai-runtime-adapters"])
+        by_id = {item["feature_id"]: item for item in candidates}
+        self.assertEqual(by_id["ai-runtime-adapters"]["candidate_reasons"], ["material_change:1.16.0"])
+        self.assertIn("interactive_runtime_configuration", by_id["ai-runtime-adapters"]["applicability"]["signals"])
+        self.assertEqual(by_id["ai-client-integration"]["candidate_reasons"], ["material_change:1.16.0"])
+        self.assertIn("native_client_model_roles", by_id["ai-client-integration"]["applicability"]["signals"])
 
 
 if __name__ == "__main__":
