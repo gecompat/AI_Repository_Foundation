@@ -90,7 +90,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.16.0")
+            self.assertEqual(catalog["ruleset_version"], "1.17.0")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
             self.assertIn("rule-context-cache", catalog["features"])
@@ -150,6 +150,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertFalse((target / ".ai" / "foundation" / "ai_runtime_adapters").exists())
             self.assertFalse((target / ".ai" / "foundation" / "ai_executor").exists())
             self.assertFalse((target / ".ai" / "foundation" / "ai_provisioning").exists())
+            self.assertFalse((target / ".ai" / "foundation" / "ai_orchestrator").exists())
 
     def test_reference_clients_and_github_registry_capabilities_are_opt_in(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
@@ -222,6 +223,16 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((target / ".ai" / "foundation" / "ai_work" / "ai_work.py").is_file())
             self.assertTrue((target / ".ai" / "foundation" / "ai_runtime_adapters" / "reference_adapters.py").is_file())
             self.assertTrue((target / ".ai" / "foundation" / "model_router" / "model_router.py").is_file())
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            self.assertEqual(self.install(target, "--capabilities", "ai-orchestrator"), 0)
+            orchestrator = target / ".ai" / "foundation" / "ai_orchestrator"
+            self.assertTrue((orchestrator / "AI_ORCHESTRATOR.md").is_file())
+            self.assertTrue((orchestrator / "ai_orchestrator.py").is_file())
+            self.assertTrue((orchestrator / "orchestrator_mcp.py").is_file())
+            self.assertTrue((target / ".ai" / "foundation" / "ai_work" / "ai_work.py").is_file())
+            self.assertTrue((target / ".ai" / "foundation" / "ai_runtime_adapters" / "runtime_configuration.py").is_file())
+            self.assertTrue((target / ".ai" / "foundation" / "model_router" / "router_v2.py").is_file())
 
     def test_model_router_capability_surfaces_runtime_configuration_notice(self) -> None:
         notices = install_foundation.capability_notices(["model-router"])
@@ -267,6 +278,14 @@ class InstallationModelTests(unittest.TestCase):
         self.assertIn("outside version control", notices[0]["message"])
         self.assertIn("REQUESTED_NOT_ATTESTED", notices[0]["message"])
         self.assertIn("grants no configuration", notices[0]["message"])
+
+    def test_ai_orchestrator_requires_external_evidence_without_granting_authority(self) -> None:
+        notices = install_foundation.capability_notices(["ai-orchestrator"])
+        self.assertEqual(len(notices), 1)
+        self.assertEqual(notices[0]["code"], "AI_ORCHESTRATOR_EXTERNAL_EVIDENCE_REQUIRED")
+        self.assertIn("outside version control", notices[0]["message"])
+        self.assertIn("MANUAL_REQUIRED", notices[0]["message"])
+        self.assertIn("grants no network", notices[0]["message"])
 
     def test_github_registry_capability_surfaces_non_blocking_protection_recommendation(self) -> None:
         notices = install_foundation.capability_notices(["artifact-registry-github"])
@@ -363,6 +382,9 @@ class InstallationModelTests(unittest.TestCase):
         self.assertEqual(work["host_preparation"]["profile"], "foundation-ai-host-preparation/v1")
         self.assertEqual(work["host_preparation"]["cost_refresh_minimum_seconds"], 86400)
         self.assertEqual(work["host_preparation"]["reference_install_network"], "denied")
+        self.assertEqual(work["reference_orchestrator"]["profile"], "foundation-ai-orchestration/v1")
+        self.assertEqual(work["reference_orchestrator"]["refresh_minimum_seconds"], 86400)
+        self.assertEqual(work["reference_orchestrator"]["unattested_result"], "MANUAL_REQUIRED")
 
         client = self.manifest["ai_client_integration_contract"]
         self.assertEqual(client["profile"], "foundation-ai-client-integration/v1")
@@ -454,7 +476,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
             self.assertRegex(row["source_sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.16.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.17.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

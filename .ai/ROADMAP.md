@@ -77,9 +77,16 @@ Initial governance, metadata, adapters, bootstrap skeleton, and validator skelet
 - expiring provider-neutral client model-routing capabilities and read-only native VS Code role/subagent planning;
 - native client dispatch first, then MCP/CLI/launcher, then an expiring manual-selection handoff.
 
+## v1.17 — End-to-end model orchestration with external evidence
+
+- optional catalog-to-router-to-invocation-to-validation orchestration with bounded fallbacks;
+- source-backed expiring model profiles without turning runtime observations into permanent policy;
+- strict requested/actual alias attestation and content-free reports;
+- refresh-on-plan research/evidence inputs, no more than once per source per day, with offline last-known-good reuse;
+- unconfigured-safe CLI and stdio MCP entry points while the Foundation default remains rules-only.
+
 ## Later
 
 - optional adapter/capability modules beyond current registration/registry clients;
-- stronger drift hashes and installed provenance under WI-0002;
 - packaged release artifacts only if they add value beyond manifest-driven transfer;
 - evaluate additional v2 reference clients, GUI/IDE frontends, or non-GitHub CI adapters only when project evidence justifies them; keep the normative registry/merge protocol implementation-neutral.
