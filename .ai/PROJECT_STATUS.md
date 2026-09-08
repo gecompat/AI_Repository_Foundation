@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-08
-Foundation version: 1.16.0 validated
+Foundation version: 1.16.0
 
 ## Implemented baseline
 
