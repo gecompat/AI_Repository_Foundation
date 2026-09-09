@@ -23,10 +23,12 @@
 #
 # Convention:
 #   .ai/    = version-controlled AI/project governance
-#   .local/ = local, non-versioned runtime and working data
+#   .local/ = disposable ignored work only when its owning contract permits it
 #
-# Store local logs, caches, temporary files, test artifacts,
-# agent state and other machine-specific data below .local/.
+# Store permitted temporary files and test artifacts below .local/.
+# Components that require state outside every Git worktree (including the
+# AI router/adapter/executor/provisioner/orchestrator references) must use
+# their documented OS state directory or an authorized external override.
 # ============================================================
 
 .local/

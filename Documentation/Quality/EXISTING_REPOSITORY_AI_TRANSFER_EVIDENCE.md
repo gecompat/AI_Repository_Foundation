@@ -4,6 +4,8 @@ Status: GENERATED/EVIDENCE
 Date: 2026-08-23
 Foundation ruleset: 1.2.0
 
+This artifact preserves the scope of the evidence gathered on that date. The separate fresh-agent continuation criterion was subsequently executed and validated on 2026-09-07 under Foundation 1.15.0; see `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md`.
+
 ## Result
 
 AI-assisted transfer of the Foundation into existing repositories has been performed successfully in multiple real repositories. This validates the practical existing-repository transfer/integration path beyond synthetic installer tests.
@@ -29,11 +31,12 @@ The successful transfers provide manual/empirical evidence for:
 
 ## Scope boundary
 
-This evidence does **not by itself** prove the complete `MV-FND-001` continuation criterion that a genuinely fresh AI, after transfer and with no prior conversation context, can correctly explain and continue every target project using repository state alone.
+This 2026-08-23 evidence does **not by itself** prove the complete `MV-FND-001` continuation criterion that a genuinely fresh AI, after transfer and with no prior conversation context, can correctly explain and continue every target project using repository state alone.
 
-Therefore:
+The evidence status is therefore:
 
 - existing-repository AI transfer: `validated`;
-- fresh-agent post-transfer continuation: `pending manual validation` until separately evidenced.
+- fresh-agent post-transfer continuation from this artifact alone: `not executed`;
+- combined current criterion: `validated` by the separate 2026-09-07 execution record.
 
-See `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md` for the remaining continuation acceptance contract.
+See `Documentation/Quality/MANUAL_VALIDATION_FRESH_AI_TRANSFER.md` for the executed procedure, exact source/target evidence, limitations, and current acceptance status.

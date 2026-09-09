@@ -2,6 +2,20 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.17.2] - 2026-09-09
+
+### Documentation
+
+- reconciled the transferable ruleset summary, repo map, direct-transfer protocol, source overview, README, and optional orchestrator guide with the complete Foundation 1.17 schemas, dependencies, configuration paths, evidence requirements, and graceful-degradation behavior;
+- replaced stale limitations and fresh-agent status claims with the implemented manifest-provenance, offline-package, and executed continuation evidence boundaries;
+- aligned contributor privacy wording and local-state guidance with the current classification gate and the external-worktree requirements of executable AI capabilities;
+- rechecked changeable Codex, VS Code, GitHub Copilot, Ollama, MCP, and GitHub Actions references against current primary documentation and clarified VS Code subagent controls plus Copilot CLI Auto/fallback behavior.
+
+### Validation
+
+- extended Foundation validation and installation/upgrade regressions so source and transferred repo maps cannot silently omit router-v2, runtime-evidence, or end-to-end orchestration contracts again.
+- bound the CLI/launcher regression to its synthetic catalog observation time so the suite does not start failing when that fixture expires in real wall-clock time.
+
 ## [1.17.1] - 2026-09-09
 
 ### Project tooling

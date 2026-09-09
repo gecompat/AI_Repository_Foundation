@@ -45,6 +45,13 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("python_required: false", repo_map)
             self.assertIn("runtime_inventory_schema: .ai/foundation/schemas/runtime-inventory.schema.json", repo_map)
             self.assertIn("host_preparation_capability: ai-provisioning", repo_map)
+            self.assertIn("model_runtime_evidence_schema: .ai/foundation/schemas/model-runtime-evidence.schema.json", repo_map)
+            self.assertIn("model_evidence_sources_schema: .ai/foundation/schemas/model-evidence-sources.schema.json", repo_map)
+            self.assertIn("orchestration_request_schema: .ai/foundation/schemas/ai-orchestration-request.schema.json", repo_map)
+            self.assertIn("orchestration_report_schema: .ai/foundation/schemas/ai-orchestration-report.schema.json", repo_map)
+            self.assertIn("orchestrator_capability: ai-orchestrator", repo_map)
+            self.assertIn("orchestration_profile: foundation-ai-orchestration/v1", repo_map)
+            self.assertIn("orchestration_unattested_result: MANUAL_REQUIRED", repo_map)
             self.assertIn("cost_refresh_minimum_seconds: 86400", repo_map)
             self.assertIn("ai_client_integration_contract:", repo_map)
             self.assertIn("profile: foundation-ai-client-integration/v1", repo_map)
@@ -59,7 +66,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.17.1")
+        self.assertEqual(manifest["ruleset_version"], "1.17.2")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -167,6 +174,15 @@ class UpgradeInstallationTests(unittest.TestCase):
         candidates = upgrade_applicability.candidate_features(catalog, "1.17.0", "1.17.1")
         self.assertEqual([item["feature_id"] for item in candidates], ["central-artifact-registry"])
         self.assertEqual(candidates[0]["candidate_reasons"], ["material_change:1.17.1"])
+
+    def test_1_17_1_to_1_17_2_documentation_reconciliation_is_non_material(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        self.assertEqual(upgrade_applicability.candidate_features(catalog, "1.17.1", "1.17.2"), [])
+        for feature_id in ["central-artifact-registry", "ai-work-orchestration", "ai-client-integration"]:
+            changes = catalog["features"][feature_id]["change_history"]
+            current = [change for change in changes if change["version"] == "1.17.2"]
+            self.assertEqual(len(current), 1)
+            self.assertEqual(current[0]["impact"], "NON_MATERIAL")
 
 
 if __name__ == "__main__":

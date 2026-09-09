@@ -129,6 +129,8 @@ class CentralArtifactRegistryTests(unittest.TestCase):
         actual = (ROOT / ".ai" / "BACKLOG.md").read_text(encoding="utf-8")
         self.assertEqual(actual, expected)
         self.assertIn("WI-0015", actual)
+        self.assertIn("completed fresh-agent continuation criterion", actual)
+        self.assertNotIn("fresh-agent continuation criterion remains tracked", actual)
 
     def test_manifest_exposes_optional_github_registry_capability(self) -> None:
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))

@@ -2,7 +2,7 @@
 
 A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and human-maintained technical and knowledge projects. Its goal is safe continuation without chat history, memory, personal prompts, or a specific vendor.
 
-## v1.17 integration, identity, provenance, AI-work, and evidence-backed capability routing
+## v1.17.2 integration, identity, provenance, AI work, and evidence-backed capability routing
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
 
@@ -60,8 +60,8 @@ This does not make Python the target runtime; the installer is only one Foundati
 For a single-file offline or air-gapped handoff, a clean exact Git checkout can build a deterministic universal source distribution:
 
 ```text
-python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip
-python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip.sha256
+python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.2.zip
+python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.2.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.2.zip.sha256
 ```
 
 The archive contains only the manifest, all manifest-whitelisted selectable sources, the minimum installer files, and a generated content index. It excludes Foundation project state and every local runtime or credential. Verify it before extraction into an empty staging directory, then run the bundled installer against the target. The package does not replace semantic integration, confer authority, or prove publisher authenticity; obtain its SHA-256 through an independently trusted channel when authenticity matters. See `Documentation/Quality/PACKAGED_RELEASE_ARTIFACT_EVALUATION.md`.
@@ -105,6 +105,30 @@ On first use it checks only bounded loopback Ollama defaults read-only, proposes
 The same capability provides `runtime_mcp.py`. It starts without configuration, reports `CONFIGURATION_REQUIRED` plus the wizard action, and isolates broken connections. Its tools probe/catalog runtimes and invoke an explicit/router-selected/pinned model while keeping prompts and generated content in external handles. The router remains decision-only; clients that can chain MCP tools pass its selected model to the runtime bridge, while other clients receive the manual model-choice handoff.
 
 Where a client natively supports task-role, custom-agent, subagent, per-invocation, or session model selection, `ai-client-integration` prefers that narrower path before MCP/CLI/launcher/manual fallback. The Foundation stores such support as an expiring, source-backed, vendor-neutral client capability instead of assuming one shared settings syntax. The VS Code reference planner recognizes only documented role settings and agent/subagent surfaces, consumes a fresh live model inventory, and writes no client configuration. GitHub Copilot CLI, Codex, Claude Code, Gemini CLI, Continue, JetBrains, Cursor, and Aider currently expose different subsets and fallback semantics; requested-versus-actual model evidence remains mandatory when silent inheritance or fallback is possible.
+
+### Optional AI work capability stack
+
+The runtime-neutral policies and schemas are core. Executable references remain opt-in:
+
+| Capability | Purpose | Dependencies selected automatically |
+| --- | --- | --- |
+| `ai-work` | decision-only `WorkRequest` to `ExecutionPlan`/`GapReport` planner | none |
+| `model-router` | provider-neutral v1/v2 model decision, CLI/MCP, snapshots and Ollama Cloud catalog adapter | none |
+| `ai-runtime-adapters` | external connection assistant plus isolated Ollama/OpenAI-compatible/command invocation bridge | none |
+| `ai-executor` | generic exact-plan execution, checkpoints, approvals, limits and validation evidence | `ai-work` |
+| `ai-provisioning` | doctor/inventory, exact approved provisioning and verified cost-evidence refresh | `ai-work` |
+| `ai-client-integration` | native/MCP/CLI/manual dispatch planning, receipt verification and rollback-safe configuration | `ai-work`, `ai-runtime-adapters`, `model-router` |
+| `ai-orchestrator` | complete catalog → evidence → route → invoke → validate → fallback → report facade | `ai-work`, `ai-runtime-adapters`, `model-router` |
+
+For the complete evidence-backed routed execution facade:
+
+```text
+python tools/install_foundation.py TARGET --capabilities ai-orchestrator --apply
+python TARGET/.ai/foundation/ai_runtime_adapters/runtime_configuration.py configure
+python TARGET/.ai/foundation/ai_orchestrator/ai_orchestrator.py plan REQUEST.json
+```
+
+Installing a dependency does not configure or start it and grants no model, runtime, credential, network, data-transfer, spend, file, Git, publication, push, or pull-request authority. The router remains decision-only; `ai-executor` executes generic AI-work plans, while `ai-orchestrator` is the narrower model-routing facade. Missing runtime configuration or fresh source-backed model evidence produces a truthful manual/unavailable result. See the capability-local Markdown file for each exact CLI and state contract.
 
 ## Transfer completeness invariant
 

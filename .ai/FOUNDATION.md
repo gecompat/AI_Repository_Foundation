@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.17.1
+- version: 1.17.2
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -31,6 +31,7 @@ Status: AUTHORITATIVE
 - rule_context_cache_contract: native instruction discovery per run; session-local semantic analyses keyed by validated scope/source dependencies; optional local records contain fingerprints/dependency metadata only and fail closed on scope, instruction, topology, source-set, schema, generator, corruption, or uncertainty changes
 - model_routing_contract: compatible `foundation-model-router/v1` plus v2 boundaries/resources/isolated fragments; complete-chain expected cost of success; price-epoch expiry; conditional affinity; paired bounded evaluation; runtime state outside version control
 - ai_work_contract: runtime-neutral `foundation-ai-work/v1`; payload handles; isolated optional capabilities; authority intersection; truthful degradation; risk-gated validation; optional content-free resumable execution; runtime state outside version control
+- ai_orchestration_contract: optional `foundation-ai-orchestration/v1`; isolated live catalogs; fresh external source-backed model evidence; router-v2 selection; content-handle invocation; deterministic validation; bounded fallback; requested/actual model reconciliation; content-free reports and checkpoints
 - ai_runtime_configuration_contract: external `foundation-ai-runtime-configuration/v1`; named host/IP/port connections; bounded first-run proposals; interactive edit/test/save/rollback; credential references only; unconfigured MCP remains available
 - ai_client_integration_contract: semantic detect/plan/apply/verify/rollback; expiring native client model-routing capabilities; read-only VS Code role/subagent plans; requested-versus-actual dispatch evidence; privacy-safe external manual handoff; quarantined governed adapter synthesis
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable
@@ -44,7 +45,7 @@ Status: AUTHORITATIVE
 - target_github_merge_protection: recommended when relevant, never silently imposed by Foundation transfer
 - python_runtime_required: false
 - powershell_reference_client: supported first-class for the v1 compatibility profile
-- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`; `ai-executor`; `ai-provisioning`; `ai-client-integration`
+- optional_capabilities: `artifact-registration-clients`; `artifact-registry-github`; `rule-context-cache`; `model-router`; `ai-work`; `ai-runtime-adapters`; `ai-executor`; `ai-provisioning`; `ai-client-integration`; `ai-orchestrator`
 - target_project_license: never replaced or modified by installation
 - default_adapters: github-copilot, claude-code, gemini
 - default_capabilities: none
