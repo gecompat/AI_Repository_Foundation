@@ -48,6 +48,7 @@ authority:
   generated_evidence:
     - .ai/PROJECT_STATUS.md
     - .ai/HANDOVER.md
+    - Documentation/Quality/DOCUMENTATION_AUDIT_2026-09-09.md
   runtime_empirical_evidence:
     - Documentation/Quality/AI_SYSTEM_INDEPENDENCE_ACCEPTANCE.md
     - Documentation/Quality/AI_WORK_SELF_HOSTING_EVIDENCE.md
@@ -127,6 +128,9 @@ transfer:
     - foundation/schemas/model-router-catalog.schema.json
     - foundation/schemas/model-routing-snapshot.schema.json
     - foundation/schemas/model-router-profiles.schema.json
+    - foundation/schemas/model-routing-request-v2.schema.json
+    - foundation/schemas/model-routing-decision-v2.schema.json
+    - foundation/schemas/model-router-catalog-fragment-v2.schema.json
   optional_model_router_capability: foundation/capabilities/model-router/
   ai_work_policy: Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md
   ai_work_schemas:
@@ -143,18 +147,25 @@ transfer:
     - foundation/schemas/provision-approval.schema.json
     - foundation/schemas/provision-report.schema.json
     - foundation/schemas/runtime-inventory.schema.json
+    - foundation/schemas/ai-adapter-protocol.schema.json
     - foundation/schemas/ai-runtime-configuration.schema.json
+    - foundation/schemas/resource-cost-evidence.schema.json
     - foundation/schemas/client-integration-plan.schema.json
     - foundation/schemas/client-model-routing-capability.schema.json
     - foundation/schemas/vscode-model-routing-plan.schema.json
     - foundation/schemas/manual-handoff.schema.json
     - foundation/schemas/dispatch-receipt.schema.json
     - foundation/schemas/adapter-synthesis-report.schema.json
+    - foundation/schemas/model-runtime-evidence.schema.json
+    - foundation/schemas/model-evidence-sources.schema.json
+    - foundation/schemas/ai-orchestration-request.schema.json
+    - foundation/schemas/ai-orchestration-report.schema.json
   optional_ai_work_capability: foundation/capabilities/ai-work/
   optional_ai_runtime_adapters_capability: foundation/capabilities/ai-runtime-adapters/
   optional_ai_executor_capability: foundation/capabilities/ai-executor/
   optional_ai_provisioning_capability: foundation/capabilities/ai-provisioning/
   optional_ai_client_integration_capability: foundation/capabilities/ai-client-integration/
+  optional_ai_orchestrator_capability: foundation/capabilities/ai-orchestrator/
   schemas: foundation/schemas/
   optional_reference_clients: tools/identity/
   optional_github_registry_capability: foundation/capabilities/artifact-registry-github/
@@ -174,6 +185,8 @@ installation:
   optional_github_registry: python tools/install_foundation.py TARGET --capabilities artifact-registry-github
   optional_model_router: python tools/install_foundation.py TARGET --capabilities model-router
   optional_ai_work_planner: python tools/install_foundation.py TARGET --capabilities ai-work
+  optional_ai_runtime_adapters: python tools/install_foundation.py TARGET --capabilities ai-runtime-adapters
   optional_ai_executor: python tools/install_foundation.py TARGET --capabilities ai-executor
   optional_ai_provisioning: python tools/install_foundation.py TARGET --capabilities ai-provisioning
   optional_ai_client_integration: python tools/install_foundation.py TARGET --capabilities ai-client-integration
+  optional_ai_orchestrator: python tools/install_foundation.py TARGET --capabilities ai-orchestrator

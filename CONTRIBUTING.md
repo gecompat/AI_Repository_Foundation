@@ -1,6 +1,6 @@
 # Contributing
 
-Read `AGENTS.md` before work. Apply the privacy stop-gate before every mutation or transfer. Use a focused branch and pull request by default; keep commits coherent and factual.
+Read `AGENTS.md` before work. Classify relevant data and its intended destination before mutation or transfer; stop only under the conditions in `Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md`. Use a focused branch and pull request by default; keep commits coherent and factual.
 
 For a change:
 

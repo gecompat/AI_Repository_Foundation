@@ -69,6 +69,61 @@ Initial governance, metadata, adapters, bootstrap skeleton, and validator skelet
 - optional `artifact-registry-github` capability for reference implementation and GitHub Actions;
 - Foundation source-project registry migrated to v2 and `.ai/BACKLOG.md` generated from it.
 
+## v1.7 — Portable transfer integrity and repository continuity
+
+- shared UTF-8 LF/CRLF equivalence for installation and validation without hiding real content drift;
+- cross-platform checkout regression coverage;
+- layered required-check availability semantics with no bypass for validation failures;
+- optional pull-request-only continuity procedure while unbypassable branch safety remains active.
+
+## v1.8 — Rule-context cache
+
+- native instruction discovery remains mandatory for each new run;
+- optional content-free fingerprint/dependency records support explainable cache hits and targeted invalidation;
+- scope, instruction, topology, source-set, schema, corruption, or uncertainty changes fail closed to a full reread.
+
+## v1.9 — Dynamic cost-aware model routing
+
+- provider-neutral router v1 contracts and opt-in reference CLI/MCP/launcher/snapshot paths;
+- hard privacy, authority, capability, context, quality, freshness, and budget filters before complete cost-of-success ranking;
+- runtime model/price discovery, bounded assessment, conditional affinity, and external content-free state;
+- Ollama Cloud is one replaceable provider adapter, not a Foundation dependency.
+
+## v1.10 — Runtime-neutral AI work
+
+- `foundation-ai-work/v1` contracts for open task classes, capabilities, plans, evidence, gaps, and truthful terminal states;
+- optional decision-only planner with no invocation or provisioning authority;
+- payload/control-plane separation, deterministic-tool preference, risk-gated validation, and isolated failure.
+
+## v1.11 — Router v2, neutral adapters, and resource economics
+
+- router v2 execution boundaries, isolated provider fragments, health/quality/resource provenance, and last-known-good behavior while preserving v1;
+- language-neutral JSONL/stdio protocol plus Ollama local/cloud, OpenAI-compatible HTTP, and shell-free command references;
+- complete fallback-chain optimization, output-aware context limits, paired evaluation settlement, and hard host-resource constraints;
+- evidenced resource money or explainable non-monetary pressure without invented conversion values.
+
+## v1.12 — Resumable execution and validation
+
+- optional exact-plan executor with bounded attempts, time, spend, resources, cancellation, and deterministic/independent validation;
+- grouped exact approval receipts, content-free checkpoints, idempotent replay, and manual reconciliation of ambiguous effects.
+
+## v1.13 — Host preparation and cost evidence
+
+- optional `doctor`, `inventory`, `plan-provision`, `provision`, and `verify` reference path;
+- expiring hash-bound plans and approvals for exact bounded downloads and offline installation;
+- isolated source-backed cost-evidence refresh at most once per source per 24 hours with offline last-known-good reuse.
+
+## v1.14 — Client integration and manual dispatch
+
+- semantic `detect → plan → apply → verify → rollback` integration without blind configuration overwrite;
+- native client routing when freshly evidenced, followed by MCP/CLI/launcher and content-separated manual selection;
+- requested/actual model receipts and governed, external, quarantined adapter synthesis.
+
+## v1.15 — Transfer provenance and fresh-agent continuation
+
+- portable manifest hashes and content-minimized installation receipts with explicit drift classifications;
+- completed clean existing-repository transfer and fresh-agent continuation evidence without treating Foundation integrity as target semantic/runtime validation.
+
 ## v1.16 — Interactive runtime configuration and native client routing
 
 - external multi-runtime host/IP/port configuration with safe first-run proposals and exact rollback;
@@ -83,10 +138,20 @@ Initial governance, metadata, adapters, bootstrap skeleton, and validator skelet
 - source-backed expiring model profiles without turning runtime observations into permanent policy;
 - strict requested/actual alias attestation and content-free reports;
 - refresh-on-plan research/evidence inputs, no more than once per source per day, with offline last-known-good reuse;
-- unconfigured-safe CLI and stdio MCP entry points while the Foundation default remains rules-only.
+- unconfigured-safe CLI and stdio MCP entry points while the Foundation default remains rules-only;
+- deterministic offline source package with content index and SHA-256 sidecar as project tooling over the same manifest payload.
+
+## v1.17.1 — Current GitHub workflow runtime
+
+- source and optional registry workflows use the current Node-24 GitHub Action generations while preserving permissions, Python, check names, and registry semantics.
+
+## v1.17.2 — Documentation integrity
+
+- source and transferable documentation enumerate the complete shipped AI work/orchestration stack, schemas, dependencies, configuration, external-state, evidence, and degradation boundaries;
+- stale limitations, continuation/backlog statements, client references, and time-dependent test evidence are reconciled and regression-protected.
 
 ## Later
 
-- optional adapter/capability modules beyond current registration/registry clients;
-- packaged release artifacts only if they add value beyond manifest-driven transfer;
-- evaluate additional v2 reference clients, GUI/IDE frontends, or non-GitHub CI adapters only when project evidence justifies them; keep the normative registry/merge protocol implementation-neutral.
+- evaluate additional provider adapters, v2 registry clients, GUI/IDE frontends, signatures/attestations, or non-GitHub CI integrations only when project evidence justifies them;
+- keep normative contracts implementation-neutral and make every executable component replaceable and optional;
+- register future work in `.ai/identity/registry.json`; this roadmap is informative and does not itself create backlog authority.

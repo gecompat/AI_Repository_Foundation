@@ -326,6 +326,38 @@ MODEL_ROUTING_MAP_MARKERS = [
     "credential_storage: prohibited",
     "optional_reference_capability: model-router",
 ]
+AI_WORK_MAP_MARKERS = [
+    ".ai/foundation/schemas/ai-adapter-protocol.schema.json",
+    ".ai/foundation/schemas/ai-runtime-configuration.schema.json",
+    ".ai/foundation/schemas/resource-cost-evidence.schema.json",
+    ".ai/foundation/schemas/model-runtime-evidence.schema.json",
+    ".ai/foundation/schemas/model-evidence-sources.schema.json",
+    ".ai/foundation/schemas/ai-orchestration-request.schema.json",
+    ".ai/foundation/schemas/ai-orchestration-report.schema.json",
+    "profile: foundation-ai-work/v1",
+    "reference_orchestrator: optional_capability",
+    "orchestrator_capability: ai-orchestrator",
+    "orchestration_profile: foundation-ai-orchestration/v1",
+    "orchestration_pipeline: catalog_evidence_route_invoke_validate_fallback_report",
+    "orchestration_model_evidence: fresh_source_backed_external_only",
+    "orchestration_unattested_result: MANUAL_REQUIRED",
+    "capability_failures: isolated",
+    "authority_expansion: prohibited",
+]
+SOURCE_AI_RUNTIME_MAP_MARKERS = [
+    "foundation/schemas/model-routing-request-v2.schema.json",
+    "foundation/schemas/model-routing-decision-v2.schema.json",
+    "foundation/schemas/model-router-catalog-fragment-v2.schema.json",
+    "foundation/schemas/ai-adapter-protocol.schema.json",
+    "foundation/schemas/resource-cost-evidence.schema.json",
+    "foundation/schemas/model-runtime-evidence.schema.json",
+    "foundation/schemas/model-evidence-sources.schema.json",
+    "foundation/schemas/ai-orchestration-request.schema.json",
+    "foundation/schemas/ai-orchestration-report.schema.json",
+    "optional_ai_orchestrator_capability: foundation/capabilities/ai-orchestrator/",
+    "optional_ai_runtime_adapters: python tools/install_foundation.py TARGET --capabilities ai-runtime-adapters",
+    "optional_ai_orchestrator: python tools/install_foundation.py TARGET --capabilities ai-orchestrator",
+]
 
 results: list[dict] = []
 
@@ -732,6 +764,7 @@ def validate_foundation(profile: str) -> None:
         ]:
             if rel not in text:
                 add("ERROR", "AUTHORITY_MAP", ".ai/repo_map.yaml", f"authoritative source missing from map: {rel}")
+        validate_markers(text, ".ai/repo_map.yaml", "SOURCE_AI_RUNTIME_MAP", SOURCE_AI_RUNTIME_MAP_MARKERS)
 
     target_map_template = ROOT / "foundation" / "repo_map.template.yaml"
     if target_map_template.is_file():
@@ -743,6 +776,7 @@ def validate_foundation(profile: str) -> None:
         validate_markers(map_text, "foundation/repo_map.template.yaml", "CENTRAL_REGISTRY_SCOPE_MAP", CENTRAL_REGISTRY_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "RULE_CONTEXT_CACHE_SCOPE_MAP", RULE_CONTEXT_CACHE_MAP_MARKERS)
         validate_markers(map_text, "foundation/repo_map.template.yaml", "MODEL_ROUTING_SCOPE_MAP", MODEL_ROUTING_MAP_MARKERS)
+        validate_markers(map_text, "foundation/repo_map.template.yaml", "AI_WORK_SCOPE_MAP", AI_WORK_MAP_MARKERS)
 
     agents_template = ROOT / "foundation" / "AGENTS.template.md"
     if agents_template.is_file():

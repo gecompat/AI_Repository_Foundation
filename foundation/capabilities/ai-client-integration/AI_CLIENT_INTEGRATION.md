@@ -29,7 +29,7 @@ Use an absolute executable in applied configuration. Installing this capability 
 
 ## Native Visual Studio Code role and subagent model plans
 
-Current VS Code supports a `model` string or prioritized model list in `.github/agents/*.agent.md`, an explicit model parameter on a subagent call, agent-level subagent restrictions, and separate settings for plan, implementation, utility, and small-utility models. The documented subagent precedence is explicit invocation model, custom-agent `model`, then the parent model. The host may still reject a request above the main model's allowed cost tier. These are preferred native dispatch capabilities when present; MCP invocation and manual handoff remain independent fallbacks.
+Current VS Code supports a `model` string or prioritized model list in `.github/agents/*.agent.md`, an explicit model parameter on a subagent call, `user-invocable`/`disable-model-invocation` plus coordinator allowlists for subagent access, and separate settings for plan, implementation, utility, and small-utility models. The documented subagent precedence is explicit invocation model, custom-agent `model`, then the parent model. The host may still reject a request above the main model's allowed cost tier. These are preferred native dispatch capabilities when present; MCP invocation and manual handoff remain independent fallbacks.
 
 The read-only command below consumes an external, expiring model inventory, a fresh `foundation-client-model-routing-capability/v1` descriptor, and target-owned role bindings. It emits `foundation-vscode-model-routing-plan/v1` with only currently observed model names, a hash binding it to the capability observation, an exact settings patch using documented keys, custom-agent frontmatter, subagent parameters, unavailable bindings, and host constraints. It never edits `.vscode/settings.json` or `.github/agents`, and it never treats the requested model as actual execution evidence.
 
@@ -39,7 +39,7 @@ python .ai/foundation/ai_client_integration/client_integration.py plan-vscode-mo
 
 The supported built-in setting surfaces are `chat.planAgent.defaultModel`, `github.copilot.chat.implementAgent.model`, `chat.utilityModel`, and `chat.utilitySmallModel`. Research, terminal, review, documentation, or arbitrary project roles use `CUSTOM_AGENT` or an explicit `SUBAGENT_PARAMETER`; the Foundation does not invent undocumented per-role JSON settings. Concrete model names remain external runtime facts and are rejected when absent from the supplied fresh inventory. Applying any returned patch still follows detect/plan/apply/verify/rollback with explicit configuration/repository authority.
 
-Primary VS Code references (observed 2026-09-08):
+Primary VS Code references (rechecked 2026-09-09):
 
 - https://code.visualstudio.com/docs/agent-customization/custom-agents
 - https://code.visualstudio.com/docs/agents/run/subagents
@@ -53,7 +53,7 @@ VS Code is not unique. Current official client documentation shows several disti
 | Client | Verified native surface | Foundation classification |
 | --- | --- | --- |
 | Codex | default subagent model/reasoning, custom role configuration files, and explicit spawn overrides | `AGENT_PROFILE` / `SUBAGENT_PARAMETER`; explicit spawn wins |
-| GitHub Copilot CLI | per-invocation/session model, custom-agent model/reasoning, and per-agent settings overrides | `INVOCATION_ARGUMENT` / `AGENT_PROFILE`; an unavailable choice may fall back to the session |
+| GitHub Copilot CLI | per-invocation/session model, custom-agent model/reasoning, and per-agent settings overrides | `INVOCATION_ARGUMENT` / `AGENT_PROFILE`; an unavailable choice may fall back to the session, and an `Auto` session makes subagents inherit its resolved model |
 | Claude Code | project/user/CLI subagent definitions with model, tools, permissions, MCP, effort, and limits | `AGENT_PROFILE`; model resolution has documented precedence |
 | Gemini CLI | project/user agent definitions with model and tools plus `agents.overrides` | `AGENT_PROFILE` / `ROLE_SETTING`; absent model inherits |
 | Continue | `config.yaml` model roles such as chat, autocomplete, edit, apply, embed, and rerank | `ROLE_SETTING` / `PER_TASK_CLASS` |
@@ -71,7 +71,7 @@ The portable decision order is:
 
 `client-model-routing-capability.schema.json` describes the native surfaces, binding scope, authority, fallback semantics, actual-model evidence, provenance, and expiry without naming a vendor or model. Product adapters may translate a descriptor into exact settings only through `detect -> plan -> apply -> verify -> rollback`. A documentation claim alone never authorizes writing user or repository configuration.
 
-Primary product references (observed 2026-09-08):
+Primary product references (rechecked 2026-09-09):
 
 - Codex: https://developers.openai.com/codex/config-reference and https://developers.openai.com/codex/multi-agent
 - GitHub Copilot CLI and custom agents: https://docs.github.com/en/copilot/reference/copilot-cli-reference/cli-command-reference and https://docs.github.com/en/copilot/reference/custom-agents-configuration
@@ -79,7 +79,7 @@ Primary product references (observed 2026-09-08):
 - Gemini CLI: https://geminicli.com/docs/core/subagents/
 - Continue: https://docs.continue.dev/customize/model-roles/00-intro
 - JetBrains AI Assistant: https://www.jetbrains.com/help/ai-assistant/use-custom-models.html
-- Cursor: https://docs.cursor.com/en/cli/reference/parameters
+- Cursor: https://cursor.com/docs/cli/reference/parameters
 - Aider: https://aider.chat/docs/config/options.html
 
 ## Automatic model dispatch evidence

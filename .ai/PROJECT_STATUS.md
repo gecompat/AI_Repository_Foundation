@@ -2,7 +2,16 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-09
-Foundation version: 1.17.1
+Foundation version: 1.17.2
+
+## Foundation 1.17.2 candidate — WI-0033
+
+- a repository-wide audit covered all 65 pre-existing Markdown documents, authoritative/transfer maps, 53 JSON contracts, manifest/feature metadata, capability CLI surfaces, current primary product sources, and historical evidence boundaries;
+- source and transferable documentation now describe the complete router-v2 and AI-work/orchestrator stack, dependencies, commands, external state, evidence, attestation, failure isolation, and manual/unavailable fallbacks;
+- stale fresh-agent, backlog, roadmap, privacy-gate, `.local/`, and post-merge statements were corrected without rewriting the original scope of historical evidence;
+- repo-map and installation regressions now prevent silent omission of the shipped evidence/orchestration contracts; a wall-clock-expired synthetic router fixture was made deterministic;
+- all 277 tests plus transfer, hash, feature, registry, backlog, full Foundation, JSON, compile, link, and diff gates pass locally on Windows; the full validator retains only its two known non-blocking self-scan warnings;
+- `WI-0033` remains `in_progress` until the protected pull-request checks validate the candidate.
 
 ## Foundation 1.17.1 — WI-0032
 
@@ -39,7 +48,7 @@ Foundation version: 1.17.1
 - CLI and stdio MCP start safely without configuration, evidence, runtime, network, credentials, or providers; `LOCAL` still invokes no model and default transfer remains rules-only;
 - all 269 tests plus manifest, transfer, feature, registry, backlog, full Foundation, manifest-hash, JSON, compile, and diff gates pass locally on Windows;
 - real read-only stdio MCP acceptance discovered the separately configured `ollama-local` and `ollama-cloud` catalogs, invoked no model, and returned `MANUAL_REQUIRED` plus a manual-handoff action because source-backed profile evidence is intentionally absent; the MCP is registered globally for Codex without credentials or evidence-source configuration;
-- PR #30 implementation head `b9a96c4ad2e2be86eca76bd07cc04236fcc9b2f9` passed Foundation CI run `34284895445` on macOS, Windows, and Linux plus registry-integrity run `34284895386`; `WI-0031` is done, subject to the final documentation-head checks and protected merge.
+- PR #30 implementation head `b9a96c4ad2e2be86eca76bd07cc04236fcc9b2f9` passed Foundation CI run `34284895445` on macOS, Windows, and Linux plus registry-integrity run `34284895386`; it was squash-merged as `f19461402d00fc3d8bf1541654672c1e5ec4f1f6`, whose post-merge Foundation CI run `34285246184` passed; `WI-0031` is done.
 
 ## Foundation 1.16 — WI-0030 / DEC-0020
 
@@ -186,14 +195,14 @@ Foundation version: 1.17.1
 ## Post-merge model-router audit — WI-0020 / WI-0021
 
 - a 2026-09-07 audit of current `origin/main` against the complete dynamic-routing plan confirmed that the provider-neutral core, Ollama Cloud adapter, live/time-dependent prices, pricing epochs, session/cache affinity, discovery, outside-repository runtime state, CLI, stdio MCP, graceful-degradation paths, client guidance, schemas, transfer metadata, tests, documentation, and aggregate success/latency learning are implemented;
-- `WI-0020` tracks a bounded routing-correctness gap: the current implementation chooses the primary by standalone score and only then appends higher-success fallbacks, so it does not minimize Cost-of-Success over the complete chain; context eligibility also checks input context without reserving expected output tokens;
-- `WI-0021` tracks a bounded evaluation/accounting gap: evaluation plans do not explicitly encode the required task set, sample count, and stopping rules, and paired candidate/incumbent reservations currently settle only the candidate-reported cost into daily evaluation spend;
-- these follow-ups do not reopen completed `WI-0019`; they preserve its implemented baseline and identify only the remaining work demonstrated by code-path and regression-counterexample review.
+- at that audit point, `WI-0020` tracked a bounded routing-correctness gap: the implementation chose the primary by standalone score and only then appended higher-success fallbacks, so it did not minimize Cost-of-Success over the complete chain; context eligibility also checked input context without reserving expected output tokens;
+- at that audit point, `WI-0021` tracked a bounded evaluation/accounting gap: evaluation plans did not explicitly encode the required task set, sample count, and stopping rules, and paired candidate/incumbent reservations settled only the candidate-reported cost into daily evaluation spend;
+- these follow-ups did not reopen completed `WI-0019`; both were subsequently completed in Foundation 1.11.0 and remain covered by v1 compatibility and regression tests.
 
 ## System-independent AI work program — DEC-0020 / WI-0022–WI-0029
 
 - `DEC-0020` establishes a runtime-neutral AI work control plane in which deterministic tools, models, retrieval, rendering, validation, external services, and human checkpoints are discovered capabilities rather than mandatory dependencies;
-- `WI-0020` and `WI-0021` remain the first router-correctness prerequisites; `WI-0022` through `WI-0028` stage contracts, isolated adapters, resumable execution, total-resource economics, bounded provisioning, client integration, and degradation validation;
+- `WI-0020` and `WI-0021` were the first router-correctness prerequisites; `WI-0022` through `WI-0028` then staged contracts, isolated adapters, resumable execution, total-resource economics, bounded provisioning, client integration, and degradation validation;
 - `WI-0029` applies the completed contracts to this Foundation source repository without committing host paths, credentials, model catalogs, payloads, or runtime traces;
 - every implementation stage must preserve router-v1 compatibility and leave Foundation governance usable when Python, MCP, network, providers, models, and optional executors are absent.
 
@@ -203,7 +212,7 @@ Foundation version: 1.17.1
 - privacy, actual authority, data boundary, capability, health/freshness, validation, deadline, monetary, and measured resource constraints precede ranking; missing or uncertain hard-limit facts fail closed;
 - the opt-in dependency-free `ai-work` planner invokes nothing, persists nothing, prefers an adequate deterministic capability, isolates unhealthy descriptors, and reports `EXECUTABLE`, `MANUAL_REQUIRED`, `UNAVAILABLE`, or `BLOCKED`;
 - `.ai/AI_WORK_PROFILE.md` and `.ai/ai-work/profile.json` apply the contract to this source project with no required provider, external runtime inventory, shell-free mappings to the existing Foundation gate, and explicit no-runtime degradation;
-- the profile grants no remote transfer, spend, publication, repository administration, push, or PR authority; `WI-0029` remains in progress until the later adapters/executor and dual-runtime evidence exist.
+- the profile grants no remote transfer, spend, publication, repository administration, push, or PR authority; at this candidate stage `WI-0029` remained in progress until the later adapters/executor and dual-runtime evidence existed.
 
 ## v1.11.0 candidate — WI-0020, WI-0021, WI-0023, and WI-0025
 

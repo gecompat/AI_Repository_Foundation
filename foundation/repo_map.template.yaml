@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.17.1
+foundation_ruleset_version: 1.17.2
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -62,6 +62,10 @@ authority:
     - .ai/foundation/schemas/manual-handoff.schema.json
     - .ai/foundation/schemas/dispatch-receipt.schema.json
     - .ai/foundation/schemas/adapter-synthesis-report.schema.json
+    - .ai/foundation/schemas/model-runtime-evidence.schema.json
+    - .ai/foundation/schemas/model-evidence-sources.schema.json
+    - .ai/foundation/schemas/ai-orchestration-request.schema.json
+    - .ai/foundation/schemas/ai-orchestration-report.schema.json
 provenance:
   foundation_notice: .ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md
   installation_receipt: .ai/foundation/installation-provenance.json
@@ -244,6 +248,10 @@ ai_work_contract:
   runtime_credential_storage: references_only
   runtime_model_selection: ROUTER_MANUAL_PINNED
   resource_cost_evidence_schema: .ai/foundation/schemas/resource-cost-evidence.schema.json
+  model_runtime_evidence_schema: .ai/foundation/schemas/model-runtime-evidence.schema.json
+  model_evidence_sources_schema: .ai/foundation/schemas/model-evidence-sources.schema.json
+  orchestration_request_schema: .ai/foundation/schemas/ai-orchestration-request.schema.json
+  orchestration_report_schema: .ai/foundation/schemas/ai-orchestration-report.schema.json
   execution_checkpoint_schema: .ai/foundation/schemas/execution-checkpoint.schema.json
   approval_receipt_schema: .ai/foundation/schemas/approval-receipt.schema.json
   adapter_protocol: foundation-ai-adapter-jsonl/v1
@@ -251,6 +259,12 @@ ai_work_contract:
   executor_capability: ai-executor
   reference_host_preparation: optional_capability
   host_preparation_capability: ai-provisioning
+  reference_orchestrator: optional_capability
+  orchestrator_capability: ai-orchestrator
+  orchestration_profile: foundation-ai-orchestration/v1
+  orchestration_pipeline: catalog_evidence_route_invoke_validate_fallback_report
+  orchestration_model_evidence: fresh_source_backed_external_only
+  orchestration_unattested_result: MANUAL_REQUIRED
   cost_refresh_minimum_seconds: 86400
   payload_transport: content_handles_outside_control_plane
   payload_persistence_default: prohibited

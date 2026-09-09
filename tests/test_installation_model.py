@@ -90,7 +90,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.17.1")
+            self.assertEqual(catalog["ruleset_version"], "1.17.2")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
             self.assertIn("rule-context-cache", catalog["features"])
@@ -127,11 +127,18 @@ class InstallationModelTests(unittest.TestCase):
                 "provision-report.schema.json",
                 "runtime-inventory.schema.json",
                 "ai-adapter-protocol.schema.json",
+                "ai-runtime-configuration.schema.json",
                 "resource-cost-evidence.schema.json",
                 "client-integration-plan.schema.json",
+                "client-model-routing-capability.schema.json",
+                "vscode-model-routing-plan.schema.json",
                 "manual-handoff.schema.json",
                 "dispatch-receipt.schema.json",
                 "adapter-synthesis-report.schema.json",
+                "model-runtime-evidence.schema.json",
+                "model-evidence-sources.schema.json",
+                "ai-orchestration-request.schema.json",
+                "ai-orchestration-report.schema.json",
             ]:
                 schema = root / "schemas" / name
                 self.assertTrue(schema.is_file(), name)
@@ -464,7 +471,7 @@ class InstallationModelTests(unittest.TestCase):
         apply = bootstrap.compatibility_args(["target"])
         self.assertIn("--apply", apply)
 
-    def test_manifest_sources_exist_targets_unique_hashed_and_version_is_v1_16(self) -> None:
+    def test_manifest_sources_exist_targets_unique_hashed_and_version_is_current(self) -> None:
         rows = list(self.manifest["core"])
         for adapter_rows in self.manifest["adapters"].values():
             rows.extend(adapter_rows)
@@ -476,7 +483,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
             self.assertRegex(row["source_sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.17.1")
+        self.assertEqual(self.manifest["ruleset_version"], "1.17.2")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 
