@@ -52,6 +52,10 @@ The final local candidate passed:
 - `git diff --check`;
 - `py -3.13 -m unittest discover -s tests -v` — all 277 tests passed on Windows in 91.848 seconds.
 
+## Protected pull-request validation
+
+PR #33 implementation head `c7c7c1982d47cd817f7618061510620d0b176c20` passed Foundation CI run `34313182487`: the required Linux `validate` gate and the Windows/macOS platform-contract jobs succeeded. Foundation Artifact Registry run `34313182426` also passed its required `registry-integrity` gate.
+
 ## Boundary
 
 This audit establishes current repository and transferable-document consistency for the reviewed revision. It does not replace `PROJECT_SEMANTIC` review in a target repository, `RUNTIME_EMPIRICAL` validation of a concrete provider/client/account, publisher signatures for offline packages, or future source revalidation when external product documentation changes.

@@ -4,14 +4,14 @@ Status: GENERATED/EVIDENCE
 Last updated: 2026-09-09
 Foundation version: 1.17.2
 
-## Foundation 1.17.2 candidate — WI-0033
+## Foundation 1.17.2 — WI-0033
 
 - a repository-wide audit covered all 65 pre-existing Markdown documents, authoritative/transfer maps, 53 JSON contracts, manifest/feature metadata, capability CLI surfaces, current primary product sources, and historical evidence boundaries;
 - source and transferable documentation now describe the complete router-v2 and AI-work/orchestrator stack, dependencies, commands, external state, evidence, attestation, failure isolation, and manual/unavailable fallbacks;
 - stale fresh-agent, backlog, roadmap, privacy-gate, `.local/`, and post-merge statements were corrected without rewriting the original scope of historical evidence;
 - repo-map and installation regressions now prevent silent omission of the shipped evidence/orchestration contracts; a wall-clock-expired synthetic router fixture was made deterministic;
 - all 277 tests plus transfer, hash, feature, registry, backlog, full Foundation, JSON, compile, link, and diff gates pass locally on Windows; the full validator retains only its two known non-blocking self-scan warnings;
-- `WI-0033` remains `in_progress` until the protected pull-request checks validate the candidate.
+- PR #33 implementation head `c7c7c1982d47cd817f7618061510620d0b176c20` passed Foundation CI run `34313182487` on macOS, Windows, and Linux plus registry-integrity run `34313182426`; `WI-0033` is done.
 
 ## Foundation 1.17.1 — WI-0032
 

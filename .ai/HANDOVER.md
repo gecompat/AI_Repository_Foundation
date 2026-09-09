@@ -4,7 +4,7 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
-Foundation 1.17.2 is the `WI-0033` documentation-integrity candidate. It reconciles the source and transferable overview, maps, ruleset/transfer summaries, capability guides, roadmap, state/evidence boundaries, and current client references with the contracts already shipped through Foundation 1.17. The validators now detect omitted evidence/orchestration map entries, the generated backlog no longer reports completed fresh-agent work as pending, and the time-sensitive router CLI fixture is deterministic. All 277 tests and the local transfer, hash, feature, registry, backlog, full Foundation, JSON, compile, relative-link, and diff gates pass on Windows. `WI-0033` remains in progress until protected pull-request validation succeeds.
+Foundation 1.17.2 is the completed `WI-0033` documentation-integrity update. It reconciles the source and transferable overview, maps, ruleset/transfer summaries, capability guides, roadmap, state/evidence boundaries, and current client references with the contracts already shipped through Foundation 1.17. The validators now detect omitted evidence/orchestration map entries, the generated backlog no longer reports completed fresh-agent work as pending, and the time-sensitive router CLI fixture is deterministic. All 277 tests and the local transfer, hash, feature, registry, backlog, full Foundation, JSON, compile, relative-link, and diff gates pass on Windows. PR #33 implementation head `c7c7c1982d47cd817f7618061510620d0b176c20` passed Foundation CI run `34313182487` on macOS, Windows, and Linux plus registry-integrity run `34313182426`.
 
 The durable audit scope, findings, source/link method, exact local checks, and evidence boundary are recorded in `Documentation/Quality/DOCUMENTATION_AUDIT_2026-09-09.md`. External product behavior remains a dated runtime/source observation rather than permanent Foundation truth.
 
@@ -124,7 +124,7 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
-`WI-0033` is the only registered open work item and closes when the documentation-integrity pull request passes the protected checks. No other registered work remains open; create further work only from new evidence or requirements.
+No registered work item remains open after `WI-0033`; create further work only from new evidence or requirements.
 
 ## Open constraints
 
