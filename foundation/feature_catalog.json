@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.17.2",
+  "ruleset_version": "1.18.0",
   "assessment_classifications": ["NOT_APPLICABLE", "ALREADY_EQUIVALENT", "PROJECT_STRONGER", "APPLY_DEFAULT", "RECOMMENDED", "DECISION_REQUIRED", "CONFLICT"],
   "features": {
     "foundation-baseline": {
@@ -119,6 +119,15 @@
       "dependencies": ["layered-validation"],
       "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["required_ci_checks", "external_ci_dependency", "repository_is_agent_coordination_channel", "protected_default_branch", "github_rulesets_or_equivalent"], "questions": ["Would an outage of the required CI provider completely block durable repository coordination?", "Can core branch safety remain enforced while only unavailable CI gates are bypassed?", "Who is authorized to classify INFRASTRUCTURE_UNAVAILABLE and use break-glass?", "How will deferred validation be rerun and recorded after recovery?"]},
       "recommendation": {"when_applicable": "RECOMMENDED", "summary": "If required CI is an availability single point of failure, define a narrow audited break-glass path that preserves PR/core branch safety and bypasses only infrastructure-unavailable validation gates; never bypass a known substantive validation failure.", "decision_required_when": ["enabling a repository break-glass path", "selecting bypass actors or authorization thresholds"]}
+    },
+    "ci-supersession-and-integration-queue": {
+      "title": "Project-selectable CI supersession and integration-candidate control",
+      "introduced_in": "1.18.0",
+      "change_history": [],
+      "transfer_sources": ["Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md", "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md", "foundation/FOUNDATION_RULESET.template.md", "foundation/repo_map.template.yaml", "foundation/feature_catalog.json"],
+      "dependencies": ["repository-continuity-break-glass", "layered-validation", "semantic-integration"],
+      "applicability": {"mode": "REPOSITORY_EVIDENCE", "signals": ["ci_validation", "multiple_commits_per_logical_change", "integration_queue_or_batching", "mutating_runtime_validation", "protected_branch"], "questions": ["Can a newer commit completely replace an unstarted validation for the same logical change?", "Which validation resource classes may mutate persistent or external state, and is hard-interruption cleanup demonstrably idempotent?", "How is final validation bound to the exact commit or tested integration candidate?", "Does the project select a queue, cancellation, or retain-all strategy?"]},
+      "recommendation": {"when_applicable": "RECOMMENDED", "summary": "Document a project-selected supersession or queue strategy that retains unsafe mutating validation, binds integration to the exact validated commit or tested candidate, and treats cancelled or unstarted runs as non-validation without requiring GitHub Actions concurrency or merge queues.", "decision_required_when": ["enabling automatic cancellation of mutating validation", "selecting an integration queue or batch candidate contract", "changing cleanup or recovery guarantees"]}
     },
     "rule-context-cache": {
       "title": "Deterministic rule-context analysis cache with fail-closed invalidation",

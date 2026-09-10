@@ -30,6 +30,10 @@ class UpgradeInstallationTests(unittest.TestCase):
             self.assertIn("validation_failure_bypass: prohibited", repo_map)
             self.assertIn("infrastructure_unavailable_bypass: project_selectable", repo_map)
             self.assertIn("deferred_validation_after_recovery: required", repo_map)
+            self.assertIn("ci_supersession_and_queue_strategy: project_selectable", repo_map)
+            self.assertIn("exact_commit_or_tested_integration_candidate_required: true", repo_map)
+            self.assertIn("unsafe_mutating_runtime_cancellation: prohibited", repo_map)
+            self.assertIn("github_actions_concurrency_and_merge_queue: project_selectable", repo_map)
             self.assertIn("utf8_crlf_lf_equivalent: true", repo_map)
             self.assertIn("statuses: CACHE_HIT_PARTIAL_INVALIDATION_CACHE_MISS", repo_map)
             self.assertIn("head_only_hit: prohibited", repo_map)
@@ -66,7 +70,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.17.2")
+        self.assertEqual(manifest["ruleset_version"], "1.18.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -183,6 +187,12 @@ class UpgradeInstallationTests(unittest.TestCase):
             current = [change for change in changes if change["version"] == "1.17.2"]
             self.assertEqual(len(current), 1)
             self.assertEqual(current[0]["impact"], "NON_MATERIAL")
+
+    def test_1_17_2_to_1_18_0_delta_surfaces_ci_supersession(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.17.2", "1.18.0")
+        self.assertEqual([item["feature_id"] for item in candidates], ["ci-supersession-and-integration-queue"])
+        self.assertEqual(candidates[0]["candidate_reasons"], ["introduced_in:1.18.0"])
 
 
 if __name__ == "__main__":

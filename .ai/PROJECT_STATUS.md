@@ -2,7 +2,7 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-09-09
-Foundation version: 1.17.2
+Foundation version: 1.18.0 candidate
 
 ## Foundation 1.17.2 — WI-0033
 

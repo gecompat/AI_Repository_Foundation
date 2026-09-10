@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.17.2
+Ruleset version: 1.18.0
 
 This directory contains reusable governance rules, machine-readable schemas, the semantic feature catalog, and the source-license notice required for transferred Foundation material. Optional capability files are installed only when explicitly selected. The ruleset does not describe the Foundation source project and does not define the target project's README, root license, architecture, backlog, status, or release state.
 
@@ -21,7 +21,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - language-neutral artifact creation, Registration Authority, `DIRECT`/`DEFERRED`, concurrency, and human/AI allocation: `ARTIFACT_REGISTRATION_POLICY.md`
 - central JSON registry v2, derived sequence allocation, object-level merge, Git-merge verification, cross-PR preflight, and generated planning views: `CENTRAL_ARTIFACT_REGISTRY_POLICY.md`
 - semantic upgrade delta/applicability and mandatory recommendation surfacing: `UPGRADE_APPLICABILITY_POLICY.md`
-- repository/CI availability, break-glass safety boundaries, and deferred validation: `REPOSITORY_CONTINUITY_POLICY.md`
+- repository/CI availability, break-glass safety boundaries, deferred validation, and project-selectable supersession/queue controls: `REPOSITORY_CONTINUITY_POLICY.md`
 - rule-context discovery, cache keys, dirty-worktree invalidation, partial reanalysis, and local-record safety: `RULE_CONTEXT_CACHE_POLICY.md`
 - runtime-neutral AI work requests, capability discovery, isolated degradation, risk-gated validation, and provisioning boundaries: `AI_WORK_ORCHESTRATION_POLICY.md`
 - semantic feature catalog: `feature_catalog.json`

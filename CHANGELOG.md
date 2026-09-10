@@ -2,6 +2,20 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.18.0] - 2026-09-10
+
+### Added
+
+- a project-selectable, platform-neutral CI supersession and integration-queue
+  rule: only unstarted validations fully replaced by a newer logical-change
+  commit may be discarded; mutating runtime validation remains unless its
+  idempotent hard-interruption cleanup and recovery are demonstrable;
+- exact commit or tested integration-candidate binding for final integration,
+  plus project documentation requirements for scope, resources, safety,
+  evidence, cleanup, and infrastructure-failure handling. GitHub Actions
+  concurrency, merge-queue activation, provider selection, and branch rules
+  remain target-project choices.
+
 ## [1.17.2] - 2026-09-09
 
 ### Documentation
