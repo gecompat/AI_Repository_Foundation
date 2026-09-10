@@ -1,5 +1,5 @@
 schema_version: 1
-foundation_ruleset_version: 1.17.2
+foundation_ruleset_version: 1.18.0
 canonical_entrypoint: AGENTS.md
 authority:
   required_or_baseline:
@@ -151,6 +151,10 @@ continuity_contract:
   direct_push_break_glass: prohibited
   deferred_validation_after_recovery: required
   target_repository_administration: recommend_never_silently_configure
+  ci_supersession_and_queue_strategy: project_selectable
+  exact_commit_or_tested_integration_candidate_required: true
+  unsafe_mutating_runtime_cancellation: prohibited
+  github_actions_concurrency_and_merge_queue: project_selectable
 rule_context_cache_contract:
   policy: .ai/foundation/RULE_CONTEXT_CACHE_POLICY.md
   schema: .ai/foundation/schemas/rule-context-cache.schema.json

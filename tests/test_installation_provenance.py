@@ -71,7 +71,7 @@ class InstallationProvenanceTests(unittest.TestCase):
             receipt_text = receipt_path.read_text(encoding="utf-8")
             receipt = json.loads(receipt_text)
             self.assertEqual(receipt["contract"], "foundation-installation-provenance/v1")
-            self.assertEqual(receipt["ruleset_version"], "1.17.2")
+            self.assertEqual(receipt["ruleset_version"], "1.18.0")
             self.assertEqual(receipt["selection"], {"adapters": [], "capabilities": []})
             self.assertTrue(all(row["integration_state"] == "FOUNDATION_BASELINE" for row in receipt["files"]))
             self.assertNotIn(str(target), receipt_text)

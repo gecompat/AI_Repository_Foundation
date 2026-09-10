@@ -208,6 +208,22 @@ class RepositoryContinuityTests(unittest.TestCase):
         self.assertIn("required_ci_checks", feature["applicability"]["signals"])
         self.assertIn("enabling a repository break-glass path", feature["recommendation"]["decision_required_when"])
 
+    def test_ci_supersession_is_discoverable_selectable_and_fail_safe(self) -> None:
+        ruleset = (ROOT / "foundation" / "FOUNDATION_RULESET.template.md").read_text(encoding="utf-8")
+        policy = (ROOT / "Documentation" / "Standards" / "REPOSITORY_CONTINUITY_POLICY.md").read_text(encoding="utf-8")
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        feature = catalog["features"]["ci-supersession-and-integration-queue"]
+        self.assertIn("REPOSITORY_CONTINUITY_POLICY.md", ruleset)
+        self.assertIn("Rule class: `PROJECT_SELECTABLE`", policy)
+        self.assertIn("exact commit being integrated", policy)
+        self.assertIn("tested integration candidate", policy)
+        self.assertIn("MUST NOT be cancelled", policy)
+        self.assertIn("GitHub Actions concurrency", policy)
+        self.assertIn("project-owned choices", policy)
+        self.assertEqual(feature["introduced_in"], "1.18.0")
+        self.assertEqual(feature["recommendation"]["when_applicable"], "RECOMMENDED")
+        self.assertNotIn("required GitHub", feature["recommendation"]["summary"])
+
 
 if __name__ == "__main__":
     unittest.main()
