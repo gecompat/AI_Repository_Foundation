@@ -11,7 +11,7 @@ Long-lived AI project chats can accumulate enough history that repeated context 
 
 Treat the orchestrator as a logical role, not as one permanent chat. Session lifecycle decisions use deterministic metadata already available to the caller plus explicit natural work boundaries. They do not perform continuous semantic conversation analysis.
 
-Soft context or checkpoint-delta thresholds prepare a checkpoint and defer rotation to a natural boundary. A hard context threshold or explicit user request may require rotation. Threshold values are target-project policy, not Foundation claims about universal model limits. Unknown token metrics remain unknown. Response latency is diagnostic only.
+Soft context thresholds prepare a checkpoint and defer rotation to a natural boundary. A checkpoint-delta threshold alone saves state without requiring rotation. A hard context threshold or explicit user request requires rotation. Threshold values are target-project policy, not Foundation claims about universal model limits. Unknown token metrics remain unknown. Response latency is diagnostic only.
 
 When rotation occurs, the successor role bootstraps from current durable repository state and a content-minimized `foundation-session-handoff/v1` delta since the previous checkpoint. The handoff carries references and at most one external content handle rather than another whole-project or whole-chat summary. Actual successor-session creation is client-specific and may be marked automatic only when that capability is attested; otherwise continuation is manual.
 

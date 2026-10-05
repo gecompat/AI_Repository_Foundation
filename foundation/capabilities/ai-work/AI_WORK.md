@@ -35,6 +35,8 @@ The request contains only already-available counters, an explicit natural-bounda
 
 Thresholds are project policy, not universal Foundation constants. A soft signal prepares a checkpoint and rotates only at a natural work boundary; a hard ratio or explicit user request requires rotation. Missing token metrics are not invented. Response latency and implicit topic-diversity scoring are intentionally excluded from the deterministic decision.
 
+The example's 0.65/0.80 ratios and 30,000-token delta are illustrative heuristics. A delta threshold alone checkpoints even at a work boundary; it does not rotate a small session. Counters reset only after the caller successfully saves a checkpoint. The command evaluates metadata and emits a request for action; it neither saves that checkpoint nor creates the successor. The caller supplies `AUTOMATIC` only from trusted current client evidence; an unknown capability uses manual continuation.
+
 When rotation is selected, create a `foundation-session-handoff/v1` control record from durable repository references plus only the delta since the last checkpoint. The handoff contains references and an optional external content handle, not a repeated full-project or full-chat summary. The successor reloads current repository truth and the referenced delta. If the client cannot attest automatic new-session creation, the decision reports a manual successor instead of pretending that a chat was opened.
 
 ## Payload separation

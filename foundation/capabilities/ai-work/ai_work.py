@@ -569,15 +569,15 @@ def validate_session_lifecycle_request(raw: Any) -> dict[str, Any]:
         "policy", "successor_session_capability",
     }
     value = require_fields(raw, fields, fields, "session lifecycle request")
-    if value["schema_version"] != 1 or value["contract"] != SESSION_CONTRACT:
+    if isinstance(value["schema_version"], bool) or value["schema_version"] != 1 or value["contract"] != SESSION_CONTRACT:
         raise WorkError(f"session lifecycle request must use {SESSION_CONTRACT}")
     if not isinstance(value["session_id"], str) or not value["session_id"]:
         raise WorkError("session_id must be a non-empty string")
-    if value["role"] not in SESSION_ROLES:
+    if not isinstance(value["role"], str) or value["role"] not in SESSION_ROLES:
         raise WorkError("role is invalid")
-    if value["boundary"] not in SESSION_BOUNDARIES:
+    if not isinstance(value["boundary"], str) or value["boundary"] not in SESSION_BOUNDARIES:
         raise WorkError("boundary is invalid")
-    if value["successor_session_capability"] not in SUCCESSOR_CAPABILITIES:
+    if not isinstance(value["successor_session_capability"], str) or value["successor_session_capability"] not in SUCCESSOR_CAPABILITIES:
         raise WorkError("successor_session_capability is invalid")
 
     metrics = require_fields(
@@ -603,7 +603,8 @@ def validate_session_lifecycle_request(raw: Any) -> dict[str, Any]:
     checkpoint_delta = _optional_nonnegative_int(
         policy["checkpoint_delta_tokens"], "policy.checkpoint_delta_tokens", positive=True
     )
-    assert checkpoint_delta is not None
+    if checkpoint_delta is None:
+        raise WorkError("policy.checkpoint_delta_tokens must be a positive integer")
 
     return {
         "schema_version": 1,
@@ -631,7 +632,10 @@ def session_lifecycle(request_raw: Any) -> dict[str, Any]:
     policy = request["policy"]
     ratio = None
     if metrics["estimated_context_tokens"] is not None and metrics["context_window_tokens"] is not None:
-        ratio = metrics["estimated_context_tokens"] / metrics["context_window_tokens"]
+        try:
+            ratio = metrics["estimated_context_tokens"] / metrics["context_window_tokens"]
+        except OverflowError as exc:
+            raise WorkError("context_ratio exceeds the supported numeric range") from exc
 
     hard_context = ratio is not None and ratio >= policy["hard_context_ratio"]
     soft_context = ratio is not None and ratio >= policy["soft_context_ratio"]
@@ -649,7 +653,7 @@ def session_lifecycle(request_raw: Any) -> dict[str, Any]:
     elif hard_context:
         action = "ROTATE_REQUIRED"
         reasons.append("HARD_CONTEXT_RATIO_REACHED")
-    elif (soft_context or delta_due) and natural_boundary:
+    elif soft_context and natural_boundary:
         action = "ROTATE_AT_BOUNDARY"
         reasons.append("NATURAL_BOUNDARY")
     elif soft_context or delta_due:

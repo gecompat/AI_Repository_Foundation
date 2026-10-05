@@ -10,7 +10,8 @@ Foundation version: 1.19.0 candidate
 - adds content-minimized delta handoff/bootstrap semantics over durable repository truth, preserving the orchestrator as a logical role rather than a permanent chat;
 - automatic successor-session creation is used only when the client capability is attested; otherwise the decision remains a truthful manual continuation;
 - the optional `ai-work` planner exposes the new `session` command while existing AI-work and orchestration contracts remain compatible;
-- transfer/version/upgrade metadata, schemas, documentation, registry/backlog, and deterministic regressions are included; PR validation is pending.
+- transfer/version/upgrade metadata, schemas, documentation, registry/backlog, and deterministic regressions are included;
+- local validation on Windows on 2026-10-05 passed all 291 regression tests, 65 focused contract/install/upgrade tests, transfer/hash/feature guards, registry/backlog checks, JSON parsing, diff hygiene, and full Foundation validation (only the two existing non-blocking validator self-scan warnings); refreshed PR #35 checks are pending.
 
 ## Foundation 1.17.2 — WI-0033
 

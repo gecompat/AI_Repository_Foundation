@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -203,6 +204,12 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((planner / "session-lifecycle.example.json").is_file())
             self.assertIn("foundation-ai-work/v1", (planner / "ai_work.py").read_text(encoding="utf-8"))
             self.assertIn("foundation-session-lifecycle/v1", (planner / "ai_work.py").read_text(encoding="utf-8"))
+            result = subprocess.run(
+                [sys.executable, str(planner / "ai_work.py"), "session", "--request", str(planner / "session-lifecycle.example.json")],
+                cwd=target, capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["action"], "ROTATE_AT_BOUNDARY")
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             self.assertEqual(self.install(target, "--capabilities", "ai-runtime-adapters"), 0)

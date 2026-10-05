@@ -14,6 +14,7 @@ All notable Foundation changes follow Semantic Versioning.
 
 - session rotation never requires continuous semantic history scanning or periodic whole-chat summarization; unknown token metrics stay unknown and response latency is not an authoritative trigger;
 - context thresholds remain project-selected policy rather than universal model constants;
+- checkpoint-delta thresholds save state without forcing rotation; exact threshold boundaries, malformed input, payload rejection, optional installation, and manual degradation have deterministic regressions;
 - successor-session creation is transport/client-specific: automatic continuation is used only when attested, otherwise the portable decision requires a manual continuation;
 - repository state remains the durable source of truth and existing `foundation-ai-work/v1` plus `foundation-ai-orchestration/v1` contracts remain compatible.
 
