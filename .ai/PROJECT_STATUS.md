@@ -11,7 +11,8 @@ Foundation version: 1.19.0 candidate
 - automatic successor-session creation is used only when the client capability is attested; otherwise the decision remains a truthful manual continuation;
 - the optional `ai-work` planner exposes the new `session` command while existing AI-work and orchestration contracts remain compatible;
 - transfer/version/upgrade metadata, schemas, documentation, registry/backlog, and deterministic regressions are included;
-- local validation on Windows on 2026-10-05 passed all 291 regression tests, 65 focused contract/install/upgrade tests, transfer/hash/feature guards, registry/backlog checks, JSON parsing, diff hygiene, and full Foundation validation (only the two existing non-blocking validator self-scan warnings); refreshed PR #35 checks are pending.
+- local validation on Windows on 2026-10-05 passed all 291 regression tests, 65 focused contract/install/upgrade tests, transfer/hash/feature guards, registry/backlog checks, JSON parsing, diff hygiene, and full Foundation validation (only the two existing non-blocking validator self-scan warnings);
+- PR #35 implementation head `e8d3111` passed Foundation CI run `37320687829` (Windows/macOS contracts and Linux validate) and registry-integrity run `37320687906`; `WI-0034` is done. The candidate remains unmerged and client-specific session creation remains an integration responsibility.
 
 ## Foundation 1.17.2 — WI-0033
 
