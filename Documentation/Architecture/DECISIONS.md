@@ -195,3 +195,11 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Decision: Bind every selected transfer source to a portable SHA-256 and record completed target installations in a content-minimized receipt that distinguishes current baseline, explicit semantic override, intact previous version, and unknown drift.
 - Consequences: Foundation 1.15 fails closed on stale manifest hashes or unexplained target differences while preserving LF/CRLF portability and the separation between provenance, semantic approval, authority, and project validation.
 - Full record: `decisions/DEC-0021-portable-installation-provenance.md`.
+
+## DEC-0022 — AI session rotation uses deterministic metadata and delta handoff
+
+- Status: Accepted
+- Date: 2026-10-05
+- Decision: Treat the orchestrator as a logical role and decide session rotation from cheap deterministic metadata plus explicit natural work boundaries; prohibit continuous semantic chat rescans merely to assess context health; bootstrap successors from durable repository state plus a delta handoff since the prior checkpoint.
+- Consequences: Foundation 1.19 adds runtime-neutral session lifecycle/handoff contracts and an optional `ai-work` reference command while leaving actual new-session creation client-specific and manual when unattested.
+- Full record: `decisions/DEC-0022-session-lifecycle-rotation.md`.
