@@ -40,6 +40,20 @@ An `ExecutionPlan` is a directed acyclic graph of steps, alternatives, fallbacks
 
 When a deterministic capability sufficiently and verifiably fulfills the task, select it ahead of a model. “Local first” is not a fixed rule: data sovereignty, total expected cost, quality, availability, validation, and measured resource pressure decide together.
 
+## Session lifecycle and orchestrator rotation
+
+Long-lived AI work MAY rotate the active session while preserving the same logical role. The orchestrator is a role over durable project state, not the identity of one chat or conversation. Session rotation MUST NOT make chat history the source of truth.
+
+A rotation decision MUST be cheap enough not to defeat the context savings it seeks. Continuous semantic rescanning of the conversation, recurring whole-chat summarization, implicit topic clustering, or another model call solely to decide whether context is "healthy" is prohibited by the Foundation reference contract. The decision uses deterministic metadata already available to the caller: estimated context tokens when known, the model/client context window when known, tokens since the last checkpoint when known, an explicit natural work boundary, project-selected soft/hard ratios, and an attested successor-session capability.
+
+Threshold values are project policy and MUST NOT be presented as universal model limits. A soft threshold SHOULD create a checkpoint and defer rotation until a natural boundary such as a completed work item, completed milestone, or explicit major topic change. A hard threshold or explicit user rotation request MAY require immediate rotation. Unknown measurements remain unknown; they are not replaced with estimates derived from a semantic scan. Response latency MAY be diagnostic evidence but MUST NOT be an authoritative automatic rotation trigger because provider load, tools, networking, and reasoning effort also affect it.
+
+Checkpointing is event-driven rather than periodic. A client SHOULD NOT summarize every N messages. When a checkpoint or rotation is actually selected, consolidation is limited to the delta since the prior checkpoint and references durable repository state. The repository, registered work items, decisions, tests, documentation, and other project-authoritative artifacts remain the durable truth. Repeated summary-of-summary chains SHOULD be avoided.
+
+A `foundation-session-handoff/v1` record is content-minimized control data. It names the predecessor, successor role, checkpoint, durable-state references, changed-state references, current work references, unresolved references, and at most one optional external delta handle. It MUST NOT embed the complete chat, project files, prompt, response, secret, environment dump, or a duplicated project summary. Session lifecycle requests, decisions, checkpoints, and handoffs are runtime state outside version control by default; a project may persist only an explicitly authorized subset.
+
+Actual successor-session creation is client-specific. The portable lifecycle decision may request `AUTOMATIC` continuation only when the caller has established that capability. Otherwise it reports a manual successor action. Foundation policy never claims that a new chat/session was created merely because rotation was recommended.
+
 ## Resource-cost evidence refresh
 
 Resource prices and conversions are expiring runtime evidence, not durable model preferences. A local evidence cache may conform to `foundation-resource-cost-evidence/v1` so routing can proceed without an AI or network call. Prefer machine-readable primary provider prices, local measurements, project-configured tariffs, and documented amortization inputs. AI-assisted research may discover or interpret sources only when deterministic retrieval is insufficient; its result is untrusted until the source and conversion are independently verified.
