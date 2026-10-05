@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import subprocess
 import tempfile
 import unittest
 from contextlib import redirect_stdout
@@ -90,12 +91,13 @@ class InstallationModelTests(unittest.TestCase):
             self.assertIn("session memory", cache_policy)
             self.assertIn("complete semantic feature delta", (root / "UPGRADE_APPLICABILITY_POLICY.md").read_text(encoding="utf-8"))
             catalog = json.loads((root / "feature_catalog.json").read_text(encoding="utf-8"))
-            self.assertEqual(catalog["ruleset_version"], "1.18.0")
+            self.assertEqual(catalog["ruleset_version"], "1.19.0")
             self.assertIn("central-artifact-registry", catalog["features"])
             self.assertIn("repository-continuity-break-glass", catalog["features"])
             self.assertIn("rule-context-cache", catalog["features"])
             self.assertIn("ai-work-orchestration", catalog["features"])
             self.assertIn("ai-client-integration", catalog["features"])
+            self.assertIn("session-lifecycle-management", catalog["features"])
             for name in [
                 "artifact-record.schema.json",
                 "artifact-registry.schema.json",
@@ -139,6 +141,9 @@ class InstallationModelTests(unittest.TestCase):
                 "model-evidence-sources.schema.json",
                 "ai-orchestration-request.schema.json",
                 "ai-orchestration-report.schema.json",
+                "session-lifecycle-request.schema.json",
+                "session-lifecycle-decision.schema.json",
+                "session-handoff.schema.json",
             ]:
                 schema = root / "schemas" / name
                 self.assertTrue(schema.is_file(), name)
@@ -196,7 +201,15 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((planner / "ai_work.py").is_file())
             self.assertTrue((planner / "work-request.example.json").is_file())
             self.assertTrue((planner / "capabilities.example.json").is_file())
+            self.assertTrue((planner / "session-lifecycle.example.json").is_file())
             self.assertIn("foundation-ai-work/v1", (planner / "ai_work.py").read_text(encoding="utf-8"))
+            self.assertIn("foundation-session-lifecycle/v1", (planner / "ai_work.py").read_text(encoding="utf-8"))
+            result = subprocess.run(
+                [sys.executable, str(planner / "ai_work.py"), "session", "--request", str(planner / "session-lifecycle.example.json")],
+                cwd=target, capture_output=True, text=True, check=False,
+            )
+            self.assertEqual(result.returncode, 0, result.stderr)
+            self.assertEqual(json.loads(result.stdout)["action"], "ROTATE_AT_BOUNDARY")
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             self.assertEqual(self.install(target, "--capabilities", "ai-runtime-adapters"), 0)
@@ -392,6 +405,11 @@ class InstallationModelTests(unittest.TestCase):
         self.assertEqual(work["reference_orchestrator"]["profile"], "foundation-ai-orchestration/v1")
         self.assertEqual(work["reference_orchestrator"]["refresh_minimum_seconds"], 86400)
         self.assertEqual(work["reference_orchestrator"]["unattested_result"], "MANUAL_REQUIRED")
+        self.assertEqual(work["session_lifecycle"]["profile"], "foundation-session-lifecycle/v1")
+        self.assertEqual(work["session_lifecycle"]["handoff_profile"], "foundation-session-handoff/v1")
+        self.assertEqual(work["session_lifecycle"]["monitoring"], "deterministic_metadata_only")
+        self.assertFalse(work["session_lifecycle"]["semantic_scan_for_rotation"])
+        self.assertEqual(work["session_lifecycle"]["handoff_scope"], "delta_since_checkpoint")
 
         client = self.manifest["ai_client_integration_contract"]
         self.assertEqual(client["profile"], "foundation-ai-client-integration/v1")
@@ -483,7 +501,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
             self.assertRegex(row["source_sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.18.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.19.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 

@@ -2,7 +2,7 @@
 
 A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and human-maintained technical and knowledge projects. Its goal is safe continuation without chat history, memory, personal prompts, or a specific vendor.
 
-## v1.18.0 integration, identity, provenance, AI work, and evidence-backed capability routing
+## v1.19.0 integration, identity, provenance, AI work, session lifecycle, and evidence-backed capability routing
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
 
@@ -60,8 +60,8 @@ This does not make Python the target runtime; the installer is only one Foundati
 For a single-file offline or air-gapped handoff, a clean exact Git checkout can build a deterministic universal source distribution:
 
 ```text
-python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.18.0.zip
-python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.18.0.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.18.0.zip.sha256
+python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.19.0.zip
+python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.19.0.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.19.0.zip.sha256
 ```
 
 The archive contains only the manifest, all manifest-whitelisted selectable sources, the minimum installer files, and a generated content index. It excludes Foundation project state and every local runtime or credential. Verify it before extraction into an empty staging directory, then run the bundled installer against the target. The package does not replace semantic integration, confer authority, or prove publisher authenticity; obtain its SHA-256 through an independently trusted channel when authenticity matters. See `Documentation/Quality/PACKAGED_RELEASE_ARTIFACT_EVALUATION.md`.
@@ -119,6 +119,14 @@ The runtime-neutral policies and schemas are core. Executable references remain 
 | `ai-provisioning` | doctor/inventory, exact approved provisioning and verified cost-evidence refresh | `ai-work` |
 | `ai-client-integration` | native/MCP/CLI/manual dispatch planning, receipt verification and rollback-safe configuration | `ai-work`, `ai-runtime-adapters`, `model-router` |
 | `ai-orchestrator` | complete catalog → evidence → route → invoke → validate → fallback → report facade | `ai-work`, `ai-runtime-adapters`, `model-router` |
+
+For long-lived orchestrator or worker sessions, the optional `ai-work` planner can also evaluate the metadata-only session lifecycle contract:
+
+```text
+python TARGET/.ai/foundation/ai_work/ai_work.py session --request session-lifecycle.json
+```
+
+The request carries only deterministic counters, an explicit natural-boundary signal, target-selected thresholds, and the client's successor-session capability. It never asks a model to rescan the full conversation merely to decide whether to rotate. A selected rotation uses a compact `foundation-session-handoff/v1` delta over durable repository references; actual new-chat/session creation remains client-specific and falls back to a manual continuation when unattested.
 
 For the complete evidence-backed routed execution facade:
 

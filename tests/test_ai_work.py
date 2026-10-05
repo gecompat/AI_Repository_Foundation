@@ -180,6 +180,73 @@ class AIWorkPlannerTests(unittest.TestCase):
         self.assertNotIn("response", serialized.lower())
         self.assertNotIn(str(ROOT), serialized)
 
+
+    def test_session_lifecycle_continues_without_semantic_scan(self) -> None:
+        value = {
+            "schema_version": 1, "contract": "foundation-session-lifecycle/v1", "session_id": "orch-1",
+            "role": "ORCHESTRATOR",
+            "metrics": {"estimated_context_tokens": 40000, "context_window_tokens": 100000, "tokens_since_checkpoint": 10000},
+            "boundary": "NONE",
+            "policy": {"soft_context_ratio": 0.65, "hard_context_ratio": 0.8, "checkpoint_delta_tokens": 30000},
+            "successor_session_capability": "AUTOMATIC",
+        }
+        result = ai_work.session_lifecycle(value)
+        self.assertEqual(result["action"], "CONTINUE")
+        self.assertFalse(result["semantic_scan_required"])
+        self.assertEqual(result["handoff_scope"], "NONE")
+        self.assertEqual(result["successor_session"]["mode"], "NONE")
+
+    def test_session_lifecycle_soft_signal_checkpoints_then_rotates_at_boundary(self) -> None:
+        base = {
+            "schema_version": 1, "contract": "foundation-session-lifecycle/v1", "session_id": "orch-2",
+            "role": "ORCHESTRATOR",
+            "metrics": {"estimated_context_tokens": 66000, "context_window_tokens": 100000, "tokens_since_checkpoint": 30000},
+            "boundary": "NONE",
+            "policy": {"soft_context_ratio": 0.65, "hard_context_ratio": 0.8, "checkpoint_delta_tokens": 30000},
+            "successor_session_capability": "MANUAL",
+        }
+        self.assertEqual(ai_work.session_lifecycle(base)["action"], "CHECKPOINT")
+        bounded = copy.deepcopy(base)
+        bounded["boundary"] = "WORK_ITEM_COMPLETED"
+        rotate = ai_work.session_lifecycle(bounded)
+        self.assertEqual(rotate["action"], "ROTATE_AT_BOUNDARY")
+        self.assertEqual(rotate["handoff_scope"], "DELTA_SINCE_CHECKPOINT")
+        self.assertEqual(rotate["successor_session"]["mode"], "MANUAL")
+
+    def test_session_lifecycle_hard_or_user_requested_rotation_is_required(self) -> None:
+        value = {
+            "schema_version": 1, "contract": "foundation-session-lifecycle/v1", "session_id": "orch-3",
+            "role": "ORCHESTRATOR",
+            "metrics": {"estimated_context_tokens": 81000, "context_window_tokens": 100000, "tokens_since_checkpoint": 5000},
+            "boundary": "NONE",
+            "policy": {"soft_context_ratio": 0.65, "hard_context_ratio": 0.8, "checkpoint_delta_tokens": 30000},
+            "successor_session_capability": "AUTOMATIC",
+        }
+        hard = ai_work.session_lifecycle(value)
+        self.assertEqual(hard["action"], "ROTATE_REQUIRED")
+        self.assertEqual(hard["successor_session"]["mode"], "AUTOMATIC")
+        unknown = copy.deepcopy(value)
+        unknown["metrics"] = {"estimated_context_tokens": None, "context_window_tokens": None, "tokens_since_checkpoint": None}
+        unknown["boundary"] = "USER_REQUESTED"
+        unknown["successor_session_capability"] = "UNKNOWN"
+        requested = ai_work.session_lifecycle(unknown)
+        self.assertIsNone(requested["context_ratio"])
+        self.assertEqual(requested["action"], "ROTATE_REQUIRED")
+        self.assertEqual(requested["successor_session"]["mode"], "MANUAL")
+        self.assertIn("SUCCESSOR_SESSION_AUTOMATION_UNATTESTED", requested["reason_codes"])
+
+    def test_session_lifecycle_rejects_invalid_threshold_order(self) -> None:
+        value = {
+            "schema_version": 1, "contract": "foundation-session-lifecycle/v1", "session_id": "bad",
+            "role": "WORKER",
+            "metrics": {"estimated_context_tokens": None, "context_window_tokens": None, "tokens_since_checkpoint": 0},
+            "boundary": "NONE",
+            "policy": {"soft_context_ratio": 0.8, "hard_context_ratio": 0.8, "checkpoint_delta_tokens": 1},
+            "successor_session_capability": "UNKNOWN",
+        }
+        with self.assertRaises(ai_work.WorkError):
+            ai_work.session_lifecycle(value)
+
     def test_cli_emits_structured_plan_and_invalid_input_fails_closed(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             root = Path(tmp)
@@ -200,12 +267,28 @@ class AIWorkPlannerTests(unittest.TestCase):
             )
             self.assertEqual(failure.returncode, 2)
             self.assertEqual(json.loads(failure.stderr)["status"], "BLOCKED")
+            session_request = {
+                "schema_version": 1, "contract": "foundation-session-lifecycle/v1", "session_id": "cli-session",
+                "role": "ORCHESTRATOR",
+                "metrics": {"estimated_context_tokens": 80, "context_window_tokens": 100, "tokens_since_checkpoint": 10},
+                "boundary": "MILESTONE_COMPLETED",
+                "policy": {"soft_context_ratio": 0.6, "hard_context_ratio": 0.9, "checkpoint_delta_tokens": 50},
+                "successor_session_capability": "MANUAL",
+            }
+            request_path.write_text(json.dumps(session_request), encoding="utf-8")
+            session_result = subprocess.run(
+                [sys.executable, str(MODULE_PATH), "session", "--request", str(request_path)],
+                text=True, capture_output=True, check=False,
+            )
+            self.assertEqual(session_result.returncode, 0, session_result.stderr)
+            self.assertEqual(json.loads(session_result.stdout)["action"], "ROTATE_AT_BOUNDARY")
 
     def test_public_schemas_are_runtime_neutral_and_strict(self) -> None:
         names = [
             "ai-work-request.schema.json", "capability-descriptor.schema.json", "execution-plan.schema.json",
             "execution-report.schema.json", "validation-evidence.schema.json", "gap-report.schema.json",
             "provision-plan.schema.json", "execution-checkpoint.schema.json", "approval-receipt.schema.json",
+            "session-lifecycle-request.schema.json", "session-lifecycle-decision.schema.json", "session-handoff.schema.json",
         ]
         for name in names:
             schema = json.loads((ROOT / "foundation" / "schemas" / name).read_text(encoding="utf-8"))

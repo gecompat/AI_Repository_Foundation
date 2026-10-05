@@ -70,7 +70,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.18.0")
+        self.assertEqual(manifest["ruleset_version"], "1.19.0")
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
@@ -193,6 +193,15 @@ class UpgradeInstallationTests(unittest.TestCase):
         candidates = upgrade_applicability.candidate_features(catalog, "1.17.2", "1.18.0")
         self.assertEqual([item["feature_id"] for item in candidates], ["ci-supersession-and-integration-queue"])
         self.assertEqual(candidates[0]["candidate_reasons"], ["introduced_in:1.18.0"])
+
+    def test_1_18_0_to_1_19_0_delta_surfaces_session_lifecycle(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.18.0", "1.19.0")
+        self.assertEqual([item["feature_id"] for item in candidates], ["session-lifecycle-management"])
+        feature = candidates[0]
+        self.assertEqual(feature["candidate_reasons"], ["introduced_in:1.19.0"])
+        self.assertIn("long_running_ai_project", feature["applicability"]["signals"])
+        self.assertIn("deterministic metadata", feature["recommendation"]["summary"])
 
 
 if __name__ == "__main__":

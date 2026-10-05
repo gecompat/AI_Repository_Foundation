@@ -4,6 +4,11 @@ Status: GENERATED/EVIDENCE
 
 ## Current state
 
+Foundation 1.19.0 candidate implements `WI-0034` under `DEC-0022`: session rotation uses deterministic counters and explicit natural work boundaries instead of repeated semantic chat scans. The optional `ai-work` planner emits `CONTINUE`, `CHECKPOINT`, `ROTATE_AT_BOUNDARY`, or `ROTATE_REQUIRED`, and successor sessions bootstrap from durable repository truth plus a content-minimized delta handoff. Thresholds remain project-selected, unknown token metrics are not invented, latency is not an authoritative trigger, and automatic chat/session creation is requested only when the client capability is attested. A delta-only trigger checkpoints without forcing rotation. Bootstrap requires native instruction discovery, current repository state, reference resolution, and reconciliation of stale or unavailable deltas under existing privacy and rule-cache contracts.
+
+Local Windows validation on 2026-10-05 passed all 291 regression tests, 65 focused contract/install/upgrade tests, transfer/hash/feature guards, registry/backlog checks, JSON parsing, diff hygiene, and full Foundation validation with only the two existing non-blocking self-scan warnings. PR #35 is continued without a history rewrite. Implementation head `e8d3111` passed Foundation CI run `37320687829` (Windows/macOS contracts and Linux validate) and registry-integrity run `37320687906`; `WI-0034` is done. The PR remains unmerged; re-read exact current main/head and final checks before integration. Client-specific successor creation and live automatic/manual client acceptance remain outside this deterministic reference implementation.
+
+
 Foundation 1.17.2 is the completed `WI-0033` documentation-integrity update. It reconciles the source and transferable overview, maps, ruleset/transfer summaries, capability guides, roadmap, state/evidence boundaries, and current client references with the contracts already shipped through Foundation 1.17. The validators now detect omitted evidence/orchestration map entries, the generated backlog no longer reports completed fresh-agent work as pending, and the time-sensitive router CLI fixture is deterministic. All 277 tests and the local transfer, hash, feature, registry, backlog, full Foundation, JSON, compile, relative-link, and diff gates pass on Windows. PR #33 implementation head `c7c7c1982d47cd817f7618061510620d0b176c20` passed Foundation CI run `34313182487` on macOS, Windows, and Linux plus registry-integrity run `34313182426`.
 
 The durable audit scope, findings, source/link method, exact local checks, and evidence boundary are recorded in `Documentation/Quality/DOCUMENTATION_AUDIT_2026-09-09.md`. External product behavior remains a dated runtime/source observation rather than permanent Foundation truth.
@@ -124,7 +129,7 @@ Model-routing policy and schemas are core transfer material; the executable `mod
 
 ## Remaining project work
 
-No registered work item remains open after `WI-0033`; create further work only from new evidence or requirements.
+No registered work item remains open after `WI-0034`. PR #35 contains the completed Foundation 1.19.0 candidate and remains unmerged; any integration uses current exact main/head and PR checks.
 
 ## Open constraints
 
