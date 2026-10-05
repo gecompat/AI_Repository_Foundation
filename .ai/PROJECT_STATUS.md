@@ -1,8 +1,16 @@
 # Project Status
 
 Status: GENERATED/EVIDENCE
-Last updated: 2026-09-09
-Foundation version: 1.18.0 candidate
+Last updated: 2026-10-05
+Foundation version: 1.19.0 candidate
+
+## Foundation 1.19.0 candidate — WI-0034 / DEC-0022
+
+- adds metadata-only session lifecycle decisions with explicit natural boundaries and project-selected thresholds; no continuous semantic conversation scan is required or permitted by the reference contract;
+- adds content-minimized delta handoff/bootstrap semantics over durable repository truth, preserving the orchestrator as a logical role rather than a permanent chat;
+- automatic successor-session creation is used only when the client capability is attested; otherwise the decision remains a truthful manual continuation;
+- the optional `ai-work` planner exposes the new `session` command while existing AI-work and orchestration contracts remain compatible;
+- transfer/version/upgrade metadata, schemas, documentation, registry/backlog, and deterministic regressions are included; PR validation is pending.
 
 ## Foundation 1.17.2 — WI-0033
 
