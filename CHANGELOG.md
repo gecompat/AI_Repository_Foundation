@@ -2,6 +2,21 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.19.0] - 2026-10-05
+
+### Added
+
+- runtime-neutral `foundation-session-lifecycle/v1` request/decision contracts for low-overhead `CONTINUE`, `CHECKPOINT`, `ROTATE_AT_BOUNDARY`, and `ROTATE_REQUIRED` decisions from deterministic metadata and explicit natural work boundaries;
+- a content-minimized `foundation-session-handoff/v1` contract that carries durable-state/current-work references and only an optional external delta since the previous checkpoint;
+- a `session` command in the optional `ai-work` reference planner and a synthetic example request.
+
+### Efficiency and compatibility
+
+- session rotation never requires continuous semantic history scanning or periodic whole-chat summarization; unknown token metrics stay unknown and response latency is not an authoritative trigger;
+- context thresholds remain project-selected policy rather than universal model constants;
+- successor-session creation is transport/client-specific: automatic continuation is used only when attested, otherwise the portable decision requires a manual continuation;
+- repository state remains the durable source of truth and existing `foundation-ai-work/v1` plus `foundation-ai-orchestration/v1` contracts remain compatible.
+
 ## [1.18.0] - 2026-09-10
 
 ### Added
