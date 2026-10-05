@@ -494,7 +494,7 @@ class InstallationModelTests(unittest.TestCase):
             self.assertTrue((ROOT / row["source"]).is_file(), row["source"])
             self.assertRegex(row["source_sha256"], r"^[0-9a-f]{64}$")
         self.assertEqual(self.manifest["schema_version"], 1)
-        self.assertEqual(self.manifest["ruleset_version"], "1.18.0")
+        self.assertEqual(self.manifest["ruleset_version"], "1.19.0")
         self.assertEqual(self.manifest["installation_scope"], "core_rules_with_opt_in_capabilities")
 
 
