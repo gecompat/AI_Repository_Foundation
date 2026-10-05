@@ -20,6 +20,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0019-dynamic-cost-aware-model-routing.md
     - Documentation/Architecture/decisions/DEC-0020-capability-oriented-ai-work-orchestration.md
     - Documentation/Architecture/decisions/DEC-0021-portable-installation-provenance.md
+    - Documentation/Architecture/decisions/DEC-0022-session-lifecycle-rotation.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -160,6 +161,9 @@ transfer:
     - foundation/schemas/model-evidence-sources.schema.json
     - foundation/schemas/ai-orchestration-request.schema.json
     - foundation/schemas/ai-orchestration-report.schema.json
+    - foundation/schemas/session-lifecycle-request.schema.json
+    - foundation/schemas/session-lifecycle-decision.schema.json
+    - foundation/schemas/session-handoff.schema.json
   optional_ai_work_capability: foundation/capabilities/ai-work/
   optional_ai_runtime_adapters_capability: foundation/capabilities/ai-runtime-adapters/
   optional_ai_executor_capability: foundation/capabilities/ai-executor/
