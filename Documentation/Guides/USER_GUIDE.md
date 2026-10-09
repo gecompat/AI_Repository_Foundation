@@ -140,6 +140,32 @@ Use `probe`, `catalog`, or `invoke` through the same CLI or `runtime_*` MCP tool
 
 If you add `ai-orchestrator`, fresh source-backed model evidence is also necessary. It may return `MANUAL_REQUIRED` even though probe/catalog work. Missing or untrusted model metadata stays unattested, and aliases require stronger evidence. Timeout, malformed response, or child-reported invocation failure may have occurred after an external effect: reconcile it before retrying. There is no automatic retry of an ambiguous call. These outcomes preserve useful output without pretending execution or validation was proven.
 
+## A bounded orchestrator job from start to completion
+
+Suppose your client should finish an authorized work item and recover from an idle chat without repeated status prompts. Select `ai-orchestrator` explicitly; the core remains usable without it:
+
+```text
+python tools/install_foundation.py ../my-project --adapters none --capabilities ai-orchestrator --apply
+```
+
+Define work, acceptance conditions, current rules and a shared budget in project-owned artifacts. A reviewed external host configuration references them and enables autonomy explicitly, with a measurable hard budget or a finite dispatch bound. Configure the client's actual capabilities rather than its product name. The [control guide](../../foundation/capabilities/ai-orchestrator/AI_ORCHESTRATOR.md#host-control-configuration) and [schema](../../foundation/schemas/orchestrator-control.schema.json) explain these inputs. External notification destinations need explicit authority.
+
+If the client supports evidenced model selection and startup, provide a start profile and available connection/model pairs. The existing router selects a sufficiently suitable model from fresh capability, quality, boundary and cost evidence. The example tier is BALANCED; the project may choose another. This requires no earlier model to choose the orchestrator model. Without evidence or startup support, select the chat manually. Individual work steps may use other suitable models or deterministic tools; subscriptions do not become fictitious API tariffs.
+
+After registration, completion events drive control. An optional host scheduler checks every 30 minutes without invoking a model. A running or waiting chat produces no prompt. Only confirmed idle, executable remaining work produces one reserved continuation whose message is exactly `HEARTBEAT`: continue this existing job within its current rules and budget. The client checks the grant, deduplicates its action ID, delivers it and records an actual acknowledgment. A duplicate tick or unchanged checkpoint cannot produce another continuation. Without a check before model invocation, leave periodic model wake disabled.
+
+At a session boundary, the existing lifecycle planner may request a checkpoint or rotation. Confirm the old execution path is idle, preserve work/instructions/budget/blockers in the small handoff, then request the successor. Confirm its actual model and startup before assigning ownership. Missing metrics cause no automatic rotation. A failure or ambiguous timeout requires intervention; it does not resume the retired chat or replay startup. New context may reduce subsequent processing, but the framework makes no measured savings claim.
+
+Completion generates one short notification, then no automatic continuation. A required decision or unexpected stop likewise generates one intervention message. Ordinary waiting stays quiet. Pause/cancel block new grants; dispatched effects still require reconciliation. Source failures may use one authorized bounded research task; proposed price/source/mapping data need independent verification before entering the cache. Collection programs are not changed automatically.
+
+Try the complete offline host roundtrip from your target directory:
+
+```text
+python .ai/foundation/ai_orchestrator/control.example.py
+```
+
+Expected output is five short records: `REGISTER`/`RUNNING` with no action, one `HEARTBEAT` with `RESUME_SESSION`, a duplicate with no action, `EVENT`/`COMPLETED` with `NOTIFY`, then a quiet heartbeat. Every record reports `model_calls: 0`. Temporary synthetic evidence simulates a manually selected chat; no real model, client, transport or scheduler is called. Tests additionally exercise startup/worker routing and confirmed handoff with freely named HarborConsole/CedarCompute and MapleWorkbench/QuartzCompute fixtures. Real hosts must protect configuration/observations from model writes and establish their own capabilities, deduplication and delivery behavior.
+
 ## Feature coverage and deeper reading
 
 This map uses every current semantic feature ID from the [catalog](../../foundation/feature_catalog.json). It is a reading map, not another version or applicability authority.
@@ -163,6 +189,7 @@ This map uses every current semantic feature ID from the [catalog](../../foundat
 | `ci-supersession-and-integration-queue` | Preserve current integration evidence; do not cancel authorized mutating work blindly | [Continuity policy](../Standards/REPOSITORY_CONTINUITY_POLICY.md) |
 | `rule-context-cache` | Persistent fingerprints with exact invalidation; no reconstructed semantic analysis | [Cache policy](../Standards/RULE_CONTEXT_CACHE_POLICY.md), optional cache planner |
 | `ai-work-orchestration` | Capability-oriented plans and narrower model facade; no blanket authority | [Work policy](../Standards/AI_WORK_ORCHESTRATION_POLICY.md), optional `ai-work` / `ai-orchestrator` |
+| `orchestrator-job-control` | Opt-in finite jobs, pre-model checks, fenced handoff and quiet deterministic notifications | [Control guide](../../foundation/capabilities/ai-orchestrator/AI_ORCHESTRATOR.md), [work policy](../Standards/AI_WORK_ORCHESTRATION_POLICY.md) |
 | `ai-runtime-adapters` | Shared HTTP/Stdio configuration and invocation; trusted backend boundaries remain explicit | [Runtime guide](../../foundation/capabilities/ai-runtime-adapters/AI_RUNTIME_ADAPTERS.md) |
 | `ai-work-execution` | Exact-plan execution, receipts/checkpoints and limits | [Executor guide](../../foundation/capabilities/ai-executor/AI_EXECUTOR.md) |
 | `ai-host-preparation` | Diagnosed, bounded approved provisioning; code installation grants no downloads | [Provisioning guide](../../foundation/capabilities/ai-provisioning/AI_PROVISIONING.md) |

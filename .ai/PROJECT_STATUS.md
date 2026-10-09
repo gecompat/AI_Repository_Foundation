@@ -2,9 +2,17 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-10-09
-Foundation version: 1.22.0 candidate
+Foundation version: 1.23.0 candidate
 
-## Current 1.22.0 candidate — WI-0037 / DEC-0025
+## Current 1.23.0 candidate — WI-0038 / DEC-0026
+
+The optional deterministic orchestrator controller is implemented on branch codex/orchestrator-control, based on PR #38 head a6516d2f02db50d3c04e361822c2209171e8700d (Foundation 1.22.0). Origin/main remains d720db4f2f0d043756a958d5195d0e62090b1c8f (1.21.0); PR #38 is still open. Delivery is a separate dependent PR, with no merge authorized.
+
+Validated locally on Windows 2026-10-09: all 349 regression tests and 52 focused controller/orchestrator/executor tests pass, including two freely named client/provider flows, concurrent processes, restart/delayed-feedback fencing, verified progress, explicit predecessor retirement, unknown budget/timeout and independent price-evidence cases. Transfer/hash/feature/version/registry/generated-backlog and full Foundation gates pass; the two known validator self-scan warnings remain. Documentation covers 25 features and ten capabilities with 99 checked local links/anchors; the installed offline example runs without any model/client/scheduler. Mechanical control reports zero model calls; no measured token savings, real client support or provider cost cap is claimed.
+
+Exact PR-head Windows/macOS platform, Linux validate and registry-integrity checks are the outstanding delivery gate. After they pass, record the tested implementation revision and finish WI-0038 through the canonical registry. Actual scheduler/delivery/chat integration belongs to a target's protected host implementation and attested capabilities; no live provider or target upgrade is included.
+
+## Predecessor 1.22.0 candidate (open PR #38) — WI-0037 / DEC-0025
 
 The authorized provider-open documentation and additive Stdio runtime work is implemented on a feature branch from main `d720db4f2f0d043756a958d5195d0e62090b1c8f`. The guide covers all 24 current semantic features and ten optional capabilities. Local Windows validation passed all 316 regression tests, including 15 synthetic Stdio cases; 52 focused runtime/orchestrator tests passed. Transfer/hash/feature/registry/backlog and full Foundation validation are green with only the two known validator self-scan warnings. Documentation checks verified 91 local links/anchors, all 24 features/ten capabilities, core-only and optional-runtime installation, and the installed offline recipe. Exact PR-head Windows/macOS contracts, Linux validate and registry-integrity remain the external delivery gate; their current result must be checked on GitHub before delivery. Deliver a PR without merging. No live provider/account test, target upgrade or measured token savings is claimed.
 

@@ -54,7 +54,7 @@ Version mirrors follow the manifest; feature histories expose changed behavior t
 | Generic execution | optional `ai-executor` | Executes an exact AI-work plan with checkpoints, limits, approvals, idempotency and validation evidence | no |
 | Host preparation | optional `ai-provisioning` | Diagnoses/inventories runtimes and performs only exact approved bounded provision plans; caches verified cost evidence | no |
 | Client integration | optional `ai-client-integration` | Detects, plans, applies, verifies and rolls back client configuration; handles native or manual model dispatch evidence | no |
-| Routed model facade | optional `ai-orchestrator` | Composes catalog, fresh model evidence, router v2, content-handle invocation, deterministic validation, fallback and reporting | no |
+| Routed model facade and job control | optional `ai-orchestrator` | Composes the model pipeline; optional deterministic control reserves client actions against trusted observations, budgets and session lifecycle | no |
 
 The router is intentionally decision-only. Runtime adapters may invoke a caller-selected model without the router. The generic executor runs a validated `ExecutionPlan`; the narrower orchestrator directly composes the model-routing pipeline. Manifest dependency declarations install companion code but never merge these authority boundaries or grant execution, network, credential, data-transfer, spend, publication, Git, push, or pull-request permission.
 
@@ -88,6 +88,21 @@ Before invocation the bridge checks privacy, per-call remote authority and resol
 These checks constrain the bridge, not child OS privileges. Trusted adapters must report truthful boundaries and metadata; target isolation is necessary when ambient access is excessive. Timeout terminates the direct child; descendants, remote effects and backend cancellation require separate evidence.
 
 ## Data, evidence, and runtime state
+
+Optional job control is a separate small path around the model pipeline. It uses the existing router only when startup is required and the existing session planner for handoff. It never invokes the model pipeline's execution step or runs evidence collectors. Public events cannot carry host observations or receipts.
+
+```mermaid
+flowchart LR
+    H[Trusted client and scheduler] -->|Fresh protected observation| C[Deterministic control]
+    E[CLI or MCP event] --> C
+    B[Shared budget and external state lock] <--> C
+    C -->|Startup requirements| R[Existing router]
+    C -->|Metadata| S[Existing session planner]
+    C -->|Reserved ID, generation, expiry| H
+    H -->|Actual effect acknowledgment| C
+```
+
+The host checks before waking a model, enforces the referenced work/budget envelope and deduplicates delivery. Quiescence confirmation retires the predecessor before successor startup; a trusted actual-model receipt assigns the successor. Pending/unknown effects cannot be replayed. Unsupported capabilities remain manual. This requests client operations without implementing a daemon, vendor API, transport guarantee or provider spending limit. See the [control guide](../../foundation/capabilities/ai-orchestrator/AI_ORCHESTRATOR.md) and [through example](../Guides/USER_GUIDE.md#a-bounded-orchestrator-job-from-start-to-completion).
 
 Control-plane contracts carry identifiers, hashes, classifications, limits, status, cost/resource totals and evidence metadata. Prompts, retrieved material and generated content travel through short-lived allowlisted handles or stdin/stdout protocols and are not persisted by default. Credentials, endpoint configuration, live inventories, model profiles, evidence-source definitions, checkpoints, reports, backups, downloads and host paths stay outside version control.
 

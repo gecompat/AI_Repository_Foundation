@@ -2,6 +2,15 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.23.0] - 2026-10-09
+
+### Added and changed
+
+- Add optional `foundation-orchestrator-control/v1` through CLI `control` and MCP `orchestration_control`: explicit bounded jobs, host-attested start routing, default 30-minute checks before model wake, and exact `HEARTBEAT` continuations without mechanical model calls.
+- Atomically reserve stable expiring actions using shared portable state IO, preserve shared budgets and checkpoint deduplication across restarts/session changes, and fence predecessor feedback until confirmed handoff and successor startup.
+- Add fixed quiet notification templates and bounded source research with independently verified candidate hashes, prices/units/model mappings and non-destructive cache merges. Unknown outcomes require reconciliation; source collectors are not automatically modified.
+- Supply an installed offline host example, focused concurrency/recovery/evidence tests, English control documentation, registry work/decision records and complete transfer/feature/version metadata. Existing runtime adapters and installation defaults remain compatible.
+
 ## [1.22.0] - 2026-10-09
 
 ### Added and changed
