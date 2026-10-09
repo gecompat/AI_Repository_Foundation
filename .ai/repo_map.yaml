@@ -26,6 +26,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0023-bounded-processing.md
     - Documentation/Architecture/decisions/DEC-0024-processing-overhead-assessment.md
     - Documentation/Architecture/decisions/DEC-0025-provider-open-runtime-and-documentation.md
+    - Documentation/Architecture/decisions/DEC-0026-deterministic-orchestrator-control.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -167,6 +168,7 @@ transfer:
     - foundation/schemas/model-evidence-sources.schema.json
     - foundation/schemas/ai-orchestration-request.schema.json
     - foundation/schemas/ai-orchestration-report.schema.json
+    - foundation/schemas/orchestrator-control.schema.json
     - foundation/schemas/session-lifecycle-request.schema.json
     - foundation/schemas/session-lifecycle-decision.schema.json
     - foundation/schemas/session-handoff.schema.json

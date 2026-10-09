@@ -213,3 +213,11 @@ Accepted 2026-10-09. See [decision record](decisions/DEC-0023-bounded-processing
 ## DEC-0024 — Assess actual test, log, review, and model-call overhead
 
 Accepted 2026-10-09. See [decision record](decisions/DEC-0024-processing-overhead-assessment.md).
+
+## DEC-0025 — Provider-open runtime transport and explanatory documentation
+
+Accepted 2026-10-09. See [decision record](decisions/DEC-0025-provider-open-runtime-and-documentation.md).
+
+## DEC-0026 — Bounded deterministic provider-neutral orchestrator control
+
+Accepted 2026-10-09. See [decision record](decisions/DEC-0026-deterministic-orchestrator-control.md).

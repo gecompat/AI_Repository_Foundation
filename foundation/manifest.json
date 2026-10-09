@@ -1,6 +1,6 @@
 {
   "schema_version": 1,
-  "ruleset_version": "1.22.0",
+  "ruleset_version": "1.23.0",
   "installation_scope": "core_rules_with_opt_in_capabilities",
   "source_repository": "https://github.com/gecompat/AI_Repository_Foundation",
   "source_license": "MIT",
@@ -245,7 +245,8 @@
       ".ai/foundation/schemas/ai-orchestration-report.schema.json",
       ".ai/foundation/schemas/session-lifecycle-request.schema.json",
       ".ai/foundation/schemas/session-lifecycle-decision.schema.json",
-      ".ai/foundation/schemas/session-handoff.schema.json"
+      ".ai/foundation/schemas/session-handoff.schema.json",
+      ".ai/foundation/schemas/orchestrator-control.schema.json"
     ],
     "payload_transport": "content_handles_outside_control_plane",
     "payload_persistence_default": "prohibited",
@@ -272,7 +273,8 @@
       "model_evidence": "fresh_source_backed_external_only",
       "alias_evidence": ["PROVIDER_DOCUMENTATION", "PROVIDER_SIGNED_METADATA"],
       "refresh_minimum_seconds": 86400,
-      "unattested_result": "MANUAL_REQUIRED"
+      "unattested_result": "MANUAL_REQUIRED",
+      "job_control": {"profile": "foundation-orchestrator-control/v1", "schema_target": ".ai/foundation/schemas/orchestrator-control.schema.json", "autonomy_default": false, "heartbeat_seconds_default": 1800, "periodic_wake": "evidenced_pre_model_status_check_only", "continuation_message": "HEARTBEAT", "action_reservation": "atomic_external_state", "client_effects": "trusted_host_or_manual", "model_calls": 0}
     },
     "adapter_protocol": "foundation-ai-adapter-jsonl/v1",
     "adapter_protocol_schema_target": ".ai/foundation/schemas/ai-adapter-protocol.schema.json",
@@ -354,8 +356,8 @@
     "policy": "preserve_complete_notice_without_changing_target_root_license"
   },
   "core": [
-    {"source": "foundation/AGENTS.template.md", "target": "AGENTS.md", "kind": "entrypoint", "merge": "ai_merge_if_exists", "source_sha256": "d324d2d0ea217e764e14b4c44d195ba909e225679aa99cdf0b050a56d0236539"},
-    {"source": "foundation/FOUNDATION_RULESET.template.md", "target": ".ai/foundation/FOUNDATION_RULESET.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "6f2362e12ba6b019c2ab6745b497c2343d7b84116a665956134d0c16fc972feb"},
+    {"source": "foundation/AGENTS.template.md", "target": "AGENTS.md", "kind": "entrypoint", "merge": "ai_merge_if_exists", "source_sha256": "7ab3f9f93d39fa57b9ae9eae6df77a582c49d9e749a5c918f1206c986be5b553"},
+    {"source": "foundation/FOUNDATION_RULESET.template.md", "target": ".ai/foundation/FOUNDATION_RULESET.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "f2920465d4a2ffb1d94b92919da4d06a09d8e5876762d90e0027e1191e11294a"},
     {"source": "foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md", "target": ".ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md", "kind": "attribution", "merge": "review_if_exists", "source_sha256": "9c4ba8b69893eb2d079e9c1daf076ec3622d5290d4ce89970f8456c2ef1c80e1"},
     {"source": ".ai/PROJECT_RULES.md", "target": ".ai/foundation/PROJECT_RULES.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "f9ee46c0117573376b0c11c1953184ea657820be5d0db7a2f8862416c6183ad8"},
     {"source": "Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md", "target": ".ai/foundation/SEMANTIC_INTEGRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "a699b3693fbc43f96ff6b75316eda8fd29ce0b78ebbdc87064617fd201fa0abc"},
@@ -365,8 +367,8 @@
     {"source": "Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md", "target": ".ai/foundation/UPGRADE_APPLICABILITY_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "faa206ca11da978d2050070bf5ae734b3b3e474c9d12b89f076f83b2f5f4d686"},
     {"source": "Documentation/Standards/REPOSITORY_CONTINUITY_POLICY.md", "target": ".ai/foundation/REPOSITORY_CONTINUITY_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "e1526c6339f4383c24c80c181a3d46efecf53b6ba1da2890ca1fdc477772c6f1"},
     {"source": "Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md", "target": ".ai/foundation/RULE_CONTEXT_CACHE_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "ea6ebca40afb42a226952d627c597f4a1196540aa0cb4d65286ece92b38988d3"},
-    {"source": "Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md", "target": ".ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "2d5e851ee87fb2154579ca617251c00ced1f85a8dc8873b75344319665e50104"},
-    {"source": "foundation/feature_catalog.json", "target": ".ai/foundation/feature_catalog.json", "kind": "feature-catalog", "merge": "review_if_exists", "source_sha256": "11b6f2a80a5d9af5a4afc4b0517669a5d3723f53b73a511ecea4a66eb9faf93d"},
+    {"source": "Documentation/Standards/AI_WORK_ORCHESTRATION_POLICY.md", "target": ".ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "6f4a784942568a0aa9f08e01cc30ae7aaa0ebf24376d287c7d9a2bef1c335f08"},
+    {"source": "foundation/feature_catalog.json", "target": ".ai/foundation/feature_catalog.json", "kind": "feature-catalog", "merge": "review_if_exists", "source_sha256": "7f26f4ecffbd8b6e2c9883cba7749424630b1d3825ea87cd4a9c380e74b8c180"},
     {"source": "foundation/schemas/artifact-record.schema.json", "target": ".ai/foundation/schemas/artifact-record.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "6c9c158f8be3514dc9e8ac95e3daf8fb383ce89de102f0174f1bf967659476e5"},
     {"source": "foundation/schemas/artifact-registry.schema.json", "target": ".ai/foundation/schemas/artifact-registry.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "2671d68b967886803dc1c2b05889ab62890e51c2c3b985a1c43e643dba4a0ee2"},
     {"source": "foundation/schemas/artifact-registry-v2.schema.json", "target": ".ai/foundation/schemas/artifact-registry-v2.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "8b8083ca367ebee5fb69090bb643fec7fbd7fcc62881dadd08ffdfcc0e8086bf"},
@@ -421,11 +423,13 @@
     {"source": "Documentation/Standards/THIRD_PARTY_AND_LICENSING.md", "target": ".ai/foundation/THIRD_PARTY_AND_LICENSING.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "0ec5bd1bcc2c7137c4e18d5df7d4f392541d715a401bf987160d96306baefc92"},
     {"source": "Documentation/Standards/SOURCE_AND_EVIDENCE_POLICY.md", "target": ".ai/foundation/SOURCE_AND_EVIDENCE_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "3823e497489b286adb78c00c8403354837d7f8d030e48b1ee2e81b105c2ce459"},
     {"source": "Documentation/Standards/DEPENDENCY_POLICY.md", "target": ".ai/foundation/DEPENDENCY_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "c42696b3d0b12e5bfbfc92251f05fcb5820db61d49a2ee96de578289ae02f256"},
-    {"source": "foundation/repo_map.template.yaml", "target": ".ai/foundation/repo_map.yaml", "kind": "rule-index", "merge": "review_if_exists", "source_sha256": "e35843385562b6c7444576715ce4131a02cfce6a1d96c34e2a94df16a81746f3"},
+    {"source": "foundation/repo_map.template.yaml", "target": ".ai/foundation/repo_map.yaml", "kind": "rule-index", "merge": "review_if_exists", "source_sha256": "af4cdbcd0907450f5aa669dbedcdc0212ec1a3281ecfae999299f2bc9ef22d6a"},
     {"source": "Documentation/Standards/PROCESSING_EFFICIENCY_POLICY.md", "target": ".ai/foundation/PROCESSING_EFFICIENCY_POLICY.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "624ee414b5a74ffa9d29754e94353c4d136c5f659218cdaf8a6ac9f489a3816e"},
     {"source": "Documentation/Standards/FOUNDATION_REFERENCE.md", "target": ".ai/foundation/FOUNDATION_REFERENCE.md", "kind": "rule", "merge": "review_if_exists", "source_sha256": "d751174fcaff4bcd93f9bffc37852b62eb428ed6dfffffdc26786ea8456b1cb2"},
     {"source": "foundation/runtime/processing_efficiency.py", "target": ".ai/foundation/runtime/processing_efficiency.py", "kind": "tool", "merge": "review_if_exists", "source_sha256": "98b9338500e73ef1d6468612d5187887cc9d4d06fb4693bd69bcb7d560e46e8d"},
-    {"source": "foundation/schemas/processing-budget-request.schema.json", "target": ".ai/foundation/schemas/processing-budget-request.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "46e6e0dd3d4c243874fc434fce4c3768a65b2fcce8fd7bd13a7fa40f06a06b58"}
+    {"source": "foundation/schemas/processing-budget-request.schema.json", "target": ".ai/foundation/schemas/processing-budget-request.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "46e6e0dd3d4c243874fc434fce4c3768a65b2fcce8fd7bd13a7fa40f06a06b58"},
+    {"source": "foundation/runtime/state_io.py", "target": ".ai/foundation/runtime/state_io.py", "kind": "tool", "merge": "review_if_exists", "source_sha256": "67dc3c4b9cc952ac67c8be7af06f5bf48433ceb2d36009772f953135e82defd6"},
+    {"source": "foundation/schemas/orchestrator-control.schema.json", "target": ".ai/foundation/schemas/orchestrator-control.schema.json", "kind": "schema", "merge": "review_if_exists", "source_sha256": "b0c98708fbfd15859e4dfe4c27a7a6f57520a70cd53139859e348f9708aaa9f8"}
   ],
   "adapters": {
     "github-copilot": [{"source": ".github/copilot-instructions.md", "target": ".github/copilot-instructions.md", "kind": "adapter", "merge": "ai_merge_if_exists", "source_sha256": "5d7beb368a2eacd4fe50fafdb4ea30982fd9f03d77a3b34e3fe0f4da4cb40f63"}],
@@ -453,7 +457,7 @@
     ],
     "ai-executor": [
       {"source": "foundation/capabilities/ai-executor/AI_EXECUTOR.md", "target": ".ai/foundation/ai_executor/AI_EXECUTOR.md", "kind": "ai-executor-documentation", "merge": "review_if_exists", "source_sha256": "86f6c732bff4723e3116e5f269da7ddf7ec63d5f984b4722fda3a04b6aede9a1"},
-      {"source": "foundation/capabilities/ai-executor/ai_executor.py", "target": ".ai/foundation/ai_executor/ai_executor.py", "kind": "ai-executor-reference", "merge": "review_if_exists", "source_sha256": "a8e6b31b8a2207a18650c118e8ff20fa1d930aede439b91c41fed991e4ffb191"}
+      {"source": "foundation/capabilities/ai-executor/ai_executor.py", "target": ".ai/foundation/ai_executor/ai_executor.py", "kind": "ai-executor-reference", "merge": "review_if_exists", "source_sha256": "6a674ffc01c3da70ada8b3f9f1fa59d95d93690f79b8eeaf64c6e0f48992b0a0"}
     ],
     "ai-provisioning": [
       {"source": "foundation/capabilities/ai-provisioning/AI_PROVISIONING.md", "target": ".ai/foundation/ai_provisioning/AI_PROVISIONING.md", "kind": "ai-provisioning-documentation", "merge": "review_if_exists", "source_sha256": "539c56300de785ca1f980dd4bba11ba08b1cc6ad0022b09b0310164356b8c355"},
@@ -483,9 +487,11 @@
       {"source": "foundation/capabilities/ai-runtime-adapters/stdio_demo.py", "target": ".ai/foundation/ai_runtime_adapters/stdio_demo.py", "kind": "ai-runtime-offline-demo", "merge": "review_if_exists", "source_sha256": "7b27150e5d08be73ddc699bd70ee93137edb9fa5fa1df10f2ef142c2da7f917b"}
     ],
     "ai-orchestrator": [
-      {"source": "foundation/capabilities/ai-orchestrator/AI_ORCHESTRATOR.md", "target": ".ai/foundation/ai_orchestrator/AI_ORCHESTRATOR.md", "kind": "ai-orchestrator-documentation", "merge": "review_if_exists", "source_sha256": "5025b2f1cd4c3581ce3d3ba607dec021572d1bb22e1203740c16422a43a4a334"},
-      {"source": "foundation/capabilities/ai-orchestrator/ai_orchestrator.py", "target": ".ai/foundation/ai_orchestrator/ai_orchestrator.py", "kind": "ai-orchestrator-reference", "merge": "review_if_exists", "source_sha256": "0750b38a39b2cec571b32cfb37ed6dc3657eb5d86fd806064da85dc2de84715d"},
-      {"source": "foundation/capabilities/ai-orchestrator/orchestrator_mcp.py", "target": ".ai/foundation/ai_orchestrator/orchestrator_mcp.py", "kind": "ai-orchestrator-mcp", "merge": "review_if_exists", "source_sha256": "f92ecdb4d8d2ece30c1dc116f5e6d7d83f11b120919058f2fee7d2925694be2f"}
+      {"source": "foundation/capabilities/ai-orchestrator/AI_ORCHESTRATOR.md", "target": ".ai/foundation/ai_orchestrator/AI_ORCHESTRATOR.md", "kind": "ai-orchestrator-documentation", "merge": "review_if_exists", "source_sha256": "3ed3e15159f8a8a5e9683e468be03f757879c0f0ebf68d0991cf7e4f8080adab"},
+      {"source": "foundation/capabilities/ai-orchestrator/ai_orchestrator.py", "target": ".ai/foundation/ai_orchestrator/ai_orchestrator.py", "kind": "ai-orchestrator-reference", "merge": "review_if_exists", "source_sha256": "f91473b37baa87d54bfe58b3fd55f0de9b0a49ea3637f184d1c177174396a0fa"},
+      {"source": "foundation/capabilities/ai-orchestrator/orchestrator_mcp.py", "target": ".ai/foundation/ai_orchestrator/orchestrator_mcp.py", "kind": "ai-orchestrator-mcp", "merge": "review_if_exists", "source_sha256": "40a8364b98581e2fc69fe9fdfb9122a19f5293595bc2f1946ab53ff4f0db33a2"},
+      {"source": "foundation/capabilities/ai-orchestrator/orchestration_control.py", "target": ".ai/foundation/ai_orchestrator/orchestration_control.py", "kind": "reference_orchestrator", "merge": "review_if_exists", "source_sha256": "a187da1c45c93c37a8c3bdae6bd3b687c28be786bc88aa2074cd649ae853870b"},
+      {"source": "foundation/capabilities/ai-orchestrator/control.example.py", "target": ".ai/foundation/ai_orchestrator/control.example.py", "kind": "example", "merge": "review_if_exists", "source_sha256": "f8643fd1fe5977fb6eee4be99f7a6cddfa7c3ef88a4b83f42e45fff018f64823"}
     ]
   },
   "never_transfer": [

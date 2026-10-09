@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.22.0
+- version: 1.23.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -33,6 +33,7 @@ Status: AUTHORITATIVE
 - ai_work_contract: runtime-neutral `foundation-ai-work/v1`; payload handles; isolated optional capabilities; authority intersection; truthful degradation; risk-gated validation; optional content-free resumable execution; runtime state outside version control
 - session_lifecycle_contract: `foundation-session-lifecycle/v1` plus `foundation-session-handoff/v1`; deterministic metadata only; natural-boundary rotation; no continuous semantic chat scan; delta handoff over durable repository truth; client-attested automatic successor or manual continuation
 - ai_orchestration_contract: optional `foundation-ai-orchestration/v1`; isolated live catalogs; fresh external source-backed model evidence; router-v2 selection; content-handle invocation; deterministic validation; bounded fallback; requested/actual model reconciliation; content-free reports and checkpoints
+- orchestrator_control_contract: optional `foundation-orchestrator-control/v1`; finite opt-in jobs; trusted host observations; default 30-minute pre-model checks; exact HEARTBEAT; atomic reservation, checkpoint deduplication and fenced successor ownership; fixed notifications; no controller model calls
 - ai_runtime_configuration_contract: external `foundation-ai-runtime-configuration/v1`; named host/IP/port connections; bounded first-run proposals; interactive edit/test/save/rollback; credential references only; unconfigured MCP remains available
 - ai_client_integration_contract: semantic detect/plan/apply/verify/rollback; expiring native client model-routing capabilities; read-only VS Code role/subagent plans; requested-versus-actual dispatch evidence; privacy-safe external manual handoff; quarantined governed adapter synthesis
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable

@@ -273,7 +273,7 @@ class AIOrchestratorTests(unittest.TestCase):
         initialized = orchestrator_mcp.handle({"jsonrpc": "2.0", "id": 1, "method": "initialize", "params": {"protocolVersion": "2025-06-18"}}, server)
         self.assertEqual(initialized["result"]["serverInfo"]["name"], "foundation-ai-orchestrator")
         listed = orchestrator_mcp.handle({"jsonrpc": "2.0", "id": 2, "method": "tools/list"}, server)
-        self.assertEqual({item["name"] for item in listed["result"]["tools"]}, {"orchestration_status", "orchestration_plan", "orchestration_execute", "orchestration_refresh_evidence"})
+        self.assertEqual({item["name"] for item in listed["result"]["tools"]}, {"orchestration_status", "orchestration_plan", "orchestration_execute", "orchestration_refresh_evidence", "orchestration_control"})
         status = server.call("orchestration_status", {})["structuredContent"]
         self.assertEqual(status["status"], "CONFIGURATION_REQUIRED")
 

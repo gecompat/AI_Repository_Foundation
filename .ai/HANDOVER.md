@@ -2,10 +2,19 @@
 
 Status: GENERATED/EVIDENCE
 
-## Current 1.22.0 candidate — WI-0037 / DEC-0025
+## Foundation 1.23.0 — WI-0038 / DEC-0026
 
-The authorized provider-open documentation and additive Stdio runtime work is implemented on a feature branch from main `d720db4f2f0d043756a958d5195d0e62090b1c8f`. The guide covers all 24 current semantic features and ten optional capabilities. Local Windows validation passed all 316 regression tests, including 15 synthetic Stdio cases; 52 focused runtime/orchestrator tests passed. Transfer/hash/feature/registry/backlog and full Foundation validation are green with only the two known validator self-scan warnings. Documentation checks verified 91 local links/anchors, all 24 features/ten capabilities, core-only and optional-runtime installation, and the installed offline recipe. Exact PR-head Windows/macOS contracts, Linux validate and registry-integrity remain the external delivery gate; their current result must be checked on GitHub before delivery. Deliver a PR without merging. No live provider/account test, target upgrade or measured token savings is claimed.
+The optional deterministic orchestrator controller is implemented and qualified. [PR #39](https://github.com/gecompat/AI_Repository_Foundation/pull/39) integrates it into main after [PR #38](https://github.com/gecompat/AI_Repository_Foundation/pull/38), which was squash-merged on 2026-10-09 as fa5f0884cb6467a4ed1777b0ea436e6f472bb018 (Foundation 1.22.0). The user's subsequent explicit merge request authorizes this integration and supersedes the original implementation-only delivery scope.
 
+Historical local qualification on Windows 2026-10-09 passed all 349 regression tests and 52 focused controller/orchestrator/executor tests, transfer/hash/feature/version/registry/generated-backlog and full Foundation gates. The two known validator self-scan warnings remain. Documentation covers 25 features and ten capabilities with 99 checked local links/anchors; the installed offline example runs without a model, client or scheduler. Two freely named client/provider flows cover concurrent processes, restarts, delayed feedback, verified progress, predecessor retirement, budgets, ambiguous timeouts and independent price evidence.
+
+Implementation head 972f950e0bf5640a72596e3b20bd55eda9f902e2 passed Foundation CI run 37992046929 and registry-integrity run 37992046933. Delivery head 66b41c6afc5b639143b0cd3b2a2abc9c3e063bdf passed all four exact-head checks in runs 37992406902 and 37992406921. These are historical receipts. Updating the branch to the merged prerequisite preserves every implementation, test and transferable byte; only source-project integration evidence changes. The merge gate requires fresh exact-head checks against main and object-level registry/Git-merge equivalence. Final commit, checks and merge receipt are recorded on PR #39; post-merge results are available in [main Foundation CI](https://github.com/gecompat/AI_Repository_Foundation/actions/workflows/foundation-ci.yml?query=branch%3Amain).
+
+WI-0038 is complete in the canonical registry. Mechanical control reports zero model calls. Scheduling, transport and actual chat support require the target's protected host implementation and attested capabilities; no live provider support, measured token savings, provider spending cap or target upgrade is claimed.
+
+## Foundation 1.22.0 prerequisite — WI-0037 / DEC-0025
+
+PR #38 was merged as fa5f0884cb6467a4ed1777b0ea436e6f472bb018 after all four exact-head checks passed for a6516d2f02db50d3c04e361822c2209171e8700d (Foundation CI run 37945856854; registry-integrity run 37945856713). It adds explanatory English documentation and provider-open Stdio transport while preserving existing HTTP adapters and installer defaults. Its historical local Windows qualification passed 316 regression tests, 52 focused runtime/orchestrator tests and all deterministic gates with the two known validator warnings. The 1.22 guide covered 24 features and ten capabilities; 91 documentation links/anchors and installed examples were checked. The original delivery excluded merging; the subsequent explicit request authorized integration. No live provider/account test, target upgrade or measured token savings is claimed.
 
 ## Foundation 1.21 processing-overhead assessment — WI-0036
 

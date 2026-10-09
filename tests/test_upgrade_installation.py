@@ -70,7 +70,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.22.0")
+        self.assertEqual(manifest["ruleset_version"], "1.23.0")
 
     def test_1_21_to_1_22_surfaces_stdio_without_mechanical_mirror_obligations(self) -> None:
         catalog = json.loads((ROOT / "foundation/feature_catalog.json").read_text(encoding="utf-8"))
@@ -83,6 +83,15 @@ class UpgradeInstallationTests(unittest.TestCase):
         sources = catalog["features"]["ai-runtime-adapters"]["transfer_sources"]
         self.assertIn("foundation/capabilities/ai-runtime-adapters/stdio_adapter.py", sources)
         self.assertIn("foundation/schemas/ai-runtime-configuration.schema.json", sources)
+
+    def test_1_22_to_1_23_surfaces_opt_in_control_and_affected_shared_contracts(self) -> None:
+        catalog = json.loads((ROOT / "foundation/feature_catalog.json").read_text(encoding="utf-8"))
+        by_id = {item["feature_id"]: item for item in upgrade_applicability.candidate_features(catalog, "1.22.0", "1.23.0")}
+        self.assertIn("introduced_in:1.23.0", by_id["orchestrator-job-control"]["candidate_reasons"])
+        self.assertEqual(catalog["features"]["orchestrator-job-control"]["recommendation"]["when_applicable"], "DECISION_REQUIRED")
+        for feature in ("ai-work-orchestration", "ai-work-execution", "session-lifecycle-management", "bounded-processing-efficiency"):
+            self.assertIn("material_change:1.23.0", by_id[feature]["candidate_reasons"])
+        self.assertNotIn("central-artifact-registry", by_id)
 
     def test_1_19_to_1_20_surfaces_core_processing_and_persistent_cache_review(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))

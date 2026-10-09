@@ -23,6 +23,7 @@ The core consists of readable rules, schemas, discovery bridges, and small deter
 | Model routing | Portable capability tiers and evidence contracts | `model-router` decides; it does not invoke models or invent prices/quality |
 | Planning and execution | Work, capability, plan, approval, checkpoint and report schemas | `ai-work` plans; `ai-executor` executes exact generic plans |
 | Runtime and client integration | Language-neutral JSONL, configuration and dispatch evidence contracts | `ai-runtime-adapters`, `ai-client-integration`, `ai-orchestrator`; missing evidence leads to manual handling |
+| Bounded autonomous jobs | Optional startup routing, pre-model heartbeat checks, fenced chat handoff and fixed notifications | `ai-orchestrator` control; autonomy off by default, finite authority/budget and evidenced client support required |
 | Host preparation | Inventory, provisioning and resource-cost evidence contracts | `ai-provisioning`; installation of capability code does not authorize downloads or spending |
 | Session lifecycle | Counters, natural boundaries, rotation decisions and delta handoffs | `ai-work` evaluates decisions; successor creation depends on evidenced client support |
 | Processing efficiency | Scoped reading, session-local reuse, bounded budget decisions and required overhead assessment | `rule-context-cache` adds persistent fingerprints; caches are never authority or evidence |
