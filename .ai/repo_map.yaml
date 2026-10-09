@@ -24,6 +24,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0021-portable-installation-provenance.md
     - Documentation/Architecture/decisions/DEC-0022-session-lifecycle-rotation.md
     - Documentation/Architecture/decisions/DEC-0023-bounded-processing.md
+    - Documentation/Architecture/decisions/DEC-0024-processing-overhead-assessment.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -203,3 +204,6 @@ processing_efficiency:
   runtime: foundation/runtime/processing_efficiency.py
   budget_profile: foundation-processing-budget/v1
   audit: advisory_only
+  overhead_assessment: required
+  assessment_areas: [test_cycles, logs, reviews, model_calls, polling]
+  required_gates_preserved: true

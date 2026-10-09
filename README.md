@@ -4,7 +4,9 @@ A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and hum
 
 Core-only installations now include a small session-local reuse/budget/audit reference tool; no optional orchestrator is required. Start with the short ruleset and load only relevant boundaries. See [processing efficiency](Documentation/Standards/PROCESSING_EFFICIENCY_POLICY.md). Budget decisions are not atomic reservations or provider spending caps; stronger project gates remain protected.
 
-## v1.20.0 scoped processing, session reuse, shared budgets, and portable governance
+Installation/upgrade now requires an assessment of actual test triggers, duplicate checks, log handling, review chains, and model calls. Separate diagnosis/integration from qualification/release; use local bounded findings and justify stronger exceptions. A copied ruleset or green integrity check alone does not complete efficiency integration. Required gates and honest evidence stay protected.
+
+## v1.21.0 assessed test, log, review, and model-call overhead
 
 The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
 
@@ -62,8 +64,8 @@ This does not make Python the target runtime; the installer is only one Foundati
 For a single-file offline or air-gapped handoff, a clean exact Git checkout can build a deterministic universal source distribution:
 
 ```text
-python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.20.0.zip
-python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.20.0.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.20.0.zip.sha256
+python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.21.0.zip
+python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.21.0.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.21.0.zip.sha256
 ```
 
 The archive contains only the manifest, all manifest-whitelisted selectable sources, the minimum installer files, and a generated content index. It excludes Foundation project state and every local runtime or credential. Verify it before extraction into an empty staging directory, then run the bundled installer against the target. The package does not replace semantic integration, confer authority, or prove publisher authenticity; obtain its SHA-256 through an independently trusted channel when authenticity matters. See `Documentation/Quality/PACKAGED_RELEASE_ARTIFACT_EVALUATION.md`.
