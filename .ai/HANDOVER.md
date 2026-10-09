@@ -1,9 +1,13 @@
 # Handover
 
+## Foundation 1.21 processing-overhead assessment — WI-0036
+
+Foundation 1.21 implements the required actual-workflow assessment and bounded test/log/review/model defaults under DEC-0024. All 300 local regression tests and 55 focused install/upgrade/processing tests passed on Windows; transfer/hash/feature/registry/backlog and full Foundation validation passed with only the two existing self-scan warnings. WI-0036 implementation is complete; integration still requires successful exact-final-head CI. Existing target projects and automations are unchanged; no provider enforcement or measured token savings are claimed.
+
 
 ## Foundation 1.20 bounded processing — WI-0035
 
-Scoped entrypoints, core session reuse, shared budgets, advisory integration audit, and proportionate review defaults are locally validated: 298 regression tests passed; transfer/hash/feature/registry/backlog and full Foundation gates passed with two existing self-scan warnings. WI-0035 implementation is complete. Integration requires successful CI at the exact final PR head; no target project is upgraded automatically. DEC-0023 records the protected boundaries.
+Foundation 1.20 was merged through PR #36 as `39ae5c534bb0cf78046485754ed1be7867bf9534`. Its final PR ran 299 passing tests with successful Windows/macOS contracts and registry integrity; the post-merge main CI also passed. WI-0035 is complete. No target project was upgraded automatically. DEC-0023 records the protected boundaries.
 
 Status: GENERATED/EVIDENCE
 

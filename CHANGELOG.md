@@ -2,6 +2,16 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.21.0] - 2026-10-09
+
+### Changed
+
+- Require assessment of actual test, log, review, model-call, and polling overhead during installation/upgrade and material workflow-rule changes; copying rules or green integrity alone is insufficient.
+- Separate diagnosis/integration from full qualification/release; select expensive checks by affected contracts, validate selectors conservatively, and deduplicate identical validator/self-test executions.
+- Inspect logs locally before bounded model ingestion; additional reviews/model calls need a concrete question or changed-input/gate reason, with retained evidence and honest uncertainty.
+- Stronger compatible rules need a bounded protective rationale; unresolved choices remain pending and surface contextual questions without silently removing project gates.
+- Preserve current-head/integration evidence, qualification oracles/repetitions, privacy, required independence, and safe runtime cleanup. No automatic target changes or claimed provider/token enforcement.
+
 ## [1.20.0] - 2026-10-09
 
 ### Added and changed

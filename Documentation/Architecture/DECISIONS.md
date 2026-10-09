@@ -207,3 +207,7 @@ Create one for durable material decisions affecting multiple areas, difficult re
 ## DEC-0023 — Bounded processing with scoped rules and session-local reuse
 
 Accepted 2026-10-09. See [decision record](decisions/DEC-0023-bounded-processing.md).
+
+## DEC-0024 — Assess actual test, log, review, and model-call overhead
+
+Accepted 2026-10-09. See [decision record](decisions/DEC-0024-processing-overhead-assessment.md).
