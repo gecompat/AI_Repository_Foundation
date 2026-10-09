@@ -1,7 +1,7 @@
 # AI Repository Foundation Ruleset
 
 Status: AUTHORITATIVE BASELINE
-Ruleset version: 1.21.0
+Ruleset version: 1.22.0
 
 ## Protected floor
 

@@ -2,6 +2,8 @@
 
 Status: AUTHORITATIVE
 
+Current provider-open transport/documentation decision: [DEC-0025](decisions/DEC-0025-provider-open-runtime-and-documentation.md). Historical decisions below retain their original evidence and dates.
+
 Use stable IDs and statuses `Proposed`, `Accepted`, `Superseded`, or `Rejected`. Do not rewrite historical decisions; supersede them with a new record.
 
 A record includes: ID, status, date, title, context, decision, rationale, alternatives, consequences, affected areas, supersedes/superseded-by, and evidence/references.

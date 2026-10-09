@@ -329,7 +329,7 @@ def _dependencies(capability_root: Path) -> tuple[Any, Any]:
         raise OrchestrationError("OPTIONAL_DEPENDENCY_UNAVAILABLE", "router or runtime adapter capability is unavailable", "AVAILABILITY") from exc
 
 
-def _catalog(store: Any, runtime: Any) -> tuple[list[dict[str, Any]], dict[str, tuple[str, str]], list[dict[str, str]]]:
+def _catalog(store: Any, runtime: Any, router: Any) -> tuple[list[dict[str, Any]], dict[str, tuple[str, str]], list[dict[str, str]]]:
     fragments: list[dict[str, Any]] = []
     mapping: dict[str, tuple[str, str]] = {}
     statuses: list[dict[str, str]] = []
@@ -341,9 +341,9 @@ def _catalog(store: Any, runtime: Any) -> tuple[list[dict[str, Any]], dict[str, 
         try:
             connection = store.load_connection(connection_id)
             result = runtime.execute_adapter(connection, "catalog", {})
+            candidates = [router.validate_fragment(source) for source in result.get("fragments", [])]
             count = 0
-            for source in result.get("fragments", []):
-                fragment = deepcopy(source)
+            for fragment in candidates:
                 original = fragment.get("provider")
                 if not isinstance(original, str) or not original:
                     continue
@@ -423,7 +423,7 @@ def plan_or_execute(raw: Any, *, execute: bool, config_path: Path | None = None,
     try:
         router, runtime = _dependencies(capability_root or Path(__file__).resolve().parent)
         store = runtime.ConfigurationStore(config_path)
-        fragments, mapping, catalogs = _catalog(store, runtime)
+        fragments, mapping, catalogs = _catalog(store, runtime, router)
     except OrchestrationError as exc:
         return _report(request, status="UNAVAILABLE", router_status="UNAVAILABLE", route=None, catalogs=[], attempts=[], validation="UNAVAILABLE", reasons=[exc.code], actions=["INSTALL_OPTIONAL_ROUTER_AND_RUNTIME_CAPABILITIES"], at=observed)
     evidence, evidence_reasons = _load_evidence(evidence_file, observed)

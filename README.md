@@ -1,278 +1,87 @@
 # AI Repository Foundation
 
-A vendor-neutral, versioned rules foundation for AI-assisted, AI-driven, and human-maintained technical and knowledge projects. Its goal is safe continuation without chat history, memory, personal prompts, or a specific vendor.
+AI Repository Foundation is a reusable framework for governing AI-assisted and human-maintained repositories. It gives a project durable instructions, safe working boundaries, stable artifact identities, validation contracts, and a way to continue work without depending on one conversation or AI provider.
 
-Core-only installations now include a small session-local reuse/budget/audit reference tool; no optional orchestrator is required. Start with the short ruleset and load only relevant boundaries. See [processing efficiency](Documentation/Standards/PROCESSING_EFFICIENCY_POLICY.md). Budget decisions are not atomic reservations or provider spending caps; stronger project gates remain protected.
+The core consists of readable rules, schemas, discovery bridges, and small deterministic helpers. Optional capabilities add planning, model selection, runtime invocation, client integration, and provisioning. You can use the core with your existing tools and add executable capabilities only where they help.
 
-Installation/upgrade now requires an assessment of actual test triggers, duplicate checks, log handling, review chains, and model calls. Separate diagnosis/integration from qualification/release; use local bounded findings and justify stronger exceptions. A copied ruleset or green integrity check alone does not complete efficiency integration. Required gates and honest evidence stay protected.
+## What it helps you do
 
-## v1.21.0 assessed test, log, review, and model-call overhead
+- Continue a software, research, documentation, or knowledge project from repository state rather than chat memory.
+- Integrate AI into an existing repository while preserving its rules, identifiers, license, and validation system.
+- Give humans and AI the same authority for registering work items and decisions.
+- Select and invoke models through evidenced capabilities and explicit data boundaries.
+- Reduce repeated rule reading and unnecessary processing while retaining required validation and truthful evidence.
 
-The Foundation repository itself is **not** a template to unpack into another repository. Its README, root LICENSE, changelog, project state, backlog, handover, internal decisions, tests, and unlisted tool source belong only to this Foundation project.
+## Functionality at a glance
 
-`foundation/manifest.json` is the explicit whitelist of reusable core material and optional capabilities **and the single ruleset-version authority**. `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md` defines coexistence with mature target-project governance. `Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md` defines long-lived artifact identity. `Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md` defines how humans and AI create/register those artifacts through the same project authority without depending on Python, PowerShell, or any other language.
-
-A target repository keeps its own README, root license, architecture, project context, decisions, state, backlog, model policy, validation system, identifier history, Registration Authority, and implementation.
-
-## Two equivalent transfer paths
-
-### Directly by an AI
-
-An AI with read access to this repository and write access to the target repository reads:
-
-1. `foundation/manifest.json` from the exact Foundation ref being evaluated;
-2. `foundation/AI_TRANSFER.md`;
-3. `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md` for an existing repository;
-4. `Documentation/Standards/PERSISTENT_IDENTITY_POLICY.md` when durable identifiers exist or are being introduced;
-5. `Documentation/Standards/ARTIFACT_REGISTRATION_POLICY.md` when artifact allocation/creation is in scope;
-6. only the manifest-listed core material, requested adapters, and explicitly selected optional capabilities it needs.
-
-For existing repositories the AI preserves target governance, identifier history, and compatible Registration Authorities, classifies semantic overlaps, ensures active project rules remain discoverable from root `AGENTS.md`, and never drops unique rules merely to thin a tool adapter.
-
-An installed target may carry an older Foundation version. That installed version describes the target's current state; it does **not** describe what the current Foundation source can transfer. Upgrade/capability questions use the source `foundation/manifest.json` at the exact requested Foundation ref and compare it with the target's installed `.ai/foundation/repo_map.yaml` version.
-
-### Deterministic local installer
-
-Preview only (default):
-
-```text
-python tools/install_foundation.py TARGET
-```
-
-Apply when the plan contains only `CREATE` and `UNCHANGED` states:
-
-```text
-python tools/install_foundation.py TARGET --apply
-```
-
-The installer verifies every selected source against the portable SHA-256 in the manifest and classifies target files as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT`. It never overwrites a differing file. A clean apply writes `.ai/foundation/installation-provenance.json`. After semantic merges, use the direct AI transfer protocol and record every differing selected file explicitly with `--record-provenance --intentional-override "TARGET=REASON"`.
-
-The validator uses that receipt to distinguish an unchanged current baseline, an explicitly recorded intentional override, an intact previous Foundation version, and unknown drift. Provenance never substitutes for target semantic/runtime validation.
-
-Adapters default to GitHub Copilot, Claude Code, and Gemini as recommendations. Use `--adapters none` or an explicit comma-separated adapter list when desired.
-
-Optional capabilities default to **none**. To install both artifact-registration reference clients explicitly:
-
-```text
-python tools/install_foundation.py TARGET --capabilities artifact-registration-clients --apply
-```
-
-This does not make Python the target runtime; the installer is only one Foundation transfer path.
-
-### Optional offline release package
-
-For a single-file offline or air-gapped handoff, a clean exact Git checkout can build a deterministic universal source distribution:
-
-```text
-python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.21.0.zip
-python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.21.0.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.21.0.zip.sha256
-```
-
-The archive contains only the manifest, all manifest-whitelisted selectable sources, the minimum installer files, and a generated content index. It excludes Foundation project state and every local runtime or credential. Verify it before extraction into an empty staging directory, then run the bundled installer against the target. The package does not replace semantic integration, confer authority, or prove publisher authenticity; obtain its SHA-256 through an independently trusted channel when authenticity matters. See `Documentation/Quality/PACKAGED_RELEASE_ARTIFACT_EVALUATION.md`.
-
-To install the optional deterministic Rule Context Cache planner:
-
-```text
-python tools/install_foundation.py TARGET --capabilities rule-context-cache --apply
-```
-
-The transferred policy and schema remain core; the executable planner is opt-in. It never replaces Codex's native per-run `AGENTS.md` discovery or repository rules. It hashes actual working-tree sources, accounts for scoped instructions, dirty Git state, discovery configuration, and transitive dependencies, and emits `CACHE_HIT`, `PARTIAL_INVALIDATION`, or fail-closed `CACHE_MISS`. Semantic analyses stay session-local; persistent cache records contain only local non-versioned fingerprint/dependency metadata.
-
-The reference planner supports a read-only preview and an explicit atomic record operation:
-
-```text
-python .ai/foundation/rule_context_cache/rule_context_cache.py check --repository TARGET --cwd TARGET --cache-dir CACHE --json
-python .ai/foundation/rule_context_cache/rule_context_cache.py record --repository TARGET --cwd TARGET --cache-dir CACHE --json
-```
-
-Use a project-authorized cache directory outside version control. Complete the first scoped rule read and analysis before `record`; a fingerprint hit permits reuse only when the corresponding exact analysis key is actually available. See `Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md` in this source repository or its installed `.ai/foundation/` counterpart.
-
-To install the optional dynamic model router:
-
-```text
-python tools/install_foundation.py TARGET --capabilities model-router --apply
-```
-
-Its provider-neutral core chooses among currently eligible models by expected cost of success after privacy, authorization, capability, context, quality, price-freshness, and budget filtering. The Ollama Cloud adapter discovers the live model catalog and public prices at runtime; no current model names or prices are embedded in Foundation policy. New models remain `UNASSESSED` until an explicitly allowed, spend-bounded evaluation produces enough evidence.
-
-The capability exposes the same decision contract through a CLI and local stdio MCP server, with a shell-free launcher and expiring snapshot as lower integration layers. It includes separate MCP examples for Visual Studio and GitHub Copilot because their current configuration shapes differ. Runtime catalogs, outcome aggregates, hashed session affinity, evaluation reservations, launchers, snapshots, and provider credentials stay outside the repository. See `foundation/capabilities/model-router/MODEL_ROUTER.md` for setup and commands.
-
-To configure and invoke actual optional runtimes, install `ai-runtime-adapters` and start its assistant:
-
-```text
-python tools/install_foundation.py TARGET --capabilities ai-runtime-adapters --apply
-python TARGET/.ai/foundation/ai_runtime_adapters/runtime_configuration.py configure
-```
-
-On first use it checks only bounded loopback Ollama defaults read-only, proposes a connection, and asks for address, host/network/remote boundary, data classes, remote-model permission, model-selection mode, content-handle roots, timeout, and optional credential reference. Hostnames, IP addresses, and ports are supported. Nothing is saved until the review screen; existing entries can be edited, tested, and rolled back.
-
-The same capability provides `runtime_mcp.py`. It starts without configuration, reports `CONFIGURATION_REQUIRED` plus the wizard action, and isolates broken connections. Its tools probe/catalog runtimes and invoke an explicit/router-selected/pinned model while keeping prompts and generated content in external handles. The router remains decision-only; clients that can chain MCP tools pass its selected model to the runtime bridge, while other clients receive the manual model-choice handoff.
-
-Where a client natively supports task-role, custom-agent, subagent, per-invocation, or session model selection, `ai-client-integration` prefers that narrower path before MCP/CLI/launcher/manual fallback. The Foundation stores such support as an expiring, source-backed, vendor-neutral client capability instead of assuming one shared settings syntax. The VS Code reference planner recognizes only documented role settings and agent/subagent surfaces, consumes a fresh live model inventory, and writes no client configuration. GitHub Copilot CLI, Codex, Claude Code, Gemini CLI, Continue, JetBrains, Cursor, and Aider currently expose different subsets and fallback semantics; requested-versus-actual model evidence remains mandatory when silent inheritance or fallback is possible.
-
-### Optional AI work capability stack
-
-The runtime-neutral policies and schemas are core. Executable references remain opt-in:
-
-| Capability | Purpose | Dependencies selected automatically |
+| Area | Core functionality | Optional executable capability / boundary |
 | --- | --- | --- |
-| `ai-work` | decision-only `WorkRequest` to `ExecutionPlan`/`GapReport` planner | none |
-| `model-router` | provider-neutral v1/v2 model decision, CLI/MCP, snapshots and Ollama Cloud catalog adapter | none |
-| `ai-runtime-adapters` | external connection assistant plus isolated Ollama/OpenAI-compatible/command invocation bridge | none |
-| `ai-executor` | generic exact-plan execution, checkpoints, approvals, limits and validation evidence | `ai-work` |
-| `ai-provisioning` | doctor/inventory, exact approved provisioning and verified cost-evidence refresh | `ai-work` |
-| `ai-client-integration` | native/MCP/CLI/manual dispatch planning, receipt verification and rollback-safe configuration | `ai-work`, `ai-runtime-adapters`, `model-router` |
-| `ai-orchestrator` | complete catalog → evidence → route → invoke → validate → fallback → report facade | `ai-work`, `ai-runtime-adapters`, `model-router` |
+| Governance and continuation | Authority, privacy, safe operations, project context and handover contracts | Existing project governance remains authoritative; chat history is not durable truth |
+| Installation, upgrades and provenance | Manifest whitelist, semantic feature assessment, portable hashes and installation receipt | Deterministic installer or direct AI transfer; differing files require semantic integration |
+| Identity and registration | Persistent UIDs, stable references, shared Registration Authority | `artifact-registration-clients`, `artifact-registry-github`; existing compatible authorities may remain |
+| Validation and continuity | Integrity/semantic/runtime scopes, honest status, repository recovery contracts | Foundation integrity cannot prove target domain correctness or grant bypass authority |
+| Model routing | Portable capability tiers and evidence contracts | `model-router` decides; it does not invoke models or invent prices/quality |
+| Planning and execution | Work, capability, plan, approval, checkpoint and report schemas | `ai-work` plans; `ai-executor` executes exact generic plans |
+| Runtime and client integration | Language-neutral JSONL, configuration and dispatch evidence contracts | `ai-runtime-adapters`, `ai-client-integration`, `ai-orchestrator`; missing evidence leads to manual handling |
+| Host preparation | Inventory, provisioning and resource-cost evidence contracts | `ai-provisioning`; installation of capability code does not authorize downloads or spending |
+| Session lifecycle | Counters, natural boundaries, rotation decisions and delta handoffs | `ai-work` evaluates decisions; successor creation depends on evidenced client support |
+| Processing efficiency | Scoped reading, session-local reuse, bounded budget decisions and required overhead assessment | `rule-context-cache` adds persistent fingerprints; caches are never authority or evidence |
 
-For long-lived orchestrator or worker sessions, the optional `ai-work` planner can also evaluate the metadata-only session lifecycle contract:
+The [user guide](Documentation/Guides/USER_GUIDE.md) explains these areas, all ten optional capabilities, and their limits. The [architecture overview](Documentation/Architecture/OVERVIEW.md) explains components, data flow, dependencies, and failure behavior.
+
+## Minimal installation without product adapters
+
+From a Foundation checkout, preview the core transfer into your project, review the result, then apply a clean plan:
 
 ```text
-python TARGET/.ai/foundation/ai_work/ai_work.py session --request session-lifecycle.json
+python tools/install_foundation.py ../my-project --adapters none --capabilities none
+python tools/install_foundation.py ../my-project --adapters none --capabilities none --apply
+python tools/foundation_validator.py --target ../my-project --adapters none
 ```
 
-The request carries only deterministic counters, an explicit natural-boundary signal, target-selected thresholds, and the client's successor-session capability. It never asks a model to rescan the full conversation merely to decide whether to rotate. A selected rotation uses a compact `foundation-session-handoff/v1` delta over durable repository references; actual new-chat/session creation remains client-specific and falls back to a manual continuation when unattested.
+The installer classifies files as `CREATE`, `UNCHANGED`, `MERGE_REQUIRED`, or `CONFLICT` and never overwrites a differing file. It verifies portable source hashes and records installation provenance after a clean apply. For an existing repository, follow the [integration walkthrough](Documentation/Guides/USER_GUIDE.md#integrating-an-existing-repository) before claiming completion.
 
-For the complete evidence-backed routed execution facade:
+The installer’s existing defaults remain GitHub Copilot, Claude Code, and Gemini discovery adapters, with no optional capabilities. The explicit `--adapters none` recipe above is provider-neutral. Python runs this reference installer; another implementation may follow the [direct AI transfer protocol](foundation/AI_TRANSFER.md).
 
-```text
-python tools/install_foundation.py TARGET --capabilities ai-orchestrator --apply
-python TARGET/.ai/foundation/ai_runtime_adapters/runtime_configuration.py configure
-python TARGET/.ai/foundation/ai_orchestrator/ai_orchestrator.py plan REQUEST.json
-```
+Only [manifest-listed](foundation/manifest.json) rules and selected modules are transferred. The Foundation project's README, root license, changelog, identity registry, backlog, status, handover, and internal decisions stay here. Your project keeps its own state and governance. Transferred MIT material carries a [namespaced notice](foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md) without replacing your root license.
 
-Installing a dependency does not configure or start it and grants no model, runtime, credential, network, data-transfer, spend, file, Git, publication, push, or pull-request authority. The router remains decision-only; `ai-executor` executes generic AI-work plans, while `ai-orchestrator` is the narrower model-routing facade. Missing runtime configuration or fresh source-backed model evidence produces a truthful manual/unavailable result. See the capability-local Markdown file for each exact CLI and state contract.
+## Provider openness
 
-## Transfer completeness invariant
+The core defines capabilities and evidence rather than a provider list. Any client or provider can integrate through compatible contracts. Codex, Copilot, Claude, Gemini, and other named products are optional reference paths with distinct observed capabilities.
 
-Reusable Foundation work is not complete merely because implementation or documentation exists in the source repository. The transfer plane is part of the feature contract.
+`ai-runtime-adapters` supports Ollama HTTP, OpenAI-compatible HTTP, and explicitly configured `stdio` JSONL programs through the shared configuration, CLI, MCP, and orchestrator paths. “OpenAI-compatible” names an HTTP interface format; it does not require an OpenAI account or prove compatibility with every endpoint. A provider with another API can supply a reviewed JSONL wrapper in any implementation language. The earlier raw-output `CommandAdapter` remains available separately.
 
-- `foundation/manifest.json#ruleset_version` is the only ruleset-version authority.
-- Every reusable policy under `Documentation/Standards/` must be classified in manifest `core`.
-- Every reusable schema under `foundation/schemas/` must be classified in manifest `core`.
-- New optional capability payloads belong under `foundation/capabilities/<capability>/` and must be classified in the matching manifest capability. Explicitly registered legacy capability roots remain validated until migrated.
-- Contract policy/schema references must resolve to manifest-listed transfer entries.
-- Every transfer row must carry a current portable source hash, and the installed-provenance schema/contract must remain core.
-- Version mirrors such as `.ai/FOUNDATION.md`, `.ai/PROJECT_STATUS.md`, `foundation/FOUNDATION_RULESET.template.md`, `foundation/repo_map.template.yaml`, and the current changelog release must match the manifest version.
+Actual compatibility requires protocol, permissions, catalog, model evidence, and runtime validation. A running local process does not prove a local model backend. Unknown model identity or an ambiguous invocation leads to manual reconciliation. See the [runtime guide](foundation/capabilities/ai-runtime-adapters/AI_RUNTIME_ADAPTERS.md).
 
-The source-side guard is:
+## Reading paths
+
+| Goal | Start here | Then deepen |
+| --- | --- | --- |
+| Learn and try the framework | [User guide](Documentation/Guides/USER_GUIDE.md) | [Architecture](Documentation/Architecture/OVERVIEW.md), [transfer overview](foundation/README.md) |
+| Integrate or upgrade a project | [Transfer protocol](foundation/AI_TRANSFER.md) | [Semantic integration](Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md), [upgrade applicability](Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md) |
+| Understand normative behavior | [Short transferred ruleset](foundation/FOUNDATION_RULESET.template.md) | [Foundation reference](Documentation/Standards/FOUNDATION_REFERENCE.md), relevant linked standards |
+| Configure execution | [Runtime adapters](foundation/capabilities/ai-runtime-adapters/AI_RUNTIME_ADAPTERS.md) | [Router](foundation/capabilities/model-router/MODEL_ROUTER.md), [orchestrator](foundation/capabilities/ai-orchestrator/AI_ORCHESTRATOR.md) |
+| Contribute to Foundation | [Repository contract](AGENTS.md) | [Repository map](.ai/repo_map.yaml), [decisions](Documentation/Architecture/DECISIONS.md), [generated backlog](.ai/BACKLOG.md) |
+| Inspect release or validation evidence | [Changelog](CHANGELOG.md), [current status](.ai/PROJECT_STATUS.md) | [Handover](.ai/HANDOVER.md), [known limitations](Documentation/Quality/KNOWN_LIMITATIONS.md) |
+
+README, the user guide, and architecture are explanations. Normative rules remain in the linked authoritative contracts. Dated quality reports and older status sections describe historical evidence, not current compatibility guarantees. [Offline package instructions](Documentation/Quality/PACKAGED_RELEASE_ARTIFACT_EVALUATION.md) describe delivery from an exact clean checkout.
+
+## Source completion checks
+
+Run these from this Foundation repository; the feature review uses the declared integration base:
 
 ```text
 python tools/transfer_manifest_guard.py
 python tools/refresh_manifest_hashes.py --check
-```
-
-CI treats any unclassified managed source or version mismatch as blocking. Negative tests deliberately remove policy/schema/capability entries and alter the version to prove that these cases fail.
-
-## Semantic compatibility
-
-Foundation `REQUIRED` rules are minimum protected floors. A target project may be stricter. Existing mature project policies may remain more detailed.
-
-Semantic integration distinguishes equivalent, stricter, selectable override, complementary, duplicate, required-conflict, target-internal-conflict, orphaned-authority, and misplaced-adapter-governance cases. See `Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md`.
-
-## Persistent identity
-
-The Foundation separates:
-
-- opaque persistent machine identity;
-- concise human reference;
-- historical aliases and external-system references;
-- mutable hierarchy/status/classification and explicit relations;
-- immutable revision identity;
-- current repository/tool locator.
-
-For new projects the default machine identity is an RFC 9562 UUIDv7 represented as a UUID URN when text form is needed. UUIDv4 is a compatible choice. Human references use flat typed project-local forms such as `CAP-0011`, `WI-0473`, `DEC-0067`, and `GATE-0032`; type subcategories, wave, status, parent, owner, and location remain metadata.
-
-Existing repositories do **not** have to adopt those strings. `PRESERVE` is the default when an established convention exists, `ADOPT_FORWARD` enables prospective use of an improved convention while retaining historical IDs, and `MIGRATE_EXPLICIT` is reserved for an explicitly authorized migration with durable mappings and recovery.
-
-## Artifact registration for humans and AI
-
-Final sequential human references require an allocator. The Foundation models that allocator as a **Registration Authority**.
-
-- Humans and AI use the same authority for the same identifier scope.
-- `DIRECT` creates the final UID and human reference only through serialized or equivalently unique allocation.
-- `DEFERRED` creates the permanent UID immediately and postpones final human-reference allocation until a safe registration point.
-- Clients do not discover the "next number" by scanning Markdown, filenames, Git history, or model memory.
-- An existing Jira/Azure DevOps/GitHub Issues/database/service/project script/module may remain the authority when compatible.
-
-The normative contract is language-neutral and includes JSON Schemas under `foundation/schemas/`.
-
-The optional `artifact-registration-clients` capability contains two independent reference implementations:
-
-```text
-.ai/foundation/reference_clients/artifact_reference.py
-.ai/foundation/reference_clients/ArtifactReference.ps1
-```
-
-Python is **not required**. PowerShell is a first-class supported reference client. A project may instead use .NET, Bash, Node, a GUI/IDE, an issue tracker, or another compatible implementation.
-
-## Attribution without changing the target license
-
-Transferred Foundation material is MIT-licensed source material. Every core transfer includes `.ai/foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md`, which preserves the complete Foundation MIT notice and applies only to transferred Foundation material, including explicitly selected optional capabilities.
-
-The target repository's own root `LICENSE` is never copied from the Foundation, replaced, amended, or reinterpreted by the installer or AI transfer protocol.
-
-## Validation
-
-Validate transfer/version completeness first:
-
-```text
-python tools/transfer_manifest_guard.py
-```
-
-Validate this Foundation project:
-
-```text
+python tools/feature_catalog_guard.py --base origin/main
+python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json
+python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check
 python tools/foundation_validator.py --profile full
-```
-
-Run deterministic Foundation tests:
-
-```text
 python -m unittest discover -s tests -v
 ```
 
-All three form the Foundation source completion gate. CI executes them automatically.
-
-Validate an installed target ruleset from a Foundation checkout:
-
-```text
-python tools/foundation_validator.py --target TARGET
-```
-
-Validate an installation that explicitly selected the reference clients:
-
-```text
-python tools/foundation_validator.py --target TARGET --capabilities artifact-registration-clients
-```
-
-Validate an installation that explicitly selected the model router:
-
-```text
-python tools/foundation_validator.py --target TARGET --capabilities model-router
-```
-
-The target validation command checks **Foundation integration only** (`FOUNDATION_INTEGRITY`). It does not replace project-specific semantic/static validation (`PROJECT_SEMANTIC`) or executable/empirical validation (`RUNTIME_EMPIRICAL`). Target projects may retain richer validation statuses as long as Foundation reserved meanings are not redefined. Historical identifier mappings, Registration Authority correctness, actual concurrency, and migration correctness remain target validation responsibilities.
-
-Foundation CI requires both CPython and PowerShell and executes the same deterministic registration fixtures against both reference clients.
-
-## Core principles
-
-- repository state is durable project truth;
-- only manifest-listed core material and explicitly selected optional modules are transferable;
-- source transfer/version completeness is a blocking Foundation CI invariant;
-- active project governance remains discoverable from root `AGENTS.md` after integration;
-- stricter project rules are compatible unless a real logical/required-floor conflict exists;
-- existing durable identifiers are preserved by default and never silently reused or reinterpreted;
-- identity is separated from mutable hierarchy, status, phase, owner, location, and external tool assignment;
-- humans and AI use the same project Registration Authority for final reference allocation;
-- implementation language is project-selectable; Python is not a Foundation runtime requirement;
-- optional Foundation reference clients never silently replace compatible project tooling;
-- normal operations inside the current task's authorization envelope do not create repeated confirmation gates;
-- privacy gates depend on data classification, destination, and handling authority, not merely on information being real;
-- model/resource routing uses `LOCAL`, `ECONOMICAL`, `BALANCED`, and `FRONTIER` as portable semantics while target routing may be more detailed;
-- Foundation validation supplements rather than replaces project-specific validation;
-- adapters are thin discovery bridges only after unique adapter governance has been preserved elsewhere.
+The [canonical validation map](.ai/repo_map.yaml) and [validation policy](.ai/VALIDATION_POLICY.md) govern completion, including relevant installation/capability checks and successful exact PR-head CI. CI also runs Windows/macOS contracts and registry semantic integrity. An installed target check establishes `FOUNDATION_INTEGRITY` only; its own `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks remain required for their respective claims.
 
 ## License
 
-The Foundation project is MIT-licensed. Installing Foundation material never replaces or silently selects the target repository's own root license. The dedicated namespaced Foundation notice carries the source-license attribution required for copied Foundation material.
+The Foundation project is [MIT-licensed](LICENSE). Its namespaced attribution notice applies to transferred Foundation material; the target repository chooses and retains its own license.

@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.21.0
+- version: 1.22.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT

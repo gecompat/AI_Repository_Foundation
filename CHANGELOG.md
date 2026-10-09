@@ -2,6 +2,15 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.22.0] - 2026-10-09
+
+### Added and changed
+
+- Restructure README around purpose, use cases, complete functionality, provider-neutral core installation and reading paths; add an explanatory English user guide and expand architecture/data-flow/failure explanations.
+- Add a closed additive Stdio variant to shared runtime configuration, with exact absolute argv, explicit environment allowlist, optional cwd and target-trusted model metadata disabled by default. Configure, CLI invocation, MCP and orchestrator use the existing JSONL protocol for arbitrary providers.
+- Bound child control output, validate protocol/request identity, reject payload control fields, check pre-call permissions/handles and verify output hashes. Ambiguous invocation outcomes retain manual reconciliation and checkpoint no-replay. Existing HTTP configuration, raw CommandAdapter and installer defaults remain compatible.
+- Select adapter type before product-specific discovery. Generalize native-client rules, clarify OpenAI-compatible as an interface format, reconcile source completion checks and merged-release state, and include an account-free synthetic demonstration.
+
 ## [1.21.0] - 2026-10-09
 
 ### Changed

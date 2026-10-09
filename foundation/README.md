@@ -16,7 +16,7 @@ The core rules and language-neutral schemas cover model routing v1/v2, AI work r
 
 - `model-router` decides among evidenced candidates but never invokes a model;
 - `ai-work` plans generic capability work;
-- `ai-runtime-adapters` configure, probe, catalog, and invoke isolated Ollama, OpenAI-compatible, or shell-free command runtimes;
+- `ai-runtime-adapters` configure, probe, catalog, and invoke Ollama HTTP, OpenAI-compatible HTTP or explicitly configured JSONL Stdio runtimes; the legacy raw command adapter remains separate;
 - `ai-executor` executes exact generic plans with checkpoints and validation;
 - `ai-provisioning` diagnoses hosts and executes only exact approved provision plans;
 - `ai-client-integration` plans native, MCP, CLI, launcher, or manual model dispatch and verifies receipts;
