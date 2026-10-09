@@ -1,8 +1,15 @@
 # Handover
 
+Status: GENERATED/EVIDENCE
+
+## Current 1.22.0 candidate — WI-0037 / DEC-0025
+
+The authorized provider-open documentation and additive Stdio runtime work is implemented on a feature branch from main `d720db4f2f0d043756a958d5195d0e62090b1c8f`. The guide covers all 24 current semantic features and ten optional capabilities. Local Windows validation passed all 316 regression tests, including 15 synthetic Stdio cases; 52 focused runtime/orchestrator tests passed. Transfer/hash/feature/registry/backlog and full Foundation validation are green with only the two known validator self-scan warnings. Documentation checks verified 91 local links/anchors, all 24 features/ten capabilities, core-only and optional-runtime installation, and the installed offline recipe. Exact PR-head Windows/macOS contracts, Linux validate and registry-integrity remain the external delivery gate; their current result must be checked on GitHub before delivery. Deliver a PR without merging. No live provider/account test, target upgrade or measured token savings is claimed.
+
+
 ## Foundation 1.21 processing-overhead assessment — WI-0036
 
-Foundation 1.21 implements the required actual-workflow assessment and bounded test/log/review/model defaults under DEC-0024. All 300 local regression tests and 55 focused install/upgrade/processing tests passed on Windows; transfer/hash/feature/registry/backlog and full Foundation validation passed with only the two existing self-scan warnings. WI-0036 implementation is complete; integration still requires successful exact-final-head CI. Existing target projects and automations are unchanged; no provider enforcement or measured token savings are claimed.
+Foundation 1.21 implements the required actual-workflow assessment and bounded test/log/review/model defaults under DEC-0024. All 300 local regression tests and 55 focused install/upgrade/processing tests passed on Windows; transfer/hash/feature/registry/backlog and full Foundation validation passed with only the two existing self-scan warnings. WI-0036 was merged through PR #37 on 2026-10-09 as `d720db4f2f0d043756a958d5195d0e62090b1c8f`; exact PR-head Windows/macOS contracts, Linux validate and registry-integrity all succeeded. This is historical 1.21 evidence. Existing target projects and automations are unchanged; no provider enforcement or measured token savings are claimed.
 
 
 ## Foundation 1.20 bounded processing — WI-0035
@@ -11,7 +18,7 @@ Foundation 1.20 was merged through PR #36 as `39ae5c534bb0cf78046485754ed1be7867
 
 Status: GENERATED/EVIDENCE
 
-## Current state
+## Historical 1.19 checkpoint (2026-10-05; superseded by merged PR #35)
 
 Foundation 1.19.0 candidate implements `WI-0034` under `DEC-0022`: session rotation uses deterministic counters and explicit natural work boundaries instead of repeated semantic chat scans. The optional `ai-work` planner emits `CONTINUE`, `CHECKPOINT`, `ROTATE_AT_BOUNDARY`, or `ROTATE_REQUIRED`, and successor sessions bootstrap from durable repository truth plus a content-minimized delta handoff. Thresholds remain project-selected, unknown token metrics are not invented, latency is not an authoritative trigger, and automatic chat/session creation is requested only when the client capability is attested. A delta-only trigger checkpoints without forcing rotation. Bootstrap requires native instruction discovery, current repository state, reference resolution, and reconciliation of stale or unavailable deltas under existing privacy and rule-cache contracts.
 

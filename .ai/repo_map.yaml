@@ -25,6 +25,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0022-session-lifecycle-rotation.md
     - Documentation/Architecture/decisions/DEC-0023-bounded-processing.md
     - Documentation/Architecture/decisions/DEC-0024-processing-overhead-assessment.md
+    - Documentation/Architecture/decisions/DEC-0025-provider-open-runtime-and-documentation.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -47,6 +48,7 @@ authority:
     - README.md
     - .ai/ROADMAP.md
     - Documentation/Architecture/OVERVIEW.md
+    - Documentation/Guides/USER_GUIDE.md
     - Documentation/Quality/KNOWN_LIMITATIONS.md
   generated:
     - .ai/BACKLOG.md
@@ -185,7 +187,7 @@ validation:
   backlog_projection_command: python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check
   source_github_rulesets_verify: python tools/github/configure_rulesets.py --verify-only
   foundation_command: python tools/foundation_validator.py
-  complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/feature_catalog_guard.py && python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json && python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
+  complete_foundation_gate: python tools/transfer_manifest_guard.py && python tools/refresh_manifest_hashes.py --check && python tools/feature_catalog_guard.py --base origin/main && python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json && python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check && python tools/foundation_validator.py --profile full && python -m unittest discover -s tests -v
   target_command: python tools/foundation_validator.py --target TARGET
 installation:
   command: python tools/install_foundation.py TARGET

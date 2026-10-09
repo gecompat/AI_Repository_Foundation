@@ -6,6 +6,8 @@ This capability joins live runtime discovery, router v2, content-handle invocati
 
 The control contract is `foundation-ai-orchestration/v1`. Prompts and generated answers stay in absolute input/output handles and never enter the orchestration report. The runtime connection store and all orchestration state remain outside Git.
 
+Provider names are data. The shared runtime store supports Ollama HTTP, OpenAI-compatible HTTP and explicit JSONL Stdio programs; no provider SDK/account is required by this facade. Stdio metadata is unattested by default unless the target trusts the reviewed adapter's observed backend identity, and missing identity still requires manual handling. Protocol failures, child-reported invocation errors and timeouts are ambiguous; checkpoints prevent automatic retry/fallback until reconciled. A local wrapper process does not establish a local model boundary.
+
 ## Install and configure
 
 Select the facade explicitly during Foundation installation:

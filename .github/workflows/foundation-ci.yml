@@ -30,6 +30,8 @@ jobs:
           tests.test_processing_efficiency
           tests.test_ai_work_self_hosting
           tests.test_ai_runtime_adapters
+          tests.test_ai_runtime_configuration
+          tests.test_ai_stdio_runtime
           tests.test_model_router
           tests.test_model_router_v2
           tests.test_ai_client_integration
