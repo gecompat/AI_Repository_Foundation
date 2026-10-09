@@ -25,7 +25,7 @@ Before mutation or transfer:
 
 A concrete task authorizes the ordinary, reasonably expected, proportionate operations needed to complete it. Do not request repeated confirmation for normal operations inside that envelope. Stop only when classification or handling authority is unresolved, the action materially exceeds the envelope, a destructive/irreversible target is not explicitly authorized, or another explicit project/platform gate applies.
 
-At the start of every new run, native instruction discovery remains mandatory. For later change waves in the same analyzed scope, apply `Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md`: validate discovery, working-tree fingerprints, Git state, dependency topology, and scope before reusing any session analysis. Use full rereading on `CACHE_MISS`, targeted rereading plus transitive reanalysis on `PARTIAL_INVALIDATION`, and reuse only an actually available analysis with the exact key on `CACHE_HIT`. A cache record is never authority or evidence.
+At the start of every new run, native instruction discovery remains mandatory. For later change waves in the same analyzed scope, use `Documentation/Standards/PROCESSING_EFFICIENCY_POLICY.md`: validate current discovery, selected source bytes, scope, and dependencies before reusing actually available session analysis. Persistent cache users additionally apply `Documentation/Standards/RULE_CONTEXT_CACHE_POLICY.md` and preserve its exact CACHE_HIT/PARTIAL_INVALIDATION/CACHE_MISS semantics. A cache record is never authority or evidence.
 
 ## Canonical reading path
 

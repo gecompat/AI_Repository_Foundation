@@ -2,6 +2,8 @@ schema_version: 1
 canonical_entrypoint: AGENTS.md
 authority:
   authoritative:
+    - Documentation/Standards/PROCESSING_EFFICIENCY_POLICY.md
+    - Documentation/Standards/FOUNDATION_REFERENCE.md
     - AGENTS.md
     - .ai/PROJECT_CONTEXT.md
     - .ai/PROJECT_RULES.md
@@ -21,6 +23,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0020-capability-oriented-ai-work-orchestration.md
     - Documentation/Architecture/decisions/DEC-0021-portable-installation-provenance.md
     - Documentation/Architecture/decisions/DEC-0022-session-lifecycle-rotation.md
+    - Documentation/Architecture/decisions/DEC-0023-bounded-processing.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
@@ -194,3 +197,9 @@ installation:
   optional_ai_provisioning: python tools/install_foundation.py TARGET --capabilities ai-provisioning
   optional_ai_client_integration: python tools/install_foundation.py TARGET --capabilities ai-client-integration
   optional_ai_orchestrator: python tools/install_foundation.py TARGET --capabilities ai-orchestrator
+
+processing_efficiency:
+  policy: Documentation/Standards/PROCESSING_EFFICIENCY_POLICY.md
+  runtime: foundation/runtime/processing_efficiency.py
+  budget_profile: foundation-processing-budget/v1
+  audit: advisory_only

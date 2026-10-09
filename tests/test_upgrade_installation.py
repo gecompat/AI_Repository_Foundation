@@ -70,7 +70,17 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.19.0")
+        self.assertEqual(manifest["ruleset_version"], "1.20.0")
+
+    def test_1_19_to_1_20_surfaces_core_processing_and_persistent_cache_review(self) -> None:
+        catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
+        by_id = {item["feature_id"]: item for item in
+                 upgrade_applicability.candidate_features(catalog, "1.19.0", "1.20.0")}
+        feature = by_id["bounded-processing-efficiency"]
+        self.assertIn("introduced_in:1.20.0", feature["candidate_reasons"])
+        self.assertIn("foundation/runtime/processing_efficiency.py",
+                      catalog["features"]["bounded-processing-efficiency"]["transfer_sources"])
+        self.assertIn("material_change:1.20.0", by_id["rule-context-cache"]["candidate_reasons"])
 
     def test_1_2_to_1_8_delta_surfaces_nomenclature_registry_eol_continuity_and_cache(self) -> None:
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))

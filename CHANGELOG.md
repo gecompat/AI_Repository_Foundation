@@ -2,6 +2,17 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.20.0] - 2026-10-09
+
+### Added and changed
+
+- Short entrypoints route to affected policies; detailed capability/contract boundaries remain in a scoped reference.
+- Core-only installations include dependency-free session analysis reuse, shared root/descendant budget decisions, and advisory governance auditing.
+- Changed rule dependencies and authority invalidate analysis; equivalent current worktrees may reuse available analysis; unknown discovery and lost analysis require reading.
+- Routine work avoids per-action orchestration paperwork; extra agents/reviews need distinct questions; unchanged blocker polling uses backoff.
+- Budget telemetry distinguishes measured, estimated, and unknown use; decisions neither reserve atomically nor enforce provider quotas.
+- Integration surfaces efficiency recommendations while retaining compatible stronger project rules and required gates. Persistent cache v1 remains compatible.
+
 ## [1.19.0] - 2026-10-05
 
 ### Added

@@ -203,3 +203,7 @@ Create one for durable material decisions affecting multiple areas, difficult re
 - Decision: Treat the orchestrator as a logical role and decide session rotation from cheap deterministic metadata plus explicit natural work boundaries; prohibit continuous semantic chat rescans merely to assess context health; bootstrap successors from durable repository state plus a delta handoff since the prior checkpoint.
 - Consequences: Foundation 1.19 adds runtime-neutral session lifecycle/handoff contracts and an optional `ai-work` reference command while leaving actual new-session creation client-specific and manual when unattested.
 - Full record: `decisions/DEC-0022-session-lifecycle-rotation.md`.
+
+## DEC-0023 — Bounded processing with scoped rules and session-local reuse
+
+Accepted 2026-10-09. See [decision record](decisions/DEC-0023-bounded-processing.md).

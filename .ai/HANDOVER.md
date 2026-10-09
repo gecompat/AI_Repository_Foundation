@@ -1,5 +1,10 @@
 # Handover
 
+
+## Foundation 1.20 bounded processing — WI-0035
+
+Scoped entrypoints, core session reuse, shared budgets, advisory integration audit, and proportionate review defaults are locally validated: 298 regression tests passed; transfer/hash/feature/registry/backlog and full Foundation gates passed with two existing self-scan warnings. WI-0035 implementation is complete. Integration requires successful CI at the exact final PR head; no target project is upgraded automatically. DEC-0023 records the protected boundaries.
+
 Status: GENERATED/EVIDENCE
 
 ## Current state
