@@ -106,16 +106,17 @@ def capability(
 
 
 class AISystemIndependenceTests(unittest.TestCase):
-    def test_default_transfer_contains_no_executable_ai_runtime(self) -> None:
+    def test_default_transfer_contains_only_deterministic_processing_helper(self) -> None:
         manifest = json.loads((ROOT / "foundation/manifest.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["default_capabilities"], [])
         executable_suffixes = {".py", ".ps1", ".exe", ".dll", ".so", ".dylib"}
-        self.assertFalse([row["source"] for row in manifest["core"] if Path(row["source"]).suffix.lower() in executable_suffixes])
+        self.assertEqual([row["source"] for row in manifest["core"] if Path(row["source"]).suffix.lower() in executable_suffixes], ["foundation/runtime/processing_efficiency.py"])
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
             with redirect_stdout(StringIO()):
                 self.assertEqual(installer.main([str(target), "--adapters", "none", "--apply"]), 0)
-            self.assertEqual(list(target.rglob("*.py")), [])
+            self.assertEqual([p.relative_to(target).as_posix() for p in target.rglob("*.py")],
+                             [".ai/foundation/runtime/processing_efficiency.py"])
             rules = (target / ".ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md").read_text(encoding="utf-8")
             self.assertIn("Foundation rules, installation, upgrade assessment", rules)
             self.assertIn("every optional capability is unavailable", rules)
