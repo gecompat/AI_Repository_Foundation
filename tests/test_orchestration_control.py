@@ -41,11 +41,11 @@ class ControlTests(unittest.TestCase):
                     "state_root": str(self.state),
                     "max_dispatches": 5, "start_request": request(self.root), "research_ref": "research-authorized",
                     "client": {"client_id": "HarborConsole", "source_ref": "host-capabilities",
-                               "valid_until": "2027-01-01T00:00:00Z", "capabilities": sorted(controller.CAPABILITIES),
+                               "valid_until": (max(AT, ai_orchestrator.utc_now()) + timedelta(days=2)).isoformat(), "capabilities": sorted(controller.CAPABILITIES),
                                "observation_path": str(self.snapshot_path)}}
         self.snapshot = {"schema_version": 1, "contract": controller.CONTRACT, "job_id": "job-1",
                          "client_id": "HarborConsole", "observed_at": "2026-09-08T11:00:00Z",
-                         "valid_until": "2027-01-01T00:00:00Z", "generation": 0, "owner_session_id": "old-chat",
+                         "valid_until": self.cfg["client"]["valid_until"], "generation": 0, "owner_session_id": "old-chat",
                          "execution": "RUNNING", "work_remaining": True, "executable": True,
                          "checkpoint_ref": "checkpoint-1", "completion_verified": False,
                          "models": [{"connection_id": "one", "model_id": "alpha"}, {"connection_id": "two", "model_id": "beta"}]}
