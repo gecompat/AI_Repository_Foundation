@@ -2,15 +2,15 @@
 
 Status: GENERATED/EVIDENCE
 Last updated: 2026-10-19
-Foundation version: 1.24.0 candidate
+Foundation version: 1.24.0
 
 ## Foundation 1.24.0 — WI-0039 / DEC-0027
 
-The rules candidate adds optional test-evidence reuse policy, protected producer/verifier and equivalence obligations, conservative fallback and compact deterministic success reporting. It is registered for transfer and upgrade assessment. Existing schemas and executable capabilities are unchanged. The [prompt assessment](../Documentation/Quality/TEST_EVIDENCE_PROMPT_ASSESSMENT_2026-10-19.md) explains corrections and scope.
+The ruleset adds optional test-evidence reuse policy, protected producer/verifier and equivalence obligations, conservative fallback and compact deterministic success reporting. It is registered for transfer and upgrade assessment. Existing schemas and executable capabilities are unchanged. The [prompt assessment](../Documentation/Quality/TEST_EVIDENCE_PROMPT_ASSESSMENT_2026-10-19.md) explains corrections and scope.
 
 Local Windows validation on 2026-10-19 passed all 350 regression tests, including installation, packaging, legacy schema/capability compatibility and the new 1.23-to-1.24 upgrade regression. All 51 focused installation/provenance/upgrade tests passed after correcting four stale version assertions. Transfer/hash/feature/version, registry/backlog and full Foundation gates passed; the validator retains its two known self-scan warnings. All 63 checked local Markdown file links resolve.
 
-WI-0039 is implemented. No live host/CI evidence recognition, native SQL/provider acceptance, cryptographic trust implementation, other-project installation or measured savings is claimed. The source branch is `codex/test-evidence-reuse-policy`; main remains the integrated 1.23.0 baseline until a separate authorized merge. The delivery PR records current remote checks; exact revision checks and semantic registry merge equivalence remain required before integration.
+WI-0039 is implemented. No live host/CI evidence recognition, native SQL/provider acceptance, cryptographic trust implementation, other-project installation or measured savings is claimed. The user's subsequent follow-up authorizes integration into main and cleanup of verified completed branches, superseding the original implementation-only delivery scope. [PR #40](https://github.com/gecompat/AI_Repository_Foundation/pull/40) is the integration record. Implementation head `c5f9d2de811a4092f89e35810fda8878a08c4ea9` passed all four checks in Foundation CI run `39263394364` and registry run `39263394529`. Integration metadata changes require fresh exact-head checks and semantic registry/Git-merge equivalence against current main. The PR records current checks and, upon integration, the merge receipt; post-merge validation is available in [main Foundation CI](https://github.com/gecompat/AI_Repository_Foundation/actions/workflows/foundation-ci.yml?query=branch%3Amain).
 
 ## Foundation 1.23.0 — WI-0038 / DEC-0026
 
