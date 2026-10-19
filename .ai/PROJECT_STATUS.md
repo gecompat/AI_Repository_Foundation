@@ -1,8 +1,16 @@
 # Project Status
 
 Status: GENERATED/EVIDENCE
-Last updated: 2026-10-09
-Foundation version: 1.23.0
+Last updated: 2026-10-19
+Foundation version: 1.24.0 candidate
+
+## Foundation 1.24.0 — WI-0039 / DEC-0027
+
+The rules candidate adds optional test-evidence reuse policy, protected producer/verifier and equivalence obligations, conservative fallback and compact deterministic success reporting. It is registered for transfer and upgrade assessment. Existing schemas and executable capabilities are unchanged. The [prompt assessment](../Documentation/Quality/TEST_EVIDENCE_PROMPT_ASSESSMENT_2026-10-19.md) explains corrections and scope.
+
+Local Windows validation on 2026-10-19 passed all 350 regression tests, including installation, packaging, legacy schema/capability compatibility and the new 1.23-to-1.24 upgrade regression. All 51 focused installation/provenance/upgrade tests passed after correcting four stale version assertions. Transfer/hash/feature/version, registry/backlog and full Foundation gates passed; the validator retains its two known self-scan warnings. All 63 checked local Markdown file links resolve.
+
+WI-0039 is implemented. No live host/CI evidence recognition, native SQL/provider acceptance, cryptographic trust implementation, other-project installation or measured savings is claimed. The source branch is `codex/test-evidence-reuse-policy`; main remains the integrated 1.23.0 baseline until a separate authorized merge. The delivery PR records current remote checks; exact revision checks and semantic registry merge equivalence remain required before integration.
 
 ## Foundation 1.23.0 — WI-0038 / DEC-0026
 

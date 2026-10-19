@@ -36,6 +36,7 @@ Existing project rules do not need to be rewritten into these labels. Use semant
 - authorization and working behavior: `WORKING_RULES.md`
 - model/resource selection and target-policy mapping: `MODEL_ROUTING_POLICY.md`
 - validation, status vocabulary, portable LF/CRLF drift semantics, infrastructure availability, and manual test plans: `VALIDATION_POLICY.md`
+- optional cross-host test recognition, protected producer/verifier trust, equivalence and safe fallback: `TEST_EVIDENCE_REUSE_POLICY.md` (policy only; no executable adapter or activation)
 - data handling and narrow provenance exceptions: `DATA_PRIVACY_AND_CONFIDENTIALITY.md`
 - safe operations: `SECURITY_AND_SAFE_OPERATIONS.md`
 - documentation truth: `DOCUMENTATION_POLICY.md`

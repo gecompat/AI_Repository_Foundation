@@ -2,6 +2,12 @@
 
 Status: GENERATED/EVIDENCE
 
+## Foundation 1.24.0 candidate — WI-0039 / DEC-0027
+
+The bounded policy/documentation change is implemented on `codex/test-evidence-reuse-policy`, based on main `ec6ece8acde5328af0836bae559003eac1c51b41`. Read the [assessment](../Documentation/Quality/TEST_EVIDENCE_PROMPT_ASSESSMENT_2026-10-19.md) and new policy for scope. Local Windows validation passed all 350 regression tests, 51 focused installation/provenance/upgrade tests, transfer/hash/feature/version, registry/backlog and full Foundation gates, with only the two known validator self-scan warnings. All 63 checked local Markdown file links resolve. The delivery PR records current remote checks. Existing evidence schemas/capabilities stay unchanged; this is no executable cross-host trust implementation. No merge or target upgrade is included.
+
+Before future integration, recheck current main, open-PR identity collisions, exact PR checks and semantic registry merge equivalence. Activating reuse in a project requires its own protected adapter, trust/equivalence decisions and real host/platform acceptance.
+
 ## Foundation 1.23.0 — WI-0038 / DEC-0026
 
 The optional deterministic orchestrator controller is implemented and qualified. [PR #39](https://github.com/gecompat/AI_Repository_Foundation/pull/39) integrates it into main after [PR #38](https://github.com/gecompat/AI_Repository_Foundation/pull/38), which was squash-merged on 2026-10-09 as fa5f0884cb6467a4ed1777b0ea436e6f472bb018 (Foundation 1.22.0). The user's subsequent explicit merge request authorizes this integration and supersedes the original implementation-only delivery scope.

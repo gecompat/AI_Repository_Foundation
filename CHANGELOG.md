@@ -2,6 +2,12 @@
 
 All notable Foundation changes follow Semantic Versioning.
 
+## [1.24.0] - 2026-10-19
+
+- Add a portable test-evidence reuse policy separating execution, producer trust, current gate equivalence, reuse and CI publication; adoption requires a protected project adapter and does not activate host or repository permissions.
+- Specify conservative invalidation, complete oracles/cleanup, environment freshness, truthful fallback and compact deterministic success reporting without additional model confirmation. Existing evidence schemas and executable capabilities remain unchanged.
+- Register the new upgrade feature and document the prompt assessment and project-owned activation/validation obligations. No live cross-host reuse or native test acceptance is claimed.
+
 ## [1.23.0] - 2026-10-09
 
 ### Added and changed

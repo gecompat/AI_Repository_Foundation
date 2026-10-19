@@ -179,6 +179,7 @@ This map uses every current semantic feature ID from the [catalog](../../foundat
 | `privacy-classification` | Handle data by class, destination and authority; real does not mean confidential | [Data privacy](../Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md) |
 | `foundation-attribution` | Namespaced MIT attribution; preserve target license | [Notice](../../foundation/AI_REPOSITORY_FOUNDATION_NOTICE.md) |
 | `layered-validation` | Integrity, semantic and empirical scopes; no invented success | [Validation policy](../../.ai/VALIDATION_POLICY.md) |
+| `test-evidence-reuse` | Optional recognition of complete tests through protected trust and current equivalence; policy only, project adapter required | [Reuse policy](../Standards/TEST_EVIDENCE_REUSE_POLICY.md) |
 | `semantic-integration` | Preserve mature compatible rules; resolve meaningful conflicts | [Semantic integration](../Standards/SEMANTIC_INTEGRATION_POLICY.md) |
 | `model-routing-interoperability` | Portable tiers and evidence-based decisions; no mandatory provider | [Model policy](../../.ai/MODEL_ROUTING_POLICY.md), optional `model-router` |
 | `persistent-identity` | Stable UID/reference/alias/revision; never silently reassign IDs | [Identity policy](../Standards/PERSISTENT_IDENTITY_POLICY.md) |
