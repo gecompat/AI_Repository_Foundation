@@ -221,3 +221,7 @@ Accepted 2026-10-09. See [decision record](decisions/DEC-0025-provider-open-runt
 ## DEC-0026 — Bounded deterministic provider-neutral orchestrator control
 
 Accepted 2026-10-09. See [decision record](decisions/DEC-0026-deterministic-orchestrator-control.md).
+
+## DEC-0027 — Optional test evidence reuse with protected trust boundaries
+
+Accepted 2026-10-19. See [decision record](decisions/DEC-0027-test-evidence-reuse-policy.md).

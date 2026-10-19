@@ -10,6 +10,7 @@ authority:
     - .ai/WORKING_RULES.md
     - .ai/MODEL_ROUTING_POLICY.md
     - .ai/VALIDATION_POLICY.md
+    - Documentation/Standards/TEST_EVIDENCE_REUSE_POLICY.md
     - .ai/AI_WORK_PROFILE.md
     - .ai/ai-work/profile.json
     - .ai/FOUNDATION.md
@@ -27,6 +28,7 @@ authority:
     - Documentation/Architecture/decisions/DEC-0024-processing-overhead-assessment.md
     - Documentation/Architecture/decisions/DEC-0025-provider-open-runtime-and-documentation.md
     - Documentation/Architecture/decisions/DEC-0026-deterministic-orchestrator-control.md
+    - Documentation/Architecture/decisions/DEC-0027-test-evidence-reuse-policy.md
     - Documentation/Architecture/IDENTIFIER_MIGRATION_2026-08-24.md
     - Documentation/Standards/DATA_PRIVACY_AND_CONFIDENTIALITY.md
     - Documentation/Standards/SECURITY_AND_SAFE_OPERATIONS.md
