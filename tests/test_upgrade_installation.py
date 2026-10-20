@@ -12,10 +12,94 @@ ROOT = Path(__file__).resolve().parents[1]
 sys.path.insert(0, str(ROOT / "tools"))
 
 import install_foundation  # noqa: E402
+import foundation_validator  # noqa: E402
 import upgrade_applicability  # noqa: E402
 
 
 class UpgradeInstallationTests(unittest.TestCase):
+    def test_1_24_to_1_25_requires_documentation_assessment_without_capability_activation(self) -> None:
+        catalog = json.loads((ROOT / "foundation/feature_catalog.json").read_text(encoding="utf-8"))
+        candidates = upgrade_applicability.candidate_features(catalog, "1.24.0", "1.25.0")
+        self.assertEqual([item["feature_id"] for item in candidates], ["human-documentation-paths"])
+        feature = candidates[0]
+        self.assertEqual(feature["candidate_reasons"], ["introduced_in:1.25.0"])
+        self.assertEqual(feature["applicability"]["mode"], "ALWAYS")
+        self.assertEqual(feature["recommendation"]["when_applicable"], "APPLY_DEFAULT")
+        self.assertNotIn("human-documentation-paths", {
+            item["feature_id"] for item in
+            upgrade_applicability.candidate_features(catalog, "1.25.0", "1.25.0")
+        })
+
+    def test_documentation_policy_is_discoverable_and_project_paths_stay_owned(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            owned = {
+                "README.md": b"# Project\n\nCurrent prototype; see manuals/start.md.\n",
+                "LICENSE": b"Project-specific terms\n",
+                "manuals/start.md": b"# Start\n\nExisting human path.\n",
+                "records/maintenance.md": b"# Maintenance\n\nExisting project planning.\n",
+            }
+            for name, content in owned.items():
+                path = target / name
+                path.parent.mkdir(parents=True, exist_ok=True)
+                path.write_bytes(content)
+            with redirect_stdout(StringIO()):
+                rc = install_foundation.main([str(target), "--adapters", "none", "--apply"])
+            self.assertEqual(rc, 0)
+            for name, content in owned.items():
+                self.assertEqual((target / name).read_bytes(), content, name)
+            # Exercise the actual installed discovery chain and exact transferred source.
+            agents = (target / "AGENTS.md").read_text(encoding="utf-8")
+            self.assertIn(".ai/foundation/FOUNDATION_RULESET.md", agents)
+            self.assertIn(".ai/foundation/DOCUMENTATION_POLICY.md", agents)
+            baseline = target / ".ai/foundation"
+            self.assertIn("DOCUMENTATION_POLICY.md", (baseline / "FOUNDATION_RULESET.md").read_text(encoding="utf-8"))
+            self.assertEqual((baseline / "DOCUMENTATION_POLICY.md").read_text(encoding="utf-8"),
+                             (ROOT / "Documentation/Standards/DOCUMENTATION_POLICY.md").read_text(encoding="utf-8"))
+            installed_catalog = json.loads((baseline / "feature_catalog.json").read_text(encoding="utf-8"))
+            self.assertIn("human-documentation-paths", installed_catalog["features"])
+            self.assertFalse((baseline / "human-documentation-paths").exists())
+
+    def test_existing_documentation_rule_requires_merge_without_rewriting_legacy_guides(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            rule = target / ".ai/foundation/DOCUMENTATION_POLICY.md"
+            rule.parent.mkdir(parents=True)
+            legacy_rule = b"# Documentation\n\nExisting project documentation rule.\n"
+            rule.write_bytes(legacy_rule)
+            guide = target / "guides/start.md"
+            guide.parent.mkdir()
+            guide.write_bytes(b"# Getting Started\n\nHistorical checkpoint before the original introduction.\n")
+            before = {p.relative_to(target): p.read_bytes() for p in target.rglob("*") if p.is_file()}
+            manifest = install_foundation.load_manifest()
+            entries = install_foundation.transfer_entries(manifest, [], [])
+            states = {item.entry.target_rel.as_posix(): item.state
+                      for item in install_foundation.build_plan(target, entries)}
+            self.assertEqual(states[".ai/foundation/DOCUMENTATION_POLICY.md"], "MERGE_REQUIRED")
+            with redirect_stdout(StringIO()):
+                rc = install_foundation.main([str(target), "--adapters", "none", "--apply"])
+            self.assertNotEqual(rc, 0)
+            after = {p.relative_to(target): p.read_bytes() for p in target.rglob("*") if p.is_file()}
+            self.assertEqual(after, before)
+
+    def test_integrity_acceptance_does_not_classify_legacy_human_documentation(self) -> None:
+        with tempfile.TemporaryDirectory() as tmp:
+            target = Path(tmp)
+            guide = target / "manuals/start.md"
+            guide.parent.mkdir()
+            content = b"# Getting Started\n\nInternal checkpoint history; human rewrite remains project work.\n"
+            guide.write_bytes(content)
+            with redirect_stdout(StringIO()):
+                installed = install_foundation.main([str(target), "--adapters", "none", "--apply"])
+            self.assertEqual(installed, 0)
+            output = StringIO()
+            with redirect_stdout(output):
+                rc = foundation_validator.main(["--target", str(target), "--adapters", "none", "--json"])
+            self.assertEqual(rc, 0)
+            self.assertIn("FOUNDATION_INTEGRITY", output.getvalue())
+            self.assertNotIn("manuals/start.md", output.getvalue())
+            self.assertEqual(guide.read_bytes(), content)
+
     def test_installed_repo_map_exposes_upgrade_registry_continuity_cache_routing_and_ai_work_contracts(self) -> None:
         with tempfile.TemporaryDirectory() as tmp:
             target = Path(tmp)
@@ -70,7 +154,7 @@ class UpgradeInstallationTests(unittest.TestCase):
         manifest = json.loads((ROOT / "foundation" / "manifest.json").read_text(encoding="utf-8"))
         catalog = json.loads((ROOT / "foundation" / "feature_catalog.json").read_text(encoding="utf-8"))
         self.assertEqual(manifest["ruleset_version"], catalog["ruleset_version"])
-        self.assertEqual(manifest["ruleset_version"], "1.24.0")
+        self.assertEqual(manifest["ruleset_version"], "1.25.0")
 
     def test_1_23_to_1_24_surfaces_reuse_without_unrelated_activation_obligations(self) -> None:
         catalog = json.loads((ROOT / "foundation/feature_catalog.json").read_text(encoding="utf-8"))

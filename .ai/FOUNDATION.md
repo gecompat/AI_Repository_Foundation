@@ -3,7 +3,7 @@
 Status: AUTHORITATIVE
 
 - foundation: AI Repository Foundation
-- version: 1.24.0
+- version: 1.25.0
 - profile: general
 - canonical_entrypoint: AGENTS.md
 - project_license: MIT
@@ -38,6 +38,7 @@ Status: AUTHORITATIVE
 - ai_client_integration_contract: semantic detect/plan/apply/verify/rollback; expiring native client model-routing capabilities; read-only VS Code role/subagent plans; requested-versus-actual dispatch evidence; privacy-safe external manual handoff; quarantined governed adapter synthesis
 - validation_availability_contract: `VALIDATION_FAILURE` is never break-glass eligible; `INFRASTRUCTURE_UNAVAILABLE` may use an authorized project path; `UNKNOWN` is non-bypassable
 - project_governance_discovery: active target governance must remain transitively discoverable from root `AGENTS.md`
+- human_documentation: complete reader paths, clear directory purposes, shared authority, separate AI control; project-semantic path acceptance and scoped legacy remediation under `Documentation/Standards/DOCUMENTATION_POLICY.md`
 - identity_contract: stable no-reuse identity floor; Foundation default = opaque RFC 9562 UUID machine UID plus flat typed project-local human reference; existing-project default = `PRESERVE`
 - registration_contract: one Registration Authority per overlapping final-reference scope; humans and AI use the same authority; `DIRECT` or `DEFERRED` allocation semantics are language-neutral
 - central_registry_contract: repository-native JSON default = `foundation-artifact-registry/v2`; complete records are central; human ref is object key; no `next_sequence`; object-level merge plus Git-result verification

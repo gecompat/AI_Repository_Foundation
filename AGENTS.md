@@ -29,6 +29,8 @@ At the start of every new run, native instruction discovery remains mandatory. F
 
 ## Canonical reading path
 
+For changes affecting documented behavior or navigation, apply [the documentation policy](Documentation/Standards/DOCUMENTATION_POLICY.md), including change-driven impact selection and bounded context, to complete affected reading paths, directory clarity, and AI-control separation. Record scoped path acceptance in existing validation evidence; Foundation integrity does not certify readability.
+
 - Foundation-project context: `.ai/PROJECT_CONTEXT.md`
 - Foundation-project rules: `.ai/PROJECT_RULES.md`
 - workflow and authorization: `.ai/WORKING_RULES.md`

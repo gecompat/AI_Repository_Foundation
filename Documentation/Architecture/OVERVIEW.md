@@ -9,6 +9,7 @@ The Foundation separates durable governance from optional execution. Its rules, 
 | Component | Input → output | Responsibility and boundary |
 | --- | --- | --- |
 | Native discovery and governance | current task + client-discovered rules → authorized scoped work | Project authority, privacy and safe operations; discovery adapters import rather than duplicate rules |
+| Documentation paths | reader task + shared technical sources → understandable guidance and inspection | Human instructions, planning/evidence and AI control have distinct reading roles; legacy adoption is progressive |
 | Transfer and upgrade | exact source manifest + target state → preview, assessment, installed receipt | Whitelist, compatible target governance, complete feature delta, portable hashes; no source-project state transfer |
 | Project continuity | durable context/decisions/status → successor understanding | Repository facts survive a conversation; a compact handoff supplements them |
 | Identity and registration | artifact creation/reservation → permanent UID/reference/relations | One authority per scope; optional clients or GitHub v2 object merging preserve IDs and generated views |
@@ -42,6 +43,8 @@ flowchart LR
 ```
 
 Version mirrors follow the manifest; feature histories expose changed behavior to upgrades. Provenance identifies content and intentional overrides, while target validators establish correctness for their respective claims.
+
+Human guidance and AI control use the same authoritative technical contracts. The [documentation policy](../Standards/DOCUMENTATION_POLICY.md) defines their reading roles, directory clarity and gradual adoption. The [user guide's inspection path](../Guides/USER_GUIDE.md#check-an-installation-or-investigate-a-problem) explains how a person follows the installed rules to formats, generators and evidence. This does not make every linked contract mandatory context for every task, nor make an integrity check a readability assessment.
 
 ## AI work layers
 
