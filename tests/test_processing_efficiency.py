@@ -54,6 +54,35 @@ class ProcessingEfficiencyTests(unittest.TestCase):
                 session.acknowledge(incomplete, {s: "Analyzed " + s for s in deps})
             self.assertEqual(processing.SessionContext().check(first)["reuse"], [])
 
+    def test_configuration_change_invalidates_unchanged_documentation_transitively(self):
+        with tempfile.TemporaryDirectory() as tmp:
+            root = Path(tmp)
+            sources = {"start.md": "Follow usage.md", "usage.md": "Use the default port",
+                       "config.json": '{"port": 8000}', "independent.md": "License"}
+            for name, content in sources.items():
+                (root / name).write_text(content, encoding="utf-8")
+            dependencies = {"start.md": ["usage.md"], "usage.md": ["config.json"],
+                            "config.json": [], "independent.md": []}
+
+            def capture():
+                return processing.capture_context(
+                    root, dependencies, repository_identity="repo", authority_key="a" * 64,
+                    scope_key="documented-default-port", discovery_complete=True)
+
+            session = processing.SessionContext()
+            first = capture()
+            session.acknowledge(first, {name: "Analyzed " + name for name in sources})
+            self.assertEqual(session.check(capture())["status"], "REUSE")
+            (root / "config.json").write_text('{"port": 9000}', encoding="utf-8")
+            changed = capture()
+            self.assertEqual((root / "usage.md").read_text(encoding="utf-8"), sources["usage.md"])
+            self.assertEqual(session.check(changed)["reread"],
+                             ["config.json", "start.md", "usage.md"])
+            self.assertEqual(session.check(changed)["reuse"], ["independent.md"])
+            with self.assertRaises(KeyError):
+                session.analysis_for(changed, "usage.md")
+            self.assertEqual(processing.SessionContext().check(changed)["reuse"], [])
+
     def test_equivalent_worktree_eol_reuses_but_scope_and_repository_do_not(self):
         with tempfile.TemporaryDirectory() as tmp:
             roots = [Path(tmp) / n for n in ("one", "two")]

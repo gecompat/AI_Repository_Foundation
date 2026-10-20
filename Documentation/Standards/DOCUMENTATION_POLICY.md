@@ -65,9 +65,21 @@ On installation/upgrade into an existing project, assess the central human paths
 
 An upgrade may complete with these explicit, planned legacy gaps, provided the new rules are integrated, active contradictions are resolved, and new/materially changed paths comply. Report the remaining scope and do not claim complete documentation conformity. This transition is not a permanent exemption: the affected gap must be addressed when its trigger or a material change to that path is reached. Scope an unauthorized broader migration as follow-up work instead of silently expanding the task.
 
+## Change-driven drift prevention and bounded context
+
+For each coherent material change, determine affected documentation paths or justify no documentation impact in the existing change/validation evidence. Include changes to behavior, APIs, defaults, configuration, schemas, generators and file locations even when no documentation file was edited. Update affected guidance with the change; use the gradual-adoption contract for unrelated legacy gaps.
+
+Select the relevant sources and paths locally using the actual working-tree diff, focused searches, existing source links and known dependencies. Include necessary continuation pages and transitive dependencies. A missing dependency map is not proof of no impact: inspect the relevant boundary, expand only as needed, and report unresolved coverage rather than claiming acceptance. No new documentation registry or per-page metadata is required.
+
+Use existing deterministic checks first for links/anchors, generated views, schemas and other applicable contracts. Give a model bounded changes, necessary surrounding context and compact findings with source locations; do not routinely send the documentation corpus or full successful logs. Link validity alone cannot detect a factually obsolete instruction.
+
+Apply the [processing efficiency policy](PROCESSING_EFFICIENCY_POLICY.md) to analysis reuse. Verify current authority, scope, actual selected source bytes and relevant dependencies, including non-documentation sources. A changed dependency invalidates affected analysis even if the documentation bytes are unchanged. Reuse only analysis actually still available; hashes and past success do not reconstruct lost understanding. In a new session or after analysis loss, read the selected relevant scope, not automatically the whole repository.
+
+Complete affected-path coverage does not require repeatedly ingesting every full page: assess changed passages in context and combine them with valid retained analysis of unchanged portions. Broaden semantic inspection for a concrete finding, unresolved impact boundary or existing gate; bound and explain that scope. A timer, new commit or unchanged status alone does not justify a whole-corpus reread or another model review. Existing mandatory checks and independent-review obligations remain in force. Token savings are not a semantic correctness guarantee or a measured claim without evidence.
+
 ## Proportionate acceptance
 
-The responsible author follows affected paths as the intended reader, including necessary linked pages and a relevant troubleshooting/technical-inspection path. Check purpose, prerequisites, actions or learning sequence, results, interpretation, limitations, navigation, and AI/source discoverability where applicable. Check path consumers after a reorganization.
+The responsible author follows affected paths as the intended reader, including necessary linked pages and a relevant troubleshooting/technical-inspection path, using the bounded-context procedure above. Check purpose, prerequisites, actions or learning sequence, results, interpretation, limitations, navigation, and AI/source discoverability where applicable. Check path consumers after a reorganization.
 
 Use existing link checks; inspect relevant links manually where no checker exists. Record the paths, result, source binding, and remaining gaps in the existing PR or validation evidence. This does not create a new per-action report system. Extra independent reviews or model calls require an existing obligation or a concrete unresolved risk.
 

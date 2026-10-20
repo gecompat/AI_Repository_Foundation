@@ -15,5 +15,5 @@ Installation/upgrade and material workflow-rule changes require the processing-o
 
 If bounded autonomous orchestration is selected, use the optional control contract in `.ai/foundation/AI_WORK_ORCHESTRATION_POLICY.md`; its configured `HEARTBEAT` meaning adds no authority.
 
-For documentation and navigation changes, apply `.ai/foundation/DOCUMENTATION_POLICY.md` to the complete affected reading paths and separately discoverable AI control. Check directory purposes and necessary continuation pages; assess legacy gaps during integration without claiming readability from a green integrity check.
+For changes affecting documented behavior or navigation, apply `.ai/foundation/DOCUMENTATION_POLICY.md`, including change-driven impact selection and bounded context, to the complete affected reading paths and separately discoverable AI control. Check directory purposes and necessary continuation pages; assess legacy gaps during integration without claiming readability from a green integrity check.
 <!-- AI_REPOSITORY_FOUNDATION:END -->

@@ -21,7 +21,8 @@
       ],
       "dependencies": [
         "layered-validation",
-        "semantic-integration"
+        "semantic-integration",
+        "bounded-processing-efficiency"
       ],
       "applicability": {
         "mode": "ALWAYS",
@@ -33,12 +34,13 @@
         "questions": [
           "Can intended readers complete the central tasks and necessary continuation pages without chat history or unexplained work IDs?",
           "Are shared authority, directory purposes, AI-control discovery and technical-inspection paths understandable?",
+          "How are documentation impacts of behavior/configuration changes selected and checked without repeatedly ingesting unchanged texts?",
           "Which legacy gaps need concrete scope, owner or role, and resumption trigger in existing project planning?"
         ]
       },
       "recommendation": {
         "when_applicable": "APPLY_DEFAULT",
-        "summary": "Apply the documentation policy to new/materially changed paths and assess existing human/AI entry paths during integration. Plan scoped legacy remediation without claiming full documentation conformity from installed rules or passing links.",
+        "summary": "Apply the documentation policy to new/materially changed paths, including behavior/configuration impacts with bounded context, and assess existing human/AI entry paths during integration. Plan scoped legacy remediation without claiming full documentation conformity from installed rules or passing links.",
         "decision_required_when": [
           "a needed directory or documentation migration exceeds current scope or has unresolved authority"
         ]

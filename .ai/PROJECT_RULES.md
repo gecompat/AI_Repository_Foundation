@@ -21,7 +21,7 @@ Existing target rules do not need to adopt these labels. During integration, cla
 - Stop on unclear or incompatible third-party rights when incorporation or distribution would create material risk.
 - Tool adapters perform discovery/import only and must not define parallel governance. Preserve and rehome unique existing adapter governance before thinning an adapter.
 - Preserve active project-specific governance and make it discoverable from the root repository instruction tree.
-- Apply `DOCUMENTATION_POLICY.md` to complete human reading paths, navigable storage, shared authoritative sources, and separately discoverable AI control. Its gradual-adoption contract governs legacy gaps; a Foundation integrity check does not establish documentation conformity.
+- Apply `DOCUMENTATION_POLICY.md` to complete human reading paths, navigable storage, shared authoritative sources, and separately discoverable AI control. Follow its change-driven impact and bounded-context procedure even when only behavior/configuration changes; its gradual-adoption contract governs legacy gaps. A Foundation integrity check does not establish documentation conformity.
 - Preserve published durable identifiers and historical references; never silently reuse, rename, or reinterpret them for a different artifact.
 - Keep canonical identity independent of mutable status, owner, hierarchy, phase, location, or tool assignment; existing references that historically encode such values remain valid and need not be renamed.
 - Treat identifiers as references, never as authorization credentials.

@@ -6,6 +6,7 @@ All notable Foundation changes follow Semantic Versioning.
 
 - Require complete understandable human reading paths, clear directory purposes, shared authoritative technical sources, and separately discoverable AI control. Root orientation and instructions remain distinct from development logs and acceptance histories.
 - Introduce gradual legacy adoption: assess existing paths during integration/upgrade and plan remaining gaps with scope, owner/role and trigger. Validate new/materially changed paths as project semantics; Foundation integrity does not establish readability.
+- Require change-driven documentation impact checks even for behavior/configuration-only changes. Select affected paths locally and reuse actually available analysis with dependency invalidation under the processing efficiency policy; avoid routine whole-corpus/model rereads.
 - Register `human-documentation-paths`, update transfer/discovery and validation guidance, and improve Foundation's own installation/upgrade/debugging paths. Source completion commands move to the contribution guide. No new documentation schema, validator, capability, or target-repository migration is introduced.
 
 ## [1.24.0] - 2026-10-19
