@@ -104,6 +104,8 @@ Use the semantic classes `EQUIVALENT`, `PROJECT_STRONGER`, `PROJECT_SELECTABLE_O
 
 Feature applicability and semantic compatibility are separate layers: first ensure every newer/materially-changed feature was considered, then integrate the applicable behavior with the target's existing governance.
 
+For human documentation and AI-control separation, apply `Documentation/Standards/DOCUMENTATION_POLICY.md` (installed as `.ai/foundation/DOCUMENTATION_POLICY.md`). Assess central reading paths and storage purposes, validate affected continuations as project semantics, and register legacy remediation with scope, owner/role and trigger. The rule permits a completed upgrade with explicitly planned legacy gaps, not a claim of complete documentation conformity. Preserve understandable target structures; scope necessary reorganizations and their path consumers rather than copying Foundation-project documentation.
+
 ## Persistent identifiers
 
 Read `PERSISTENT_IDENTITY_POLICY.md` whenever durable project identifiers exist or are introduced.

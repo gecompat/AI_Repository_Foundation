@@ -1,8 +1,18 @@
 # Project Status
 
 Status: GENERATED/EVIDENCE
-Last updated: 2026-10-19
-Foundation version: 1.24.0
+Last updated: 2026-10-20
+Foundation version: 1.25.0 candidate
+
+## Foundation 1.25.0 — WI-0040 / DEC-0028
+
+The user-approved human documentation policy is implemented in the candidate. It requires complete reader paths, understandable directory purposes, shared authority, separately discoverable AI control, and current/history separation. Existing projects use scoped legacy remediation with owner/role and trigger. The [decision](../Documentation/Architecture/decisions/DEC-0028-human-documentation-paths.md) records authority, boundaries and processing overhead; the policy is the sole detailed rule source.
+
+Foundation's own README now links to human integration and troubleshooting guidance. Source completion commands are maintained in Contributing; the old README anchor remains as a compatibility destination. No target repository is changed.
+
+Local Windows validation on 2026-10-20 with Python 3.14.7 passed 354 regression tests and 55 final focused installation/provenance/upgrade tests. Transfer/version/hash/feature coverage, canonical registry validation, generated backlog and full Foundation validation passed; only the two pre-existing validator self-scan warnings remain. A final compatibility review retained the previous license/copyright/attribution/historical-decision protection explicitly; focused installation/upgrade and integrity checks cover the final policy bytes. Exact delivery checks remain bound to the PR revision and are not inferred from these local results.
+
+Author path acceptance (`PROJECT_SEMANTIC`) inspected the candidate's actual README → user-guide prerequisites/core install → result/troubleshooting flow; README → integration walkthrough → upgrade/documentation policy → feature assessment; and troubleshooting → AGENTS/repository map → contract/provenance schema/installer → scoped evidence. All 126 local links/anchors in the 21 changed Markdown files resolved after correcting the moved completion-check link. The policy rejects the synthetic front-loaded Getting Started history while permitting concise prototype/safety/directory explanations; the install tests deliberately demonstrate that integrity does not make that readability judgment. Shared contracts remain authoritative and the moved command entry retains its references. This is an author walkthrough, not an independent newcomer study or arbitrary target-documentation certification.
 
 ## Foundation 1.24.0 — WI-0039 / DEC-0027
 

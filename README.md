@@ -4,6 +4,8 @@ AI Repository Foundation is a reusable framework for governing AI-assisted and h
 
 The core consists of readable rules, schemas, discovery bridges, and small deterministic helpers. Optional capabilities add planning, model selection, runtime invocation, client integration, and provisioning. You can use the core with your existing tools and add executable capabilities only where they help.
 
+It is intended for people maintaining software, research, education, documentation, and other knowledge projects. The core and reference tools are implemented; optional live integrations have separate [validation boundaries and limitations](Documentation/Quality/KNOWN_LIMITATIONS.md).
+
 ## What it helps you do
 
 - Continue a software, research, documentation, or knowledge project from repository state rather than chat memory.
@@ -17,6 +19,7 @@ The core consists of readable rules, schemas, discovery bridges, and small deter
 | Area | Core functionality | Optional executable capability / boundary |
 | --- | --- | --- |
 | Governance and continuation | Authority, privacy, safe operations, project context and handover contracts | Existing project governance remains authoritative; chat history is not durable truth |
+| Human documentation | Complete reading paths, understandable directories, shared contracts, and separate AI control | Existing projects adopt progressively; link checks do not certify readability |
 | Installation, upgrades and provenance | Manifest whitelist, semantic feature assessment, portable hashes and installation receipt | Deterministic installer or direct AI transfer; differing files require semantic integration |
 | Identity and registration | Persistent UIDs, stable references, shared Registration Authority | `artifact-registration-clients`, `artifact-registry-github`; existing compatible authorities may remain |
 | Validation and continuity | Integrity/semantic/runtime scopes, honest status, repository recovery contracts | Foundation integrity cannot prove target domain correctness or grant bypass authority |
@@ -59,29 +62,18 @@ Actual compatibility requires protocol, permissions, catalog, model evidence, an
 | Goal | Start here | Then deepen |
 | --- | --- | --- |
 | Learn and try the framework | [User guide](Documentation/Guides/USER_GUIDE.md) | [Architecture](Documentation/Architecture/OVERVIEW.md), [transfer overview](foundation/README.md) |
-| Integrate or upgrade a project | [Transfer protocol](foundation/AI_TRANSFER.md) | [Semantic integration](Documentation/Standards/SEMANTIC_INTEGRATION_POLICY.md), [upgrade applicability](Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md) |
+| Integrate or upgrade a project | [Integration walkthrough](Documentation/Guides/USER_GUIDE.md#integrating-an-existing-repository) | [Transfer protocol](foundation/AI_TRANSFER.md), [upgrade applicability](Documentation/Standards/UPGRADE_APPLICABILITY_POLICY.md) |
+| Investigate an installation or follow machine information | [Installation troubleshooting](Documentation/Guides/USER_GUIDE.md#check-an-installation-or-investigate-a-problem) | [Architecture](Documentation/Architecture/OVERVIEW.md), relevant linked contracts |
 | Understand normative behavior | [Short transferred ruleset](foundation/FOUNDATION_RULESET.template.md) | [Foundation reference](Documentation/Standards/FOUNDATION_REFERENCE.md), relevant linked standards |
 | Configure execution | [Runtime adapters](foundation/capabilities/ai-runtime-adapters/AI_RUNTIME_ADAPTERS.md) | [Router](foundation/capabilities/model-router/MODEL_ROUTER.md), [orchestrator](foundation/capabilities/ai-orchestrator/AI_ORCHESTRATOR.md) |
-| Contribute to Foundation | [Repository contract](AGENTS.md) | [Repository map](.ai/repo_map.yaml), [decisions](Documentation/Architecture/DECISIONS.md), [generated backlog](.ai/BACKLOG.md) |
+| Contribute to Foundation | [Contribution guide](CONTRIBUTING.md) | [Decisions](Documentation/Architecture/DECISIONS.md), project maintenance links in the contribution guide |
 | Inspect release or validation evidence | [Changelog](CHANGELOG.md), [current status](.ai/PROJECT_STATUS.md) | [Handover](.ai/HANDOVER.md), [known limitations](Documentation/Quality/KNOWN_LIMITATIONS.md) |
 
 README, the user guide, and architecture are explanations. Normative rules remain in the linked authoritative contracts. Dated quality reports and older status sections describe historical evidence, not current compatibility guarantees. [Offline package instructions](Documentation/Quality/PACKAGED_RELEASE_ARTIFACT_EVALUATION.md) describe delivery from an exact clean checkout.
 
-## Source completion checks
+<a id="source-completion-checks"></a>
 
-Run these from this Foundation repository; the feature review uses the declared integration base:
-
-```text
-python tools/transfer_manifest_guard.py
-python tools/refresh_manifest_hashes.py --check
-python tools/feature_catalog_guard.py --base origin/main
-python foundation/capabilities/artifact-registry-github/registry_semantic.py validate --registry .ai/identity/registry.json
-python foundation/capabilities/artifact-registry-github/registry_semantic.py backlog --registry .ai/identity/registry.json --output .ai/BACKLOG.md --check
-python tools/foundation_validator.py --profile full
-python -m unittest discover -s tests -v
-```
-
-The [canonical validation map](.ai/repo_map.yaml) and [validation policy](.ai/VALIDATION_POLICY.md) govern completion, including relevant installation/capability checks and successful exact PR-head CI. CI also runs Windows/macOS contracts and registry semantic integrity. An installed target check establishes `FOUNDATION_INTEGRITY` only; its own `PROJECT_SEMANTIC` and `RUNTIME_EMPIRICAL` checks remain required for their respective claims.
+The **AI entry point** is [AGENTS.md](AGENTS.md). It leads to the applicable rules and machine-readable discovery sources. Foundation development checks and project-maintenance details are in [Contributing](CONTRIBUTING.md#source-completion-checks).
 
 ## License
 

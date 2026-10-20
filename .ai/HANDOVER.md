@@ -2,6 +2,12 @@
 
 Status: GENERATED/EVIDENCE
 
+## Foundation 1.25.0 — WI-0040 / DEC-0028
+
+The approved documentation-path policy and discovery/integration/upgrade references are implemented on `codex/human-documentation-paths`. New/materially changed paths must comply; existing documentation debt is assessed and planned with scope, owner/role and trigger. Confusing folders may require relocation with path-consumer checks; the rule does not freeze existing layouts.
+
+Local regression, focused install/upgrade checks and source path acceptance passed; see PROJECT_STATUS for scope and results. Remaining delivery work is the current-revision PR gate and its receipt, followed by the final registry/backlog status. Preserve the old release evidence below. No target upgrades, new documentation schema/tool, extra review chain or live runtime acceptance are included. Integrity alone never certifies readability. Do not merge without a separate user instruction.
+
 ## Foundation 1.24.0 — WI-0039 / DEC-0027
 
 The bounded policy/documentation change is implemented through [PR #40](https://github.com/gecompat/AI_Repository_Foundation/pull/40), based on main `ec6ece8acde5328af0836bae559003eac1c51b41`. Read the [assessment](../Documentation/Quality/TEST_EVIDENCE_PROMPT_ASSESSMENT_2026-10-19.md) and new policy for scope. Local Windows validation passed all 350 regression tests, 51 focused installation/provenance/upgrade tests, transfer/hash/feature/version, registry/backlog and full Foundation gates, with only the two known validator self-scan warnings. All 63 checked local Markdown file links resolve. Implementation head `c5f9d2de811a4092f89e35810fda8878a08c4ea9` passed all four PR checks (Foundation CI `39263394364`; registry integrity `39263394529`). The user's subsequent follow-up authorizes merge and verified completed-branch cleanup; the PR records fresh integration checks and, upon integration, its merge receipt. Existing evidence schemas/capabilities stay unchanged; this is no executable cross-host trust implementation. No target upgrade is included.

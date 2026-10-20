@@ -30,6 +30,13 @@ For example, a documentation project may need only the core. A team with an exis
 
 ## Minimal installation
 
+For the reference commands, use Git and Python 3.12 or newer. Obtain a Foundation checkout and enter it:
+
+```text
+git clone https://github.com/gecompat/AI_Repository_Foundation.git
+cd AI_Repository_Foundation
+```
+
 Choose a Foundation ref and read its [manifest](../../foundation/manifest.json). `ruleset_version` is the single version authority; the feature catalog explains semantic upgrade changes. For a provider-neutral core preview:
 
 ```text
@@ -54,9 +61,33 @@ The reference installer uses Python's standard library. The rules and contracts 
 3. Use [semantic integration](../Standards/SEMANTIC_INTEGRATION_POLICY.md) to classify overlaps: preserve equivalent/stronger compatible rules, rehome unique adapter governance, and resolve protected-floor conflicts explicitly. Keep active project rules discoverable from the root instruction tree.
 4. For upgrades, assess every material candidate from the [feature catalog](../../foundation/feature_catalog.json) under [upgrade applicability](../Standards/UPGRADE_APPLICABILITY_POLICY.md). Existing identifiers default to preservation; optional clients never replace a compatible allocator silently.
 5. Assess actual test triggers, duplicate checks, logs, reviews, model calls and polling under [processing efficiency](../Standards/PROCESSING_EFFICIENCY_POLICY.md). A copied policy or a green integrity scan does not establish an efficient workflow. Explain bounded exceptions or keep unresolved choices pending.
-6. After authorized semantic merges, record each differing selected file and reason through the installer's `--record-provenance --intentional-override "TARGET=REASON"` path. Run target integrity plus its own semantic and runtime checks. Record what ran, what remains manual and the relevant revision.
+6. Assess central human reading paths, directory purposes and the AI entry under the [documentation policy](../Standards/DOCUMENTATION_POLICY.md). A clearer index may suffice; a confusing storage layout may need an authorized reorganization. New/materially changed paths must comply. Put remaining legacy gaps, their owner/role and resumption trigger into existing project planning. You may complete the upgrade with those explicit gaps, while reporting that documentation conformity is incomplete.
+7. After authorized semantic merges, record each differing selected file and reason through the installer's `--record-provenance --intentional-override "TARGET=REASON"` path. Run target integrity plus its own semantic and runtime checks. Record what ran, what remains manual and the relevant revision.
 
 See [validation/provenance](../../.ai/VALIDATION_POLICY.md) for receipt semantics and drift classes. Stronger target rules remain valid unless there is a real logical conflict. Foundation does not create repository bypass authority; continuity handling remains project-owned.
+
+## Check an installation or investigate a problem
+
+After a clean core-only apply, run this from the Foundation checkout:
+
+```text
+python tools/foundation_validator.py --target ../my-project --adapters none
+```
+
+Use the adapters and capabilities actually selected for a different installation. The expected result is no blocking/error findings and managed files matching their baseline or an explicitly recorded override. Read any warnings rather than treating exit success as full acceptance. The check covers Foundation integrity; your project's tests and the author walkthrough of its reading paths establish their separate claims.
+
+| Observation | Inspect next | What to do |
+| --- | --- | --- |
+| Preview reports `MERGE_REQUIRED` | The differing target and the source row in the manifest | Preserve project facts and integrate the selected rule semantically; repeating apply cannot merge it |
+| A selected rule is missing | The reported path and manifest selection | Restore the correct selected source through the installer/semantic integration process, then rerun the check |
+| `UNKNOWN_DRIFT` or an invalid receipt is reported | Target content and `.ai/foundation/installation-provenance.json` | Establish the actual source/version and reason for a difference before recording provenance; do not invent an override |
+| Integrity passes but a guide is confusing | The complete affected reader task and linked pages | Apply the documentation policy as project-semantic work; file presence does not prove understanding |
+
+For human inspection of an installed project's AI behavior, start at its named `AGENTS.md`, follow the short ruleset and relevant project sources, then inspect the applicable contract and linked schema or manifest. The [Foundation reference](../Standards/FOUNDATION_REFERENCE.md) routes by subject; it is not a demand to read every contract.
+
+The [manifest](../../foundation/manifest.json) is the authoritative transfer whitelist; the [feature catalog](../../foundation/feature_catalog.json) explains upgrade behavior. The installed receipt is a derived record of source and installed hashes, constrained by the [provenance schema](../../foundation/schemas/installation-provenance.schema.json); it is not semantic approval. The [installer](../../tools/install_foundation.py) writes it after a clean apply or an explicitly recorded semantic merge. Use [validation policy](../../.ai/VALIDATION_POLICY.md#installed-provenance-and-drift-classification) to interpret findings.
+
+In the Foundation source project, [AGENTS.md](../../AGENTS.md) and the [repository map](../../.ai/repo_map.yaml) lead to active contracts. [Current status](../../.ai/PROJECT_STATUS.md) and linked quality records describe actual evidence and its limits. [Contributing](../../CONTRIBUTING.md) explains registry/backlog generation and source checks. Keep private runtime data outside version control when investigating failures.
 
 ## Choose only the capabilities you need
 
@@ -173,6 +204,7 @@ This map uses every current semantic feature ID from the [catalog](../../foundat
 | Catalog feature | Purpose and main boundary | Authority / implementation |
 | --- | --- | --- |
 | `foundation-baseline` | Shared repository governance; target facts stay project-owned | [Foundation reference](../Standards/FOUNDATION_REFERENCE.md) |
+| `human-documentation-paths` | Human reading paths, clear storage, shared technical sources and separate AI control with gradual adoption | [Documentation policy](../Standards/DOCUMENTATION_POLICY.md) |
 | `rules-only-transfer` | Explicit whitelist transfer; no source-project state copying | [Transfer protocol](../../foundation/AI_TRANSFER.md) |
 | `installed-foundation-provenance` | Portable hashes and exact receipts; not semantic approval | [Validation policy](../../.ai/VALIDATION_POLICY.md) |
 | `authorization-envelope` | Ordinary task effects proceed within scope; destructive targets need exact authority | [Safe operations](../Standards/SECURITY_AND_SAFE_OPERATIONS.md) |
@@ -199,4 +231,4 @@ This map uses every current semantic feature ID from the [catalog](../../foundat
 | `bounded-processing-efficiency` | Scoped reading, exact session reuse, finite budgets; no provider spending enforcement | [Efficiency policy](../Standards/PROCESSING_EFFICIENCY_POLICY.md) |
 | `processing-overhead-assessment` | Inspect actual tests/logs/reviews/model routes; explain bounded stronger exceptions | [Efficiency policy](../Standards/PROCESSING_EFFICIENCY_POLICY.md) |
 
-For component relationships and failure paths, continue with the [architecture overview](../Architecture/OVERVIEW.md). For Foundation development checks use the [README completion commands](../../README.md#source-completion-checks). The current [status](../../.ai/PROJECT_STATUS.md) and [handover](../../.ai/HANDOVER.md) are evidence; older dated sections do not define current source availability. Release history belongs in the [changelog](../../CHANGELOG.md).
+For component relationships and failure paths, continue with the [architecture overview](../Architecture/OVERVIEW.md). For Foundation development checks use the [contribution guide's completion commands](../../CONTRIBUTING.md#source-completion-checks). The current [status](../../.ai/PROJECT_STATUS.md) and [handover](../../.ai/HANDOVER.md) are evidence; older dated sections do not define current source availability. Release history belongs in the [changelog](../../CHANGELOG.md).

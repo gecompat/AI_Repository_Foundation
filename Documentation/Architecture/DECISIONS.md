@@ -225,3 +225,7 @@ Accepted 2026-10-09. See [decision record](decisions/DEC-0026-deterministic-orch
 ## DEC-0027 — Optional test evidence reuse with protected trust boundaries
 
 Accepted 2026-10-19. See [decision record](decisions/DEC-0027-test-evidence-reuse-policy.md).
+
+## DEC-0028 — Human documentation paths and separated AI control with gradual adoption
+
+Accepted 2026-10-20. See [decision record](decisions/DEC-0028-human-documentation-paths.md).
