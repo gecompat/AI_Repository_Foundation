@@ -6,7 +6,9 @@ Status: GENERATED/EVIDENCE
 
 The approved documentation-path policy and discovery/integration/upgrade references are implemented on `codex/human-documentation-paths`. New/materially changed paths must comply; existing documentation debt is assessed and planned with scope, owner/role and trigger. Confusing folders may require relocation with path-consumer checks; the rule does not freeze existing layouts.
 
-Local regression, focused install/upgrade checks and source path acceptance passed; see PROJECT_STATUS for scope and results. Remaining delivery work is the current-revision PR gate and its receipt, followed by the final registry/backlog status. Preserve the old release evidence below. No target upgrades, new documentation schema/tool, extra review chain or live runtime acceptance are included. Integrity alone never certifies readability. Do not merge without a separate user instruction.
+Local regression, final focused install/provenance/upgrade checks and source path acceptance passed; implementation head `1becb1f1e59180b0941724363c3ff0c75ee6ca4f` also passed all four PR checks. `WI-0040` is complete for implementation/PR delivery. See PROJECT_STATUS for scoped evidence and [PR #41](https://github.com/gecompat/AI_Repository_Foundation/pull/41) for the exact final-revision check receipt. A metadata-only completion update does not change the transferable rules or tests; its current-head gates still apply.
+
+Preserve the old release evidence below. No target upgrades, new documentation schema/tool, extra review chain or live runtime acceptance are included. Integrity alone never certifies readability. The candidate is unmerged; before any later integration recheck current main, collisions, exact checks and semantic registry/Git-result equivalence. Do not merge without a separate user instruction.
 
 ## Foundation 1.24.0 — WI-0039 / DEC-0027
 
