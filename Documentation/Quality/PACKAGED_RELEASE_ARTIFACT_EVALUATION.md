@@ -34,23 +34,9 @@ The embedded index binds the ruleset version, exact source commit, commit epoch,
 
 `verify` rejects unsafe or duplicate paths, non-regular entries, missing or extra files, index changes, payload changes, transfer-manifest mismatches, and an optional sidecar mismatch before extraction.
 
-## Usage
+## Current usage
 
-From a clean exact Foundation checkout:
-
-```text
-python tools/package_foundation.py build --output OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip
-python tools/package_foundation.py verify --archive OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip --sha256-file OUTSIDE_REPOSITORY/ai-repository-foundation-1.17.1.zip.sha256
-```
-
-After authorized transfer, verify first, extract into an empty staging directory, inspect the plan, and then use the bundled installer:
-
-```text
-python STAGING/tools/install_foundation.py TARGET --adapters default --capabilities none
-python STAGING/tools/install_foundation.py TARGET --adapters default --capabilities none --apply
-```
-
-Optional capabilities remain opt-in even though the universal distribution carries all selectable payload sources. Carrying all sources avoids creating ambiguous partial manifests; selection occurs at installation time exactly as it does from a Git checkout.
+Follow the [release package guide](../Guides/RELEASE_PACKAGE.md) for current downloads, checksum verification, staging, installation, upgrade/conflict handling and source-checkout build commands. That guide is the operational reading path; this record retains the package design, boundaries and acceptance scope.
 
 ## Acceptance evidence
 

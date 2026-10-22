@@ -2,6 +2,12 @@
 
 Status: GENERATED/EVIDENCE
 
+## Release v1.25.0 — REL-0001
+
+The user authorizes publication of the first stable GitHub release after updating the human package instructions and release description. The canonical registry records release approval as `REL-0001`; actual publication state and artifact receipt belong to [GitHub release v1.25.0](https://github.com/gecompat/AI_Repository_Foundation/releases/tag/v1.25.0). The preparation PR records executed checks and the immutable source binding, avoiding a self-referential publication claim in the tagged source.
+
+Complete source/registry/generated-view gates, local regression and exact PR/main CI; build the ZIP twice from the clean qualified main commit, verify reproducibility/checksum/index, and exercise staging/install/provenance from that actual package. Before publication verify the remote tag's peeled commit and downloaded draft assets. Publish the prepared release and verify its state and asset hashes. No target project or transferable payload changes are included. Current human instructions are in [the release package guide](../Documentation/Guides/RELEASE_PACKAGE.md), with a linked release overview and existing troubleshooting/upgrade guidance.
+
 ## Foundation 1.25.0 — WI-0040 / DEC-0028
 
 The approved documentation-path policy and discovery/integration/upgrade references are implemented on `codex/human-documentation-paths`. New/materially changed paths must comply; existing documentation debt is assessed and planned with scope, owner/role and trigger. Confusing folders may require relocation with path-consumer checks; the rule does not freeze existing layouts.

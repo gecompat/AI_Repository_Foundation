@@ -69,7 +69,7 @@ Actual compatibility requires protocol, permissions, catalog, model evidence, an
 | Contribute to Foundation | [Contribution guide](CONTRIBUTING.md) | [Decisions](Documentation/Architecture/DECISIONS.md), project maintenance links in the contribution guide |
 | Inspect release or validation evidence | [Changelog](CHANGELOG.md), [current status](.ai/PROJECT_STATUS.md) | [Handover](.ai/HANDOVER.md), [known limitations](Documentation/Quality/KNOWN_LIMITATIONS.md) |
 
-README, the user guide, and architecture are explanations. Normative rules remain in the linked authoritative contracts. Dated quality reports and older status sections describe historical evidence, not current compatibility guarantees. [Offline package instructions](Documentation/Quality/PACKAGED_RELEASE_ARTIFACT_EVALUATION.md) describe delivery from an exact clean checkout.
+README, the user guide, and architecture are explanations. Normative rules remain in the linked authoritative contracts. Dated quality reports and older status sections describe historical evidence, not current compatibility guarantees. For a fixed version, read the [v1.25.0 release overview](Documentation/Releases/v1.25.0.md) and [download, verify and install a release package](Documentation/Guides/RELEASE_PACKAGE.md).
 
 <a id="source-completion-checks"></a>
 
