@@ -4,6 +4,12 @@ Status: GENERATED/EVIDENCE
 Last updated: 2026-10-20
 Foundation version: 1.25.0
 
+## Release v1.25.0 — REL-0001
+
+The user explicitly authorizes preparing and publishing the first stable GitHub release with tag `v1.25.0`, human-readable notes, the deterministic Foundation ZIP and SHA-256 sidecar. `REL-0001` in the canonical registry records this approved release scope, not a claim of completed publication. [Release notes](../Documentation/Releases/v1.25.0.md) and the [package guide](../Documentation/Guides/RELEASE_PACKAGE.md) form the human entry path. The ruleset version and all manifest-listed transferable material remain unchanged.
+
+Release preparation requires source/registry/backlog integrity, local regression and exact PR/main CI, then build/verify of reproducible assets from the qualified main commit and installation/provenance checks from that actual package. The preparation PR records source-bound execution evidence; the [GitHub release](https://github.com/gecompat/AI_Repository_Foundation/releases/tag/v1.25.0) is the authoritative publication, tag and asset receipt once published. This immutable source snapshot does not predict publication success. Optional live integrations and target upgrades remain outside scope.
+
 ## Foundation 1.25.0 — WI-0040 / DEC-0028
 
 The user-approved human documentation policy is implemented through [PR #41](https://github.com/gecompat/AI_Repository_Foundation/pull/41). It requires complete reader paths, understandable directory purposes, shared authority, separately discoverable AI control, and current/history separation. Existing projects use scoped legacy remediation with owner/role and trigger. The [decision](../Documentation/Architecture/decisions/DEC-0028-human-documentation-paths.md) records authority, boundaries and processing overhead; the policy is the sole detailed rule source.
